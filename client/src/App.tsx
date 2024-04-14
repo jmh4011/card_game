@@ -1,0 +1,31 @@
+import React, { useEffect } from 'react';
+import io from 'socket.io-client';
+import ModalLogin from './components/ModalLogin';
+import useModal from './components/useModal';
+import { useSocketOn } from './components/Utiles';
+
+
+export const socket = io("ws://localhost:5000");
+
+function App() {
+
+
+
+  const sendMessage = () => {
+    socket.emit('message', 'Hello World!');
+  };
+  useSocketOn('message', (data) => {console.log(data)})
+
+
+  const {openModal:openModalLogin,closeModal:closeModalLogin} = useModal(() => 
+    {return <ModalLogin socket={socket} closeModal={closeModalLogin} />})
+
+  return (
+    <div className="App">
+      <button onClick={sendMessage}>sned message</button>
+      <button onClick={openModalLogin}>login</button>
+    </div>
+  );
+}
+
+export default App;

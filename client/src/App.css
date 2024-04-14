@@ -1,3 +1,58 @@
-.App {
+.modal {
+  z-index: 10;
+  display: block;
+  background: rgba(0,0,0,0.3);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}
+
+.login {
+  z-index: 15;
+  border: 1px solid rgb(196, 196, 196);
+  background-color: white;
+  position: fixed;
+  width: 600px;
+  height: 400px;
+  top:30vh;
+  left:30vw;
+}
+
+.createAccount {
+  z-index: 15;
+  border: 1px solid black;
+  background-color: white;
+  position: fixed;
+  width: 600px;
+  height: 400px;
+  top:30vh;
+  left:30vw;
+}
+
+
+.vibration {
+  animation: vibration 0.1s infinite;
+}
+
+@keyframes vibration {
+  from {
+    transform: rotate(1deg);
+  }
+  to {
+    transform: rotate(-1deg);
+  }
+}
+
+
+.weakInput {
+  font-size: 10px;
+  color: red;
+}
+
+
+
+.userid {
+  display: block;
+  background-color: #491aaf;
   text-align: center;
 }
