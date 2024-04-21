@@ -25,14 +25,12 @@ const ModalLogin: React.FC<ModalLoginPorps> = ({closeModal,socket}) => {
         {return <ModalCreateAccount socket={socket} closeModal={closeModalCreateAccount} />})
 
     useSocketOn("login", (data) => {
-        if(data === "Success") {
+        if(data === "success") {
+            alert("로그인 성공")
             closeModal()
         }
-        else if (data === "useridError") {
-            alert("존재하지 않는 아이디 입니다.")
-        }
-        else if (data === "passwordError") {
-            alert("틀린 비밀번호")
+        else if (data === "loginError") {
+            alert("존재하지 않는 아이디이거나 틀린 비밀번호 입니다.")
         }
         else {
             alert("알 수 없는 오류 발생")
@@ -46,6 +44,7 @@ const ModalLogin: React.FC<ModalLoginPorps> = ({closeModal,socket}) => {
         <UserInput placeholder="id" type="text" onChange={(e) => {setUserid(e.target.value)}} />
         <UserInput placeholder="password" type="password" onChange={(e) => {setPassword(e.target.value)}} />
         <CreateAccount onClick={() => {closeModal(); openModalCreateAccount();}}>Create Account</CreateAccount>
+        <FindAccount onClick={() => {alert("장민혁한테 문의하세요.")}}>Find Account</FindAccount>
         <LoginButton onClick={send}>완료</LoginButton>
     </Login>
     </>
@@ -90,7 +89,21 @@ const UserInput = styled.input`
 `;
 
 const CreateAccount = styled.p`
+    display: inline;
     margin-left: 50px;
+    font-size: 15px;
+    color: rgb(81, 121, 255);
+    width: 110px;
+    &:hover {
+        text-decoration: underline;
+        color: rgb(0, 60, 255);
+      }
+`;
+
+
+const FindAccount = styled.p`
+    display: inline;
+    margin-left: 10px;
     font-size: 15px;
     color: rgb(81, 121, 255);
     width: 110px;

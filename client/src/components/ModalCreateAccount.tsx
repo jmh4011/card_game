@@ -28,8 +28,9 @@ const ModalCreateAccount: React.FC<ModalLoginPorps> = ({closeModal,socket}) => {
       };
     
     useSocketOn("create_account", (data) => {
-        if(data === "Success") {
+        if(data === "success") {
             closeModal()
+            alert("계정 생성됨")
         }
         else if (data === "useridDuplicate") {
             alert("이미 존재하는 아이디 입니다.")
@@ -50,9 +51,9 @@ const ModalCreateAccount: React.FC<ModalLoginPorps> = ({closeModal,socket}) => {
     <CreateAccount>
         <Cancel onClick={closeModal}>x</Cancel>
         <Title>create account</Title>
-        <UserInput placeholder="id" onChange={(e) => {setUserid(e.target.value)}} />
-        <UserInput placeholder="new Password" onChange={(e) => {setPassword(e.target.value)}} />
-        <UserInput placeholder="again Password" onChange={(e) => {setAgainPassword(e.target.value)}} />
+        <UserInput placeholder="id" type="text" onChange={(e) => {setUserid(e.target.value)}} />
+        <UserInput placeholder="new Password" type="password" onChange={(e) => {setPassword(e.target.value)}} />
+        <UserInput placeholder="again Password" type="password" onChange={(e) => {setAgainPassword(e.target.value)}} />
         {password !== againPassword && vibration && <WeakInput>비밀번호가 일치 하지 않습니다.</WeakInput>}
         <LoginButton onClick={send}>완료</LoginButton>
     </CreateAccount>
