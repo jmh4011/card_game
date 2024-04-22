@@ -1,5 +1,5 @@
 import React,{ useEffect } from "react";
-import { socket } from "../App";
+import { socket } from "../../App";
 
 export const styleVibration = (setVibration:(vibration:boolean)=>void,t:number = 400) => {
     setVibration(true);

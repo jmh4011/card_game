@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import io from 'socket.io-client';
-import ModalLogin from './components/ModalLogin';
-import useModal from './components/useModal';
-import { useSocketOn } from './components/Utiles';
+import ModalLogin from './components/ui/ModalLogin';
+import useModal from './components/utiles/useModal';
+import { useSocketOn } from './components/utiles/Utiles';
 
 
 export const socket = io("ws://localhost:5000");
@@ -24,6 +24,7 @@ function App() {
     <div className="App">
       <button onClick={sendMessage}>sned message</button>
       <button onClick={openModalLogin}>login</button>
+      
     </div>
   );
 }
