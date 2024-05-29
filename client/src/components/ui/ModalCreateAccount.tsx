@@ -1,9 +1,9 @@
 import classnames from "classnames"
 import { useEffect, useState } from "react"
-import { styleVibration, useSocketOn } from "../utiles/Utiles"
+import { styleVibration, useSocketOn } from "../../utiles/Utiles"
 import { Socket } from "socket.io-client"
 import styled, { css } from 'styled-components';
-import { OutModal, Vibration } from "../styles";
+import { OutModal, Vibration } from "../../utiles/styles";
 
 
 interface ModalLoginPorps {

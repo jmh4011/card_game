@@ -1,5 +1,7 @@
-import React,{ useEffect } from "react";
-import { socket } from "../../App";
+import React,{ useEffect, useState } from "react";
+import { socket } from "../App";
+import {card} from './inter'
+
 
 export const styleVibration = (setVibration:(vibration:boolean)=>void,t:number = 400) => {
     setVibration(true);
@@ -21,3 +23,8 @@ export const useSocketOn = (ev:string, callBack:(data:any)=>void, deps:React.Dep
         };
     }, deps);
 }
+
+
+
+
+

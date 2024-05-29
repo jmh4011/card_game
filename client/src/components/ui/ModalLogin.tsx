@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Socket } from "socket.io-client";
-import useModal from "../utiles/useModal";
-import {useSocketOn} from '../utiles/Utiles'
+import useModal from "../../utiles/useModal";
+import {useSocketOn} from '../../utiles/Utiles'
 import ModalCreateAccount from './ModalCreateAccount'
-import { OutModal } from "../styles";
+import { OutModal } from "../../utiles/styles";
 import styled from "styled-components";
 
 interface ModalLoginPorps {

@@ -1,5 +1,5 @@
 import base64
-from flask import Flask
+from flask import Flask, jsonify
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -32,17 +32,30 @@ def handle_message(data):
     
 @socketio.on('card')
 def handle_request_card(id):
-    card = db.card_info(id)
-    image_path = f'./data/images/{card['image']}'
+    card = list(db.card_info(id)[0])
+    image_path = f'./data/images/character/{[card[7]]}.png'
     try:
         with open(image_path, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-            card['image'] = encoded_string
-            socketio.emit('card', json.dumps(card))
+            card[7] = encoded_string
     except FileNotFoundError:
-        socketio.emit('card', 'error')
+        print("파일 못 찾음")
+        card[7] = 'error'
+    finally:
+        result = {key:value for key,value in zip(['id','name','cost','attack','health','type','text','image'],card)}
+        socketio.emit('card', json.dumps(result))
     
     
 
 if __name__ == '__main__':
     socketio.run(app,debug=True,port=5000)
+    
+    
+# id: number; 
+#   name: string;
+#   cost : number;
+#   attack : number;
+#   health : number;
+#   type : string;
+#   text : string;
+#   image : string;

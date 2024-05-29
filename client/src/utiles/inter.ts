@@ -8,3 +8,9 @@ export interface card {
   text : string;
   image : string;
 }
+
+
+export interface skin {
+  backgraund: string;
+  character: string;
+}

@@ -20,6 +20,8 @@ class Database:
         self.cur.execute("INSERT INTO user (userid, password, name) VALUES (%s, %s, %s);",(userid,password,'test'))
         self.conn.commit()
         return "success"
+    
     def card_info(self,id:int) -> dict:
-        return self.cur.execute("SELECT * FROM card WHERE id=%d;",(id))
+        self.cur.execute("SELECT * FROM card WHERE id=%s;",(id))
+        return self.cur.fetchall()
 # conn.close()
