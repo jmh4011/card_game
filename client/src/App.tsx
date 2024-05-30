@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import ModalLogin from './components/ui/ModalLogin';
-import useModal from './utiles/useModal';
-import { useSocketOn} from './utiles/Utiles';
+import ModalLogin from './pages/ModalLogin';
+import useModal from './utile/useModal';
+import { useSocketOn} from './utile/Utiles';
 import Card from './components/Card'
 
 export const socket = io("ws://localhost:5000");

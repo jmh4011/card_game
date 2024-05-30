@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
-import ModalProvider from './utiles/ModalProvider';
+import ModalProvider from './utile/ModalProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
