@@ -4,17 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
-import ModalProvider from './utile/ModalProvider';
+import {CookiesProvider} from 'react-cookie';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <RecoilRoot>
-    <React.StrictMode>
-      <ModalProvider />
-      <App />
-    </React.StrictMode>
+    <CookiesProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </CookiesProvider>
   </RecoilRoot>
 );
 

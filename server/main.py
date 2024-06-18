@@ -1,49 +1,49 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
-from .DB import models, schemas, database
+import uvicorn
+from contextlib import asynccontextmanager
+from .db.database import Base, engine
+from .db.routers import cards, deck_cards, decks, players
 
 app = FastAPI()
 
-# 정적 파일 제공 설정
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# CORS 설정
+origins = [
+    "http://localhost:3000",  # React 개발 서버
+    "http://127.0.0.1:3000",  # React 개발 서버
+]
 
-# 데이터베이스 종속성 설정
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-models.Base.metadata.create_all(bind=database.engine)
+app.mount("/static", StaticFiles(directory="server/static"), name="static")
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = models.User(userid=user.userid, password=user.password, name=user.name)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+# 라우터 추가
+app.include_router(cards.router)
+app.include_router(players.router)
+app.include_router(decks.router)
+app.include_router(deck_cards.router)
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the Card Game API"}
 
-@app.post("/cards/", response_model=schemas.Card)
-def create_card(card: schemas.CardCreate, db: Session = Depends(get_db)):
-    db_card = models.Card(**card.model_dump())
-    db.add(db_card)
-    db.commit()
-    db.refresh(db_card)
-    return db_card
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 애플리케이션 시작 시 실행되는 코드
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # 애플리케이션 종료 시 실행되는 코드
+    await engine.dispose()
 
-@app.get("/cards/{card_id}", response_model=schemas.Card)
-def read_card(card_id: int, db: Session = Depends(get_db)):
-    db_card = db.query(models.Card).filter(models.Card.id == card_id).first()
-    if db_card is None:
-        raise HTTPException(status_code=404, detail="Card not found")
-    return db_card
+app.router.lifespan_context = lifespan
+
+if __name__ == "__main__":
+    uvicorn.run("server.main:app", host="127.0.0.1", port=8000, reload=True)

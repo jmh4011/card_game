@@ -1,51 +1,44 @@
 import React, { useState } from "react";
-import { Socket } from "socket.io-client";
-import useModal from "../utile/useModal";
-import {useSocketOn} from '../utile/Utiles'
 import ModalCreateAccount from './ModalCreateAccount'
 import { OutModal } from "../utile/styles";
 import styled from "styled-components";
+import {PostPlayer} from "../api/api";
+import { useSetRecoilState } from "recoil";
+import { showPageState, userIdState } from "../atom";
 
 interface ModalLoginPorps {
-  closeModal: () => void
-  socket : Socket
 }
 
 
 
-const ModalLogin: React.FC<ModalLoginPorps> = ({closeModal,socket}) => {
-  const [userid, setUserid] = useState<String>()
-  const [password,setPassword] = useState<String>()
-  const send = () => {
-    socket.emit('login', {userid : userid, password: password});
-  };
+const ModalLogin: React.FC<ModalLoginPorps> = () => {
+  const [username, setUsernmae] = useState<string>('')
+  const [password,setPassword] = useState<string>('')
+  const setUserId = useSetRecoilState(userIdState)
+  const setShowPage = useSetRecoilState(showPageState)
 
 
-  const {openModal:openModalCreateAccount,closeModal:closeModalCreateAccount} = useModal(() => 
-    {return <ModalCreateAccount socket={socket} closeModal={closeModalCreateAccount} />})
+  const login = () => {
+    PostPlayer(username, password, (data) => {
+      if (data === -1){
+        alert('틀림')
+      }else{
+        setUserId(data)
+        setShowPage("main")
+      }
+    })
+  }
 
-  useSocketOn("login", (data) => {
-    if(data === "success") {
-      alert("로그인 성공")
-      closeModal()
-    }
-    else if (data === "loginError") {
-      alert("존재하지 않는 아이디이거나 틀린 비밀번호 입니다.")
-    }
-    else {
-      alert("알 수 없는 오류 발생")
-    }
-  })
+  
   return <>
   <OutModal/>
   <Login>
-    <Cancel onClick={closeModal}>x</Cancel>
     <Title>Login</Title>
-    <UserInput placeholder="id" type="text" onChange={(e) => {setUserid(e.target.value)}} />
+    <UserInput placeholder="id" type="text" onChange={(e) => {setUsernmae(e.target.value)}} />
     <UserInput placeholder="password" type="password" onChange={(e) => {setPassword(e.target.value)}} />
-    <CreateAccount onClick={() => {closeModal(); openModalCreateAccount();}}>Create Account</CreateAccount>
+    <CreateAccount onClick={() => {setShowPage("createAccount");}}>Create Account</CreateAccount>
     <FindAccount onClick={() => {alert("장민혁한테 문의하세요.")}}>Find Account</FindAccount>
-    <LoginButton onClick={send}>완료</LoginButton>
+    <LoginButton onClick={login}>완료</LoginButton>
   </Login>
   </>
 
@@ -58,7 +51,7 @@ const Login = styled.div`
     border-radius: 10px;
     background-color: white;
     width: 400px;
-    height: 370px;
+    height: 350px;
     position: fixed;
     left: 50%;
     top: 50%;
@@ -89,15 +82,15 @@ const UserInput = styled.input`
 `;
 
 const CreateAccount = styled.p`
-    display: inline;
-    margin-left: 50px;
-    font-size: 15px;
-    color: rgb(81, 121, 255);
-    width: 110px;
-    &:hover {
-        text-decoration: underline;
-        color: rgb(0, 60, 255);
-      }
+  display: inline;
+  margin-left: 50px;
+  font-size: 15px;
+  color: rgb(81, 121, 255);
+  width: 110px;
+  &:hover {
+      text-decoration: underline;
+      color: rgb(0, 60, 255);
+    }
 `;
 
 

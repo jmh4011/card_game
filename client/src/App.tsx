@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import { useUserIdSync } from './utile/cookie';
+import { useRecoilState } from 'recoil';
+import { decksState, showPageState, userIdState } from './atom';
+import ModalMain from './pages/ModalMain';
 import ModalLogin from './pages/ModalLogin';
-import useModal from './utile/useModal';
-import { useSocketOn} from './utile/Utiles';
-import Card from './components/Card'
-
-export const socket = io("ws://localhost:5000");
-
-function App() {
-  const sendMessage = () => {
-    socket.emit('message', 'Hello World!');
-  };
-  useSocketOn('message', (data) => {console.log(data)})
+import ModalCreateAccount from './pages/ModalCreateAccount';
+import ModalSeletDeck from './pages/ModalSeletDeck';
 
 
-  const {openModal:openModalLogin,closeModal:closeModalLogin} = useModal(() => 
-    {return <ModalLogin socket={socket} closeModal={closeModalLogin} />})
+const App: React.FC = () => {
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const [decks, setDecks] = useRecoilState(decksState);
+  const [showPage, setShowPege] = useRecoilState(showPageState)
+  useUserIdSync()
 
 
   return (
     <div className="App">
-      <button onClick={sendMessage}>sned message</button>
-      <button onClick={openModalLogin}>login</button>
+      <div></div>
+      
+      {showPage === 'main'?
+      <ModalMain/>:null}
+
+      {showPage === 'login'?
+      <ModalLogin/>:null}
+      
+      {showPage === 'createAccount'?
+      <ModalCreateAccount/>:null}
+      
+      {showPage === 'seletDeck'?
+      <ModalSeletDeck/>:null}
+      
     </div>
   );
 }
