@@ -1,22 +1,18 @@
-import { useEffect, useState } from "react"
-import { styleVibration } from "../utile/Utiles"
-import styled, { css } from 'styled-components';
-import { OutModal, Vibration } from "../utile/styles";
-import {PutPlyaer} from "../api/api";
+import { useEffect, useState } from "react";
+import styled from 'styled-components';
+import { OutModal, Vibration } from "../utils/styles";
+import { PutPlayer } from "../api/api";
 import { useSetRecoilState } from "recoil";
-import { showPageState, userIdState } from "../atom";
+import { loadingState, showPageState, userIdState } from "../recoli/atom";
 
-
-interface ModalLoginPorps {
-}
-
-
-const ModalCreateAccount: React.FC<ModalLoginPorps> = ({}) => {
-  const [username, setUsername] = useState<string>('')
-  const [password,setPassword] = useState<string>('')
-  const [againPassword,setAgainPassword] = useState<string>('')
-  const [vibration, setVibration] = useState<boolean>(false)
-  const setShowPage = useSetRecoilState(showPageState)
+const ModalCreateAccount: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [againPassword, setAgainPassword] = useState<string>('');
+  const [vibration, setVibration] = useState<boolean>(false);
+  const setShowPage = useSetRecoilState(showPageState);
+  const setLoading = useSetRecoilState(loadingState);
+  const setUserId = useSetRecoilState(userIdState);
 
   useEffect(() => {
     if (vibration) {
@@ -25,39 +21,42 @@ const ModalCreateAccount: React.FC<ModalLoginPorps> = ({}) => {
     }
   }, [vibration]);
 
-  const setUserId = useSetRecoilState(userIdState)
-  const create = () => {
-    password !== againPassword?
-      setVibration(true):
-      PutPlyaer(username,password, (data) => {
-        if (data === -1){
-          alert("이미 있는 아이디")
-        } else{
-          setUserId(data)
+  const createAccount = () => {
+    if (password !== againPassword) {
+      setVibration(true);
+    } else {
+      PutPlayer(username, password, (data) => {
+        if (data === -1) {
+          alert("이미 있는 아이디");
+        } else {
+          setUserId(data);
+          setShowPage('start');
         }
-      })
-  }
-  
+      }, setLoading);
+    }
+  };
 
-  return <>
-  <OutModal/>
-  <CreateAccount>
-    <Title>create account</Title>
-    <UserInput placeholder="id" type="text" onChange={(e) => {setUsername(e.target.value)}} />
-    <UserInput placeholder="new Password" type="password" onChange={(e) => {setPassword(e.target.value)}} />
-    <UserInput placeholder="again Password" type="password" onChange={(e) => {setAgainPassword(e.target.value)}} />
-    {password !== againPassword && vibration && <WeakInput>비밀번호가 일치 하지 않습니다.</WeakInput>}
-    <Login onClick={() => {setShowPage("login");}}>Login</Login>
-    <LoginButton onClick={create}>완료</LoginButton>
-  </CreateAccount>
-  </>
-}
+  return (
+    <>
+      <OutModal />
+      <CreateAccount>
+        <Title>Create Account</Title>
+        <UserInput placeholder="id" type="text" onChange={(e) => setUsername(e.target.value)} />
+        <UserInput placeholder="new Password" type="password" onChange={(e) => setPassword(e.target.value)} />
+        <UserInput placeholder="again Password" type="password" onChange={(e) => setAgainPassword(e.target.value)} />
+        {password !== againPassword && vibration && <WeakInput>비밀번호가 일치 하지 않습니다.</WeakInput>}
+        <Login onClick={() => setShowPage("login")}>Login</Login>
+        <LoginButton onClick={createAccount}>완료</LoginButton>
+      </CreateAccount>
+    </>
+  );
+};
 
 const CreateAccount = styled.div`
   z-index: 15;
   border: 1px solid rgb(150, 150, 150);
   border-radius: 10px;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   width: 400px;
   height: 400px;
   position: fixed;
@@ -66,19 +65,19 @@ const CreateAccount = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-
 const Title = styled.div`
   display: block;
   margin-left: 50px;
   margin-top: 30px;
   font-size: 35px;
-  color: #6A24FE;
-`
+  color: rgb(106, 36, 254);
+`;
 
 const UserInput = styled.input`
   display: block;
   margin-left: 50px;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   width: 286px;
   height: 50px;
   border: 0;
@@ -90,33 +89,33 @@ const UserInput = styled.input`
 `;
 
 const Login = styled.p`
-    display: inline;
-    margin-left: 50px;
-    font-size: 15px;
-    color: rgb(81, 121, 255);
-    width: 110px;
-    &:hover {
-        text-decoration: underline;
-        color: rgb(0, 60, 255);
-      }
+  display: inline;
+  margin-left: 50px;
+  font-size: 15px;
+  color: rgb(81, 121, 255);
+  width: 110px;
+  &:hover {
+    text-decoration: underline;
+    color: rgb(0, 60, 255);
+  }
 `;
-
 
 const LoginButton = styled.button`
   margin-left: 50px;
   width: 300px;
   height: 40px;
-  color: #fff;
+  color: rgb(255, 255, 255);
   font-size: 16px;
-  background-color: #6A24FE;
+  background-color: rgb(106, 36, 254);
   text-align: center;
   line-height: 40px;
-  margin-top: 20px;
+  margin-top: 10px;
   border-radius: 10px;
   &:hover {
-    background-color: #491aaf;
+    background-color: rgb(73, 26, 175);
   }
-`
+`;
+
 const Cancel = styled.div`
   display: block;
   width: 20px;
@@ -130,16 +129,15 @@ const Cancel = styled.div`
   border: 1px solid rgb(200, 200, 200);
   border-radius: 5px;
   &:hover {
-    color: rgb(0,0,0);
+    color: rgb(0, 0, 0);
   }
-`
+`;
 
 const WeakInput = styled.p`
   margin-left: 50px;
   font-size: 10px;
-  color: red;
+  color: rgb(255, 0, 0);
   animation: ${Vibration} 0.4s infinite;
 `;
 
-
-export default ModalCreateAccount
+export default ModalCreateAccount;

@@ -1,9 +1,11 @@
+// src/api/api.ts
 import axios, { AxiosResponse } from 'axios';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { SetterOrUpdater } from 'recoil';
 import { io, Socket } from 'socket.io-client';
-import { decksState, userIdState } from '../atom';
 
-class webSocket {
+type setFn = (data:any) => void;
+
+class WebSocketService {
   private socket: Socket | null = null;
   // WebSocket 연결
   connectWebSocket(url: string, messageHandler: (message: any) => void): void {
@@ -47,20 +49,18 @@ class webSocket {
   }
 }
 
-export default new webSocket();
-
-
+export const webSocketService = new WebSocketService();
 
 // HTTP 요청
 export const http = async (
   type: "get" | "put" | "post",
   url: string,
   callback: (data: any) => void,
-  data: any = undefined,
-  setLoading: ((loading: boolean) => void) | null = null) => {
+  setLoading: setFn,
+  data: any = undefined) => {
   
-  if (setLoading) setLoading(true);
-
+  setLoading(true);
+  
   const request = type === 'get' ? axios.get : type === "put"? axios.put: axios.post;
 
   try {
@@ -76,48 +76,58 @@ export const http = async (
       console.error('Unexpected error:', error);
     }
   } finally {
-    if (setLoading) setLoading(false);
+    setLoading(false);
   }
 }
 
 
-export const GetDecks = (userId:number, setDecks:(data:any)=>void,setLoading:((data:any) => void) | null = null) =>{
-  http('get', `/decks/${userId}`,(data)  => {console.log(data);setDecks(data);},undefined,setLoading)
+export const GetDecks = (userId:number, setDecks:setFn, setLoading: setFn) => {
+  http('get', `/decks/${userId}`,setDecks, setLoading);
 }
 
-export const PostDecks = (userId:number, 
+export const PostDecks = (userId:number, setDeck:setFn, setLoading: setFn,
   deck_name:string = `새로운 덱`, 
-  image:string = "0.png", 
-  setLoading:((data:any) => void) | null = null
-  ) => {
-  http('post', `/decks/`,
-  console.log,
-  {
+  image:string = "0.png") => {
+  http('post', `/decks/`, setDeck, setLoading, {
     player_id: userId,
     deck_name: deck_name,
-    image: image},
-    setLoading
-  )
+    image: image
+  });
 }
 
-export const PostPlayer = (username: string, password:string, callback: (data:any) => void, setLoading:((data:any) => void) | null = null) =>{
-  http("post",`/players/login`,
-    callback, {
-      username: username,
-      password: password},
-    setLoading
-  )
+export const GetPlayer = (userId:number, setPlayer:setFn, setLoading: setFn) => {
+  http('get', `/players/state/${userId}`, setPlayer, setLoading);
 }
 
-export const PutPlyaer = (username:string, password:string, 
-  callback : (data:any) => void, 
-  setLoading:((data:any) => void) | null = null) => {
+export const GetPlayerCards = (userId:number, setPlayerCards: setFn, setLoading: setFn) =>{
+  http('get', `/players/cards/${userId}`, setPlayerCards,setLoading)
+}
 
-  http('put', `/players/create`, 
-    callback,
-    {
-      username: username,
-      password: password},
-    setLoading
-  )
+export const PostPlayer = (username: string, password:string, callback: setFn, setLoading: setFn) => {
+  http("post", `/players/login`, callback, setLoading, {
+    username: username,
+    password: password
+  });
+}
+
+export const PutPlayer = (username:string, password:string, 
+  callback: setFn, setLoading: setFn) => {
+  http('put', `/players/create/${username}/${password}`, callback, setLoading);
+}
+
+export const GetDeckPlayerCards = (deck_id: number, userId:number,callback: setFn, setLoading: setFn) => {
+  http('get', `/decks/cards/${deck_id}/${userId}`, callback, setLoading);
+}
+
+interface deckUpdate {
+  deck_name: string;
+  image: string;
+  deck_cards: number[]
+}
+
+export const PutDeckUpdate = (deck_id: number,data:deckUpdate,setDeck: setFn,setDeckCrads:setFn,setLoading: setFn) => {
+  http('put', `/decks/${deck_id}`, (data:any) => {
+    setDeck(data.deck);
+    setDeckCrads(data.deck_cards)},
+    setLoading, data)
 }

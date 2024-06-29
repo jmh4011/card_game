@@ -1,19 +1,21 @@
 import React from "react";
-import { useRecoilState } from "recoil";
-import { showPageState, userIdState } from "../atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { showDeckState, showPageState, userIdState } from "../recoli/atom";
 import styled from "styled-components";
+import { GetDecks } from "../api/api";
 
 
 const ModalMain: React.FC = () => {
   const [showPage, setShowPage] = useRecoilState(showPageState)
   const [userId,SerUserId] = useRecoilState(userIdState)
-
+  const setDecks = useSetRecoilState(showDeckState)
+  
   const handlePlay = () => {
     alert("미구현")
   }
 
   const handleDeck = () => {
-    setShowPage("seletDeck")
+    setShowPage("selectDeck")
   }
 
   const handleShap = () => {

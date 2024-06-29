@@ -16,8 +16,6 @@ async def get_cards(db: AsyncSession, skip: int = 0, limit: int = 10):
 async def create_card(db: AsyncSession, card: CardCreate):
     db_card = Card(**card.model_dump())
     db.add(db_card)
-    await db.commit()
-    await db.refresh(db_card)
     return db_card
 
 async def update_card(db: AsyncSession, card_id: int, card: CardCreate):
@@ -25,8 +23,6 @@ async def update_card(db: AsyncSession, card_id: int, card: CardCreate):
     if db_card:
         for key, value in card.model_dump().items():
             setattr(db_card, key, value)
-        await db.commit()
-        await db.refresh(db_card)
         return db_card
     return None
 
@@ -34,6 +30,5 @@ async def delete_card(db: AsyncSession, card_id: int):
     db_card = await db.get(Card, card_id)
     if db_card:
         await db.delete(db_card)
-        await db.commit()
         return db_card
     return None

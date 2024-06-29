@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
 from .db.database import Base, engine
-from .db.routers import cards, deck_cards, decks, players
+from .db.routers import cards, decks, players
 
 app = FastAPI()
 
@@ -28,7 +28,6 @@ app.mount("/static", StaticFiles(directory="server/static"), name="static")
 app.include_router(cards.router)
 app.include_router(players.router)
 app.include_router(decks.router)
-app.include_router(deck_cards.router)
 
 @app.get("/")
 async def read_root():

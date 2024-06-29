@@ -1,7 +1,7 @@
 import React from "react";
-import MyHand from "../componenet/play/Myhand";
-import { card } from "../utile/inter";
-import Field from "../componenet/play/Field";
+import MyHand from "../components/play/Myhand";
+import { card } from "../utils/inter";
+import Field from "../components/play/Field";
 
 interface ModalGamePorps{
   player_id: number

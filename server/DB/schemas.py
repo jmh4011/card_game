@@ -56,8 +56,6 @@ class Deck(DeckBase):
         from_attributes = True
         
 
-class DeckUpdate(Deck):
-    pass
 
 
 class DeckCardBase(BaseModel):
@@ -73,45 +71,18 @@ class DeckCard(DeckCardBase):
     class Config:
         from_attributes = True
 
-class DeckCardUpdate(DeckCard):
-    pass
 
-class GameBase(BaseModel):
-    player1_id: Optional[int] = None
-    player2_id: Optional[int] = None
-    winner_id: Optional[int] = None
+class DeckUpdate(BaseModel):
+    deck_name: str
+    image: str
+    deck_cards: list[int]
 
-class GameCreate(GameBase):
-    pass
-
-class Game(GameBase):
-    game_id: int
-    played_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    class Config:
-        from_attributes = True
-
-
-class GameMoveBase(BaseModel):
-    game_id: Optional[int] = None
-    player_id: Optional[int] = None
-    move_description: Optional[str] = None
-
-class GameMoveCreate(GameMoveBase):
-    pass
-
-class GameMove(GameMoveBase):
-    move_id: int
-    move_timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    class Config:
-        from_attributes = True
 
 
 class PlayerStatsBase(BaseModel):
     player_id: int
     current_deck_id: Optional[int] = None
-    money: int
+    money: Optional[int] = 0
 
 class PlayerStatsCreate(PlayerStatsBase):
     pass
@@ -122,3 +93,25 @@ class PlayerStats(PlayerStatsBase):
 
     class Config:
         from_attributes = True
+
+class PlayerCardBase(BaseModel):
+    player_id:int
+    card_id:int
+
+class PlayerCardCreate(PlayerCardBase):
+    pass
+
+class PlayerCard(PlayerCardBase):
+    player_card_id : int
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    class Config:
+        from_attributes = True
+
+class PlayerCardReturn(Card):
+    card_count: int
+
+
+class DeckUpdateReturn(BaseModel):
+    deck: Deck
+    deck_cards: list[PlayerCardReturn]

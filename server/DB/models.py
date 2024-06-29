@@ -14,6 +14,7 @@ class Card(Base):
     cost = Column(Integer, nullable=True)
     card_type = Column(Integer, nullable=True)
     decks = relationship("DeckCard", back_populates="card")
+    player_cards = relationship("PlayerCard", back_populates="card")
 
 class DeckCard(Base):
     __tablename__ = "deckcards"
@@ -64,9 +65,10 @@ class Player(Base):
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     decks = relationship("Deck", back_populates="player")
     stats = relationship("PlayerStats", back_populates="player")
+    player_cards = relationship("PlayerCard", back_populates="player")
 
 class PlayerStats(Base):
-    __tablename__ = "player_stats"
+    __tablename__ = "playerstats"
     stat_id = Column(Integer, primary_key=True, index=True)
     player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
     current_deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=True)
@@ -74,3 +76,13 @@ class PlayerStats(Base):
     last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     player = relationship("Player", back_populates="stats")
     deck = relationship("Deck", back_populates="stats")
+
+class PlayerCard(Base):
+    __tablename__ = "playercards"
+    player_card_id = Column(Integer, primary_key=True, index=True)
+    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+    card_id = Column(Integer, ForeignKey("cards.card_id"), nullable=False)
+    card_count = Column(Integer, nullable=False,default=1)
+    created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
+    player = relationship("Player", back_populates="player_cards")
+    card = relationship("Card", back_populates="player_cards")
