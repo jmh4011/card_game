@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { decksState, loadingState, playerCardsStats, playerStats, showPageState, userIdState } from "../atom";
+import { decksState, loadingState, playerCardsStats, playerStats, showPageState, userIdState } from "../recoli/atom";
 import { GetDecks, GetPlayer, GetPlayerCards } from "../api/api";
 
 
