@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { OutModal } from "../utils/styles";
+import { OutModal } from "../../utils/styles";
 import styled from "styled-components";
-import { PostPlayer } from "../api/api";
+import { PostPlayer } from "../../api/players";
 import { useSetRecoilState } from "recoil";
-import { loadingState, showPageState, userIdState } from "../recoli/atom";
+import { loadingState, showPageState, userIdState } from "../../atoms/global";
 
 const ModalLogin: React.FC = () => {
   const [username, setUsername] = useState<string>('');

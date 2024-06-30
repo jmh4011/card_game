@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "Start All",
+          "type": "node",
+          "request": "launch",
+          "preLaunchTask": "Start All Servers",
+          "program": "${workspaceFolder}/client/src/index.js",
+          "outFiles": ["${workspaceFolder}/client/out/**/*.js"],
+          "sourceMaps": true,
+          "skipFiles": ["<node_internals>/**"],
+          "presentation": {
+              "reveal": "always",
+              "panel": "dedicated"
+          }
+      }
+  ]
+}

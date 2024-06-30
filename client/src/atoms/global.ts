@@ -1,7 +1,7 @@
 import React from "react";
 import { Cookies } from "react-cookie";
 import { atom } from "recoil";
-import { card, deck, player_card, player_stats } from "./utils/inter";
+import { card, deck, player_card, player_stats } from "../utils/inter";
 
 const cookies = new Cookies();
 

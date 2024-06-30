@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { PostDecks, GetDeckPlayerCards } from "../api/api";
-import { deckCardsState, decksState, loadingState, showDeckState, showPageState, userIdState } from "../recoli/atom";
+import { PostDecks, GetDeckPlayerCards } from "../../api/decks";
+import { deckCardsState, decksState, loadingState, showDeckState, showPageState, userIdState } from "../../atoms/global";
 import styled from "styled-components";
-import { deck } from "../utils/inter";
+import { deck } from "../../utils/inter";
 
 const ModalSelectDeck: React.FC = () => {
   const userId = useRecoilValue(userIdState);

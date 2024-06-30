@@ -1,6 +1,17 @@
+# server/DB/schemas.py
+
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone
+
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
 
 class CardBase(BaseModel):
     card_name: str
@@ -21,7 +32,6 @@ class Card(CardBase):
     class Config:
         from_attributes = True
 
-
 class PlayerBase(BaseModel):
     username: str
     password: str
@@ -39,7 +49,6 @@ class Player(PlayerBase):
 class PlayerUpdate(Player):
     pass
 
-
 class DeckBase(BaseModel):
     player_id: Optional[int] = None
     deck_name: Optional[str] = None
@@ -54,9 +63,6 @@ class Deck(DeckBase):
 
     class Config:
         from_attributes = True
-        
-
-
 
 class DeckCardBase(BaseModel):
     deck_id: Optional[int] = None
@@ -71,13 +77,10 @@ class DeckCard(DeckCardBase):
     class Config:
         from_attributes = True
 
-
 class DeckUpdate(BaseModel):
     deck_name: str
     image: str
     deck_cards: list[int]
-
-
 
 class PlayerStatsBase(BaseModel):
     player_id: int
@@ -110,7 +113,6 @@ class PlayerCard(PlayerCardBase):
 
 class PlayerCardReturn(Card):
     card_count: int
-
 
 class DeckUpdateReturn(BaseModel):
     deck: Deck

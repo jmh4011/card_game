@@ -1,8 +1,8 @@
 import React from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { showDeckState, showPageState, userIdState } from "../recoli/atom";
+import { showDeckState, showPageState, userIdState } from "../../atoms/global";
 import styled from "styled-components";
-import { GetDecks } from "../api/api";
+import { GetDecks } from "../../api/decks";
 
 
 const ModalMain: React.FC = () => {

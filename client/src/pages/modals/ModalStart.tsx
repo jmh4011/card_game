@@ -1,7 +1,8 @@
 import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { decksState, loadingState, playerCardsStats, playerStats, showPageState, userIdState } from "../recoli/atom";
-import { GetDecks, GetPlayer, GetPlayerCards } from "../api/api";
+import { decksState, loadingState, playerCardsStats, playerStats, showPageState, userIdState } from "../../atoms/global";
+import { GetDecks } from "../../api/decks";
+import { GetPlayer, GetPlayerCards } from "../../api/players";
 
 
 const ModalStart: React.FC = () => { 

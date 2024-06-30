@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { deckCardsState, decksState, loadingState, playerCardsStats, showDeckState, showPageState, userIdState } from "../recoli/atom";
+import { deckCardsState, decksState, loadingState, playerCardsStats, showDeckState, showPageState, userIdState } from "../../atoms/global";
 import styled from "styled-components";
-import Card from "../components/Card";
-import { player_card } from "../utils/inter";
-import { PutDeckUpdate } from "../api/api";
-import CardInfo from "./config_deck/CardInfo";
-import SearchSetting from "./config_deck/SearchSetting";
-import ShowDeck from "./config_deck/ShowDeck";
-import SearchCards from "./config_deck/SearchCards";
+import Card from "../../components/Card";
+import { player_card } from "../../utils/inter";
+import { PutDeckUpdate } from "../../api/decks";
+import CardInfo from "../config_deck/CardInfo";
+import SearchSetting from "../config_deck/SearchSetting";
+import ShowDeck from "../config_deck/ShowDeck";
+import SearchCards from "../config_deck/SearchCards";
 
 const ModalConfigDeck: React.FC = () => {
   const userId = useRecoilValue(userIdState);

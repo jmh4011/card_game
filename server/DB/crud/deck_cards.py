@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import delete
-
-from server.db.schemas import PlayerCardReturn
+from server.utils import to_dict
+from ..schemas import PlayerCardReturn
 from ..models import DeckCard
 from ..crud import player_cards as crud_player_cards, cards as crud_cards
 from sqlalchemy.ext.declarative import DeclarativeMeta
@@ -55,14 +55,3 @@ async def deck_cards_to_player_cards(db: AsyncSession, deck_id: int, player_id: 
         deck_cards_return.append(PlayerCardReturn(**card_info_dict))
     
     return deck_cards_return
-
-async def to_dict(instance, db: AsyncSession):
-    if isinstance(instance.__class__, DeclarativeMeta):
-        await db.refresh(instance)  # 비동기적으로 객체를 새로 고침
-        return {c.name: getattr(instance, c.name) for c in instance.__table__.columns}
-    elif isinstance(instance, dict):
-        return instance
-    elif isinstance(instance, PlayerCardReturn):
-        return instance.dict()
-    else:
-        raise ValueError("The provided instance is not a SQLAlchemy model, dictionary, or PlayerCardReturn instance.")

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
-import { OutModal, Vibration } from "../utils/styles";
-import { PutPlayer } from "../api/api";
+import { OutModal, Vibration } from "../../utils/styles";
+import { PutPlayer } from "../../api/players";
 import { useSetRecoilState } from "recoil";
-import { loadingState, showPageState, userIdState } from "../recoli/atom";
+import { loadingState, showPageState, userIdState } from "../../atoms/global";
 
 const ModalCreateAccount: React.FC = () => {
   const [username, setUsername] = useState<string>('');

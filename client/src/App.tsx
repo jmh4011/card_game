@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useUserIdSync } from './utils/cookie';
 import { useRecoilState } from 'recoil';
-import { decksState, loadingState, showPageState, userIdState } from './recoli/atom';
-import ModalMain from './pages/ModalMain';
-import ModalLogin from './pages/ModalLogin';
-import ModalCreateAccount from './pages/ModalCreateAccount';
-import ModalSelectDeck from './pages/ModalSelectDeck';
-import ModalConfigDeck from './pages/ModalConfigDeck';
+import { decksState, loadingState, showPageState, userIdState } from './atoms/global';
+import ModalMain from './pages/modals/ModalMain';
+import ModalLogin from './pages/modals/ModalLogin';
+import ModalCreateAccount from './pages/modals/ModalCreateAccount';
+import ModalSelectDeck from './pages/modals/ModalSelectDeck';
+import ModalConfigDeck from './pages/modals/ModalConfigDeck';
 import styled from 'styled-components';
-import ModalStart from './pages/ModalStart';
+import ModalStart from './pages/modals/ModalStart';
 
 const App: React.FC = () => {
   const [userId, setUserId] = useRecoilState(userIdState);

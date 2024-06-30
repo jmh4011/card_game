@@ -1,3 +1,4 @@
+# server/DB/crud/players.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import and_
@@ -6,6 +7,10 @@ from ..schemas import PlayerCreate, PlayerUpdate
 
 async def get_player(db: AsyncSession, player_id: int):
     result = await db.execute(select(Player).filter(Player.player_id == player_id))
+    return result.scalar_one_or_none()
+
+async def get_player_by_username(db: AsyncSession, username: str):
+    result = await db.execute(select(Player).filter(Player.username == username))
     return result.scalar_one_or_none()
 
 async def create_player(db: AsyncSession, player: PlayerCreate):

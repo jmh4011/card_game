@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {Cookies} from 'react-cookie';
 import { useRecoilValue } from 'recoil';
-import { userIdState } from '../atom';
+import { userIdState } from '../atoms/global';
 
 const cookies = new Cookies();
 
