@@ -4,8 +4,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone
 
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str

@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 from .DB.database import get_db
 from .DB.crud import players as crud_players
 from .DB.schemas import Token, TokenData, Player
@@ -41,7 +41,7 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
 
 async def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.now(datetime.UTC) + expires_delta if expires_delta else datetime.utcnow() + timedelta(minutes=15)
+    expire = datetime.now(timezone.utc) + expires_delta if expires_delta else datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
