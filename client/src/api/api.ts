@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 type setFn = (data: any) => void;
 
 export const http = async (
-  type: "get" | "put" | "post",
+  type: "get" | "put" | "post" | "delete",
   url: string,
   callback: (data: any) => void,
   setLoading: setFn,
@@ -11,7 +11,11 @@ export const http = async (
   
   setLoading(true);
   
-  const request = type === 'get' ? axios.get : type === "put" ? axios.put : axios.post;
+  const request = 
+  type === 'get' ? axios.get : 
+  type === 'put' ? axios.put : 
+  type === 'post'? axios.post: 
+  axios.delete;
 
   try {
     const response: AxiosResponse = data === undefined 

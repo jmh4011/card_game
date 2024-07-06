@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, TIMESTAMP, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, TIMESTAMP, func
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -35,16 +35,6 @@ class Deck(Base):
     cards = relationship("DeckCard", back_populates="deck")
     stats = relationship("PlayerStats", back_populates="deck")
 
-class GameMove(Base):
-    __tablename__ = "gamemoves"
-    move_id = Column(Integer, primary_key=True, index=True)
-    game_id = Column(Integer, ForeignKey("games.game_id"), nullable=False)
-    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
-    move_description = Column(Text, nullable=True)
-    move_timestamp = Column(TIMESTAMP, server_default=func.now(), nullable=True)
-    game = relationship("Game", back_populates="moves")
-    player = relationship("Player")
-
 class Game(Base):
     __tablename__ = "games"
     game_id = Column(Integer, primary_key=True, index=True)
@@ -57,12 +47,24 @@ class Game(Base):
     player2 = relationship("Player", foreign_keys=[player2_id])
     winner = relationship("Player", foreign_keys=[winner_id])
 
+class GameMove(Base):
+    __tablename__ = "gamemoves"
+    move_id = Column(Integer, primary_key=True, index=True)
+    game_id = Column(Integer, ForeignKey("games.game_id"), nullable=False)
+    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+    move_description = Column(Text, nullable=True)
+    move_timestamp = Column(TIMESTAMP, server_default=func.now(), nullable=True)
+    game = relationship("Game", back_populates="moves")
+    player = relationship("Player")
+
 class Player(Base):
     __tablename__ = "players"
     player_id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
+    refresh_token = Column(String(255), nullable=True)
+    refresh_token_expiry = Column(DateTime, nullable=True)
     decks = relationship("Deck", back_populates="player")
     stats = relationship("PlayerStats", back_populates="player")
     player_cards = relationship("PlayerCard", back_populates="player")

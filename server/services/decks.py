@@ -1,17 +1,23 @@
 # server/services/decks.py
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..DB.crud import decks as crud_decks
-from ..DB.schemas import DeckCreate, DeckUpdate
-from ..DB.models import Deck
+from ..crud import deck_crud
+from ..schemas import decks as deck_schemas
+from ..models import Deck
 
-async def create_deck(db: AsyncSession, deck: DeckCreate) -> Deck:
-    return await crud_decks.create_deck(db=db, deck=deck)
+class deck_services:
 
-async def get_deck(db: AsyncSession, player_id: int) -> list[Deck]:
-    return await crud_decks.get_deck(db=db, player_id=player_id)
+    @staticmethod
+    async def create_deck(db: AsyncSession, deck: deck_schemas.DeckCreate) -> Deck:
+        return await deck_crud.create(db=db, deck=deck)
 
-async def update_deck(db: AsyncSession, deck_id: int, deck: DeckUpdate) -> Deck:
-    return await crud_decks.update_deck(db=db, deck_id=deck_id, deck=deck)
+    @staticmethod
+    async def get_deck(db: AsyncSession, player_id: int) -> list[Deck]:
+        return await deck_crud.get(db=db, player_id=player_id)
 
-async def delete_deck(db: AsyncSession, deck_id: int) -> Deck:
-    return await crud_decks.delete_deck(db=db, deck_id=deck_id)
+    @staticmethod
+    async def update_deck(db: AsyncSession, deck_id: int, deck: deck_schemas.DeckUpdate) -> Deck:
+        return await deck_crud.update(db=db, deck_id=deck_id, deck=deck)
+
+    @staticmethod
+    async def delete_deck(db: AsyncSession, deck_id: int) -> Deck:
+        return await deck_crud.delete(db=db, deck_id=deck_id)

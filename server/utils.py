@@ -9,17 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()  # .env 파일을 로드하여 환경 변수로 설정
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-TEST_USERNAME = os.getenv('TEST_USERNAME')
-TEST_PASSWORD = os.getenv('TEST_PASSWORD')
 
 def get_secret_key():
     return SECRET_KEY
 
-def get_test_credentials():
-    return {
-        'username': TEST_USERNAME,
-        'password': TEST_PASSWORD
-    }
 
 async def to_dict(instance, db: AsyncSession):
     if isinstance(instance.__class__, DeclarativeMeta):
@@ -28,7 +21,7 @@ async def to_dict(instance, db: AsyncSession):
     elif isinstance(instance, dict):
         return instance
     elif isinstance(instance, PlayerCardReturn):
-        return instance.dict()
+        return instance.model_dump()
     else:
         raise ValueError("The provided instance is not a SQLAlchemy model, dictionary, or PlayerCardReturn instance.")
     

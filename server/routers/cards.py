@@ -1,8 +1,8 @@
 # server/routers/cards.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..DB.database import get_db
-from ..DB.schemas import Card, CardCreate
+from ..database import get_db
+from ..schemas import Card, CardCreate
 from ..services.cards import create_card, get_cards, get_card, update_card, delete_card
 from ..auth import get_current_active_user, User
 from ..utils import handle_transaction
