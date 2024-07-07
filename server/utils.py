@@ -1,10 +1,13 @@
 # server/utils.py
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
-from server.DB.schemas import PlayerCardReturn
+from fastapi import HTTPException, Request, Response, status
+from server.auth import refresh_access_token, set_auth_cookies
+from server.schemas.player_cards import PlayerCardReturn
 import os
 from dotenv import load_dotenv
+
+from server.services.players import player_services
 
 load_dotenv()  # .env 파일을 로드하여 환경 변수로 설정
 
@@ -36,3 +39,16 @@ async def handle_transaction(db: AsyncSession, func, *args, **kwargs):
     except Exception as e:
         await db.rollback()  # 오류 발생 시 롤백
         raise HTTPException(status_code=400, detail=str(e))
+    
+    
+async def handle_token_refresh(db: AsyncSession, request: Request, response: Response):
+    result = await refresh_access_token(db=db, request=request)
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
+
+    player_id, new_access_token, new_refresh_token = result
+    if new_access_token and new_refresh_token:
+        await handle_transaction(db, player_services.update_refresh_token, player_id=player_id, refresh_token=new_refresh_token)
+        set_auth_cookies(response=response, access_token=new_access_token, refresh_token=new_refresh_token)
+    
+    return player_id

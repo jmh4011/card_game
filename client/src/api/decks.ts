@@ -6,10 +6,10 @@ export const GetDecks = (userId: number, setDecks: setFn, setLoading: setFn) => 
   http('get', `/decks/${userId}`, setDecks, setLoading);
 }
 
-export const PostDecks = (userId: number, setDeck: setFn, setLoading: setFn,
+export const PutDecks = (userId: number, setDeck: setFn, setLoading: setFn,
   deck_name: string = `새로운 덱`, 
   image: string = "0.png") => {
-  http('post', `/decks/`, setDeck, setLoading, {
+  http('put', `/decks/`, setDeck, setLoading, {
     player_id: userId,
     deck_name: deck_name,
     image: image

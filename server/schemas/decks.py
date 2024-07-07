@@ -15,7 +15,6 @@ class DeckCreate(DeckBase):
 class DeckUpdate(DeckBase):
     pass
 
-
 class Deck(DeckBase):
     deck_id: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

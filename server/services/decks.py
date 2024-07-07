@@ -1,23 +1,21 @@
 # server/services/decks.py
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..crud import deck_crud
-from ..schemas import decks as deck_schemas
+from ..crud import deck_crud, deck_card_crud
+from ..schemas.decks import DeckUpdate
+from ..schemas.routers import RouterDeckUpdate
 from ..models import Deck
 
 class deck_services:
 
     @staticmethod
-    async def create_deck(db: AsyncSession, deck: deck_schemas.DeckCreate) -> Deck:
-        return await deck_crud.create(db=db, deck=deck)
-
+    async def get(db: AsyncSession, player_id: int) -> Deck:
+        return await deck_crud.get_all(db=db, player_id=player_id)
+    
+    
     @staticmethod
-    async def get_deck(db: AsyncSession, player_id: int) -> list[Deck]:
-        return await deck_crud.get(db=db, player_id=player_id)
-
-    @staticmethod
-    async def update_deck(db: AsyncSession, deck_id: int, deck: deck_schemas.DeckUpdate) -> Deck:
-        return await deck_crud.update(db=db, deck_id=deck_id, deck=deck)
-
-    @staticmethod
-    async def delete_deck(db: AsyncSession, deck_id: int) -> Deck:
-        return await deck_crud.delete(db=db, deck_id=deck_id)
+    async def update(db: AsyncSession, deck_id: int, deck: RouterDeckUpdate):
+        result_deck = await deck_crud.update(db=db, deck_id=deck_id, deck=DeckUpdate(deck_name=deck.deck_name, image=deck.image))
+        if result_deck is None:
+            return None
+        result_cards = await deck_card_crud.update_all(db=db, deck_id=deck_id, deck_cards_id=deck.deck_cards)
+    

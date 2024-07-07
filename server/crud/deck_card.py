@@ -47,7 +47,7 @@ class deck_card_crud:
 
 
     @staticmethod
-    async def update_deck_cards(db: AsyncSession, deck_id: int, deck_cards_id: list[int]):
+    async def update_all(db: AsyncSession, deck_id: int, deck_cards_id: list[int]):
         existing_deck_cards = await deck_card_crud.get(db, deck_id)
         existing_card_ids = {deck_card.card_id for deck_card in existing_deck_cards}
 
@@ -65,3 +65,4 @@ class deck_card_crud:
             db.add_all(
                 [DeckCard(deck_id=deck_id, card_id=card_id) for card_id in cards_to_add]
             )
+        return deck_cards_id
