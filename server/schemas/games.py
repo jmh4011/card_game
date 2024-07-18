@@ -1,12 +1,10 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime, timezone
 
-
 class GameBase(BaseModel):
-    player1_id = Optional[int] = None
-    player2_id = Optional[int] = None
-    winner_id = Optional[int] = None
+    player1_id: int
+    player2_id: int
+    winner_id: int
 
 class GameCreate(GameBase):
     pass

@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { OutModal } from "../../utils/styles";
 import styled from "styled-components";
-import { PostPlayer } from "../../api/players";
+import useHttpPlayer from "../../api/players";
 import { useSetRecoilState } from "recoil";
-import { loadingState, showPageState, userIdState } from "../../atoms/global";
+import { loadingState, showPageState} from "../../atoms/global";
 
 const ModalLogin: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const setUserId = useSetRecoilState(userIdState);
   const setShowPage = useSetRecoilState(showPageState);
   const setLoading = useSetRecoilState(loadingState);
-
-  const login = () => {
-    PostPlayer(username, password, (data) => {
-      if (data === -1) {
-        alert('틀림');
-      } else {
-        setUserId(data);
-        setShowPage("start");
-      }
-    }, setLoading);
+  const {playerLogin} = useHttpPlayer();
+  const useHandleLogin = () => {
+    playerLogin(username, password, 
+      (data) => {setShowPage("start");},
+      (data) => {alert("틀림")},
+      setLoading);
   };
 
   return (
@@ -32,7 +27,7 @@ const ModalLogin: React.FC = () => {
         <UserInput placeholder="password" type="password" onChange={(e) => setPassword(e.target.value)} />
         <CreateAccount onClick={() => setShowPage("createAccount")}>Create Account</CreateAccount>
         <FindAccount onClick={() => alert("장민혁한테 문의하세요.")}>Find Account</FindAccount>
-        <LoginButton onClick={login}>완료</LoginButton>
+        <LoginButton onClick={useHandleLogin}>완료</LoginButton>
       </Login>
     </>
   );

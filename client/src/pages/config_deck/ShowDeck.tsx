@@ -1,26 +1,34 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Card from "../../components/Card";
-import { deck, player_card } from "../../utils/inter";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { showCardState, tempDeckCardsState, tempDeckState } from "../../atoms/modalConfigDeck";
+import { playerCardsStats } from "../../atoms/global";
 
-interface ShowDeckProps {
-  deck: deck;
-  setDeck: (data: any) => void;
-  deckCards: player_card[];
-  setDeckCards: (data: any) => void;
-  setShowCard: (data: player_card) => void;
-}
+const ShowDeck: React.FC = () => {
+  const [deck, setDeck] = useRecoilState(tempDeckState);
+  const [deckCards, setDeckCards] = useRecoilState(tempDeckCardsState);
+  const playerCards = useRecoilValue(playerCardsStats);
+  const setShowCard = useSetRecoilState(showCardState);
 
-const ShowDeck: React.FC<ShowDeckProps> = ({ deck, setDeck, deckCards, setDeckCards, setShowCard }) => {
   const [isNameEditing, setIsNameEditing] = useState(false);
-  const [cardToRemove, setCardToRemove] = useState<number | null>(null);
+  const [cardToRemove, setCardToRemove] = useState<string | null>(null);
 
-  const handleDeckCardRightClick = (e: React.MouseEvent, index: number) => {
+  const handleDeckCardRightClick = (e: React.MouseEvent, value: number, uniqueKey: string) => {
     e.preventDefault();
-    setCardToRemove(index);
+    setCardToRemove(uniqueKey);
     setTimeout(() => {
-      setDeckCards((prev: any) => prev.filter((card: player_card, idx: number) => idx !== index));
+      setDeckCards((prev: any) => {
+        const newState = { ...prev };
+        if (newState[value] !== undefined) {
+          newState[value] -= 1;
+          if (newState[value] === 0) {
+            delete newState[value];
+          }
+        }
+        return newState;
+      });
       setCardToRemove(null);
     }, 300);
   };
@@ -42,18 +50,25 @@ const ShowDeck: React.FC<ShowDeckProps> = ({ deck, setDeck, deckCards, setDeckCa
         )}
       </DeckName>
       <CardList>
-        {deckCards.map((value, idx) => (
-          <CardWrapper
-            key={idx}
-            onClick={() => setShowCard(value)}
-            onContextMenu={(e) => handleDeckCardRightClick(e, idx)}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: cardToRemove === idx ? 0 : 1, y: cardToRemove === idx ? -20 : 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Card card={value} scale={.15} />
-          </CardWrapper>
-        ))}
+        {Object.entries(deckCards).flatMap(([key, value]) =>
+          Array(value).fill(Number(key)).map((cardId, index) => {
+            const uniqueKey = `${cardId}-${index}`;
+            const isExceedingPlayerCount = index >= (playerCards[cardId] || 0);
+            return (
+              <CardWrapper
+                key={uniqueKey}
+                onClick={() => setShowCard(cardId)}
+                onContextMenu={(e) => handleDeckCardRightClick(e, cardId, uniqueKey)}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: cardToRemove === uniqueKey ? 0 : 1, y: cardToRemove === uniqueKey ? -20 : 0 }}
+                transition={{ duration: 0.5 }}
+                isExceedingPlayerCount={isExceedingPlayerCount}
+              >
+                <Card card_id={cardId} scale={0.08} />
+              </CardWrapper>
+            );
+          })
+        )}
       </CardList>
     </DeckContainer>
   );
@@ -82,8 +97,8 @@ const EditNameInput = styled.input`
 const CardList = styled.div`
   border: 1px solid rgb(1, 0, 1);
   width: 100%;
-  height: 80%;
-  max-height: 80%;
+  height: 90%;
+  max-height: 90%;
   overflow-y: auto;
   gap: 10px;
 
@@ -106,6 +121,17 @@ const CardList = styled.div`
   }
 `;
 
-const CardWrapper = styled(motion.div)`
+// CardWrapper 컴포넌트 정의
+const CardWrapper = styled(motion.div).withConfig({
+  shouldForwardProp: (prop) => prop !== 'isExceedingPlayerCount'
+})<{ isExceedingPlayerCount: boolean }>`
   display: inline-block;
+
+  ${({ isExceedingPlayerCount }) =>
+    isExceedingPlayerCount &&
+    css`
+      & * {
+        opacity: 0.8;
+      }
+    `}
 `;

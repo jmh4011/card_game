@@ -1,26 +1,21 @@
 import React from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { searchSettingsState } from "../../atoms/modalConfigDeck";
 
-interface SearchSettingProps {
-  order: 'Ascending' | 'Descending';
-  setOrder: (data: 'Ascending' | 'Descending') => void;
-  stand: string;
-  setStand: (data: string) => void;
-  searchName: boolean;
-  searchClass: boolean;
-  searchDescription: boolean;
-  setSearchName: (data: boolean) => void;
-  setSearchClass: (data: boolean) => void;
-  setSearchDescription: (data: boolean) => void;
-}
 
-const SearchSetting: React.FC<SearchSettingProps> = ({
-  order, setOrder,
-  stand, setStand,
-  searchName, setSearchName,
-  searchClass, setSearchClass,
-  searchDescription, setSearchDescription
-}) => {
+
+const SearchSetting: React.FC = () => {
+  
+  const [searchSettings, setSearchSettings] = useRecoilState(searchSettingsState);
+  const setOrder = (order:'Ascending' | 'Descending') => setSearchSettings(prev => ({ ...prev, order }))
+  const setStand = (stand:string) => setSearchSettings(prev => ({ ...prev, stand }))
+  const setSearchName = (searchName:boolean) => setSearchSettings(prev => ({ ...prev, searchName }))
+  const setSearchClass = (searchClass:boolean) => setSearchSettings(prev => ({ ...prev, searchClass }))
+  const setSearchDescription = (searchDescription:boolean) => setSearchSettings(prev => ({ ...prev, searchDescription }))
+          
+
+
   return (
     <FilterSetting>
       <Order>
@@ -28,7 +23,7 @@ const SearchSetting: React.FC<SearchSettingProps> = ({
           <input
             type="radio"
             value="Ascending"
-            checked={order === 'Ascending'}
+            checked={searchSettings.order === 'Ascending'}
             onChange={() => setOrder('Ascending')}
           />
           오름차순
@@ -37,7 +32,7 @@ const SearchSetting: React.FC<SearchSettingProps> = ({
           <input
             type="radio"
             value="Descending"
-            checked={order === 'Descending'}
+            checked={searchSettings.order === 'Descending'}
             onChange={() => setOrder('Descending')}
           />
           내림차순
@@ -45,7 +40,8 @@ const SearchSetting: React.FC<SearchSettingProps> = ({
       </Order>
       <Sort>
         <label htmlFor="selectBox">정렬 기준:</label>
-        <select id="selectBox" defaultValue={stand} onChange={(e) => setStand(e.target.value)}>
+        <select id="selectBox" defaultValue={searchSettings.stand} 
+        onChange={(e) => setStand(e.target.value)}>
           <option value="id">id순</option>
           <option value="name">이름순</option>
           <option value="cost">코스트순</option>
@@ -55,15 +51,18 @@ const SearchSetting: React.FC<SearchSettingProps> = ({
       </Sort>
       <Search>
         <label>
-          <input type="checkbox" defaultChecked={searchName} onChange={(e) => setSearchName(e.target.checked)} />
+          <input type="checkbox" defaultChecked={searchSettings.searchName} 
+          onChange={(e) => setSearchName(e.target.checked)} />
           이름
         </label>
         <label>
-          <input type="checkbox" defaultChecked={searchClass} onChange={(e) => setSearchClass(e.target.checked)} />
+          <input type="checkbox" defaultChecked={searchSettings.searchClass} 
+          onChange={(e) => setSearchClass(e.target.checked)} />
           종족
         </label>
         <label>
-          <input type="checkbox" defaultChecked={searchDescription} onChange={(e) => setSearchDescription(e.target.checked)} />
+          <input type="checkbox" defaultChecked={searchSettings.searchDescription} 
+          onChange={(e) => setSearchDescription(e.target.checked)} />
           효과
         </label>
       </Search>

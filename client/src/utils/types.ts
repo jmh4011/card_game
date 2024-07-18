@@ -1,4 +1,8 @@
-export interface card {
+export type SetFn = (data: any) => void;
+
+export type CardCount = Record<number,number>
+
+export interface Card {
   card_id: number;
   card_name: string;
   card_class: string;
@@ -10,33 +14,29 @@ export interface card {
   card_type: number;
 }
 
-export interface skin {
+export interface Skin {
   backgraund: string;
   character: string;
 }
 
 
-export interface deck {
+export interface Deck {
   deck_id: number;
   player_id: number;
   deck_name: string;
   image: string;
 }
 
-export interface deck_card {
-  deck_card_id: number;
-  deck_id: number;
-  card_id: number;
-}
 
-
-export interface player_card extends card{
-  card_count: number
-}
-
-export interface player_stats {
+export interface PlayerStats {
   stat_id: number;
   player_id: number;
   current_deck_id: number | null;
   money: number;
+}
+
+export interface DeckUpdate {
+  deck_name: string;
+  image: string;
+  deck_cards: CardCount;
 }

@@ -1,10 +1,14 @@
-# server/DB/crud/players.py
+# /crud/players.py
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import and_
-from ..models import Player
-from ..schemas.players import PlayerCreate, PlayerUpdate
+from models import Player
+from schemas.players import PlayerCreate, PlayerUpdate
+from utils import get_refresh_token_expire
 
+
+REFRESH_TOKEN_EXPIRE = get_refresh_token_expire()
 
 class player_crud:
     @staticmethod
@@ -41,10 +45,11 @@ class player_crud:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def update_refresh_token(db: AsyncSession, player_id:int, refresh_token:str):
+    async def update_refresh_token(db: AsyncSession, player_id: int, refresh_token: str, refresh_token_expiry:timedelta = REFRESH_TOKEN_EXPIRE):
         db_player = await db.get(Player, player_id)
         if db_player:
             db_player.refresh_token = refresh_token
+            db_player.refresh_token_expiry = datetime.now(timezone.utc) + refresh_token_expiry
         return db_player
 
     @staticmethod

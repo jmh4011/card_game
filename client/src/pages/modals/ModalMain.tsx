@@ -1,42 +1,44 @@
 import React from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { showDeckState, showPageState, userIdState } from "../../atoms/global";
+import { loadingState, showPageState} from "../../atoms/global";
 import styled from "styled-components";
-import { GetDecks } from "../../api/decks";
+import useHttpPlayer from "../../api/players";
+import useHttpDeck from "../../api/decks";
 
 
 const ModalMain: React.FC = () => {
   const [showPage, setShowPage] = useRecoilState(showPageState)
-  const [userId,SerUserId] = useRecoilState(userIdState)
-  const setDecks = useSetRecoilState(showDeckState)
-  
-  const handlePlay = () => {
+  const setLoading = useSetRecoilState(loadingState)
+  const {playerLogout} = useHttpPlayer()
+  const {} = useHttpDeck
+
+  const useHandlePlay = () => {
     alert("미구현")
   }
 
-  const handleDeck = () => {
+  const useHandleDeck = () => {
     setShowPage("selectDeck")
   }
 
-  const handleShap = () => {
+  const useHandleShap = () => {
     alert("미구현")
   }
 
-  const handleSetting = () => {
+  const useHandleSetting = () => {
     alert("미구현")
   }
 
-  const handleLogout = () => {
-    SerUserId(0)
-    setShowPage("login")
+  const useHandleLogout = () => {
+    playerLogout(
+      (data) => {setShowPage("login")})
   }
 
   return <div>
-    <button onClick={handlePlay}>플레이</button>
-    <button onClick={handleDeck}>덱</button>
-    <button onClick={handleShap}>상점</button>
-    <button onClick={handleSetting}>설정</button>
-    <button onClick={handleLogout}>로그아웃</button>
+    <button onClick={useHandlePlay}>플레이</button>
+    <button onClick={useHandleDeck}>덱</button>
+    <button onClick={useHandleShap}>상점</button>
+    <button onClick={useHandleSetting}>설정</button>
+    <button onClick={useHandleLogout}>로그아웃</button>
   </div>
 }
 

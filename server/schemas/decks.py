@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 
 
 class DeckBase(BaseModel):
-    player_id: Optional[int] = None
-    deck_name: Optional[str] = None
-    image: Optional[str] = None
+    player_id: int
+    deck_name: str
+    image: str
 
 class DeckCreate(DeckBase):
     pass

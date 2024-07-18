@@ -1,14 +1,17 @@
 import React from "react";
-import { card } from "../utils/inter";
 import styled from "styled-components";
 import baseSprites from '../assets/base_sprites.png';
+import { useRecoilValue } from "recoil";
+import { cardsStats } from "../atoms/global";
 
 interface CardProps {
-  card: card;
+  card_id: number;
   scale: number;
 }
 
-const Card: React.FC<CardProps> = ({ card, scale }) => {
+const Card: React.FC<CardProps> = ({ card_id, scale }) => {
+  const card = useRecoilValue(cardsStats)[card_id]
+
   return (
     <CardContainer scale={scale}>
       <CardFrame scale={scale}>

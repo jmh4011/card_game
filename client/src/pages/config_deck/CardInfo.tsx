@@ -1,12 +1,18 @@
 import React from "react";
-import { player_card } from "../../utils/inter";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { cardsStats, playerCardsStats } from "../../atoms/global";
+import { tempDeckCardsState } from "../../atoms/modalConfigDeck";
 
 interface CardInfoProps {
-  card: player_card;
+  card_id: number;
 }
 
-const CardInfo: React.FC<CardInfoProps> = ({ card }) => {
+const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
+  const card = useRecoilValue(cardsStats)[card_id]
+  const deckCount = useRecoilValue(tempDeckCardsState)[card_id]
+  const playerCount = useRecoilValue(playerCardsStats)[card_id]
+  
   return (
     <InfoContainer>
       <CardId>{card.card_id}</CardId>
@@ -17,6 +23,9 @@ const CardInfo: React.FC<CardInfoProps> = ({ card }) => {
       <Health>{card.health}</Health>
       <Class>{card.card_class}</Class>
       <Description>{card.description}</Description>
+      
+      <PlayerCount>{playerCount || 0}</PlayerCount>
+      <DeckCount>{deckCount || 0}</DeckCount>
     </InfoContainer>
   );
 };
@@ -55,6 +64,7 @@ const Stat = styled.div`
   width: 25%;
   text-align: center;
   margin-left: 5%;
+  height: 4%;
 `;
 
 const Cost = styled(Stat)`
@@ -71,6 +81,9 @@ const Health = styled(Stat)`
 
 const Class = styled.div`
   color: rgb(0, 0, 0);
+  width: 100%;
+  height: 4%;
+  text-align: center;
 `;
 
 const Description = styled.div`
@@ -100,3 +113,26 @@ const Description = styled.div`
     background: #555;
   }
 `;
+
+
+const PlayerCount = styled.div`
+  display: inline-block;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+  margin-left: 7%;
+  height: 4%;
+`
+
+
+const DeckCount = styled.div`
+  display: inline-block;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+  margin-left: 5%;
+  height: 4%;
+`
+

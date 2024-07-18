@@ -6,8 +6,7 @@ from datetime import datetime, timezone
 
 class PlayerStatsBase(BaseModel):
     player_id: int
-    current_deck_id: Optional[int] = None
-    money: Optional[int] = 0
+    money: int = 0
 
 class PlayerStatsCreate(PlayerStatsBase):
     pass

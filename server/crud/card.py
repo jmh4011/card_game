@@ -1,8 +1,8 @@
 # server/DB/crud/cards.py
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models import Card
-from ..schemas.cards import CardCreate, CardUpdate
+from models import Card
+from schemas.cards import CardCreate, CardUpdate
 
 
 class card_crud:
@@ -33,3 +33,8 @@ class card_crud:
             await db.delete(db_card)
             return db_card
         return None
+    
+    @staticmethod
+    async def get_all(db: AsyncSession):
+        db_cards = await db.execute(select(Card))
+        return db_cards.scalars().all()

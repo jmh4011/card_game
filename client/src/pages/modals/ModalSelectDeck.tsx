@@ -1,56 +1,99 @@
-import React, { useState, useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { PostDecks, GetDeckPlayerCards } from "../../api/decks";
-import { deckCardsState, decksState, loadingState, showDeckState, showPageState, userIdState } from "../../atoms/global";
+import React, { useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import useHttpDeck from "../../api/decks";
+import { decksState, showPageState} from "../../atoms/global";
+
 import styled from "styled-components";
-import { deck } from "../../utils/inter";
+import { Deck } from "../../utils/types";
+import { deckCardsState, deckState,  tempDeckCardsState, tempDeckState } from "../../atoms/modalConfigDeck";
+import useHttpCard from "../../api/cards";
 
 const ModalSelectDeck: React.FC = () => {
-  const userId = useRecoilValue(userIdState);
+  const {createDeck, getDeckCards} = useHttpDeck()
   const [decks, setDecks] = useRecoilState(decksState);
   const [scale, setScale] = useState(0.4);
   const setShowPage = useSetRecoilState(showPageState);
-  const setShowDeck = useSetRecoilState(showDeckState);
-  const setDeckCards = useSetRecoilState(deckCardsState);
-  const [loading, setLoading] = useRecoilState(loadingState);
 
-  const handleCreate = () => {
-    PostDecks(userId, (data: any) => {
-      setDecks((prev: any) => [...prev, data]);
-    }, setLoading);
+  const setShowDeck = useSetRecoilState(deckState);
+  const setDeckCards = useSetRecoilState(deckCardsState);
+
+  const setTempShowDeck = useSetRecoilState(tempDeckState);
+  const setTempDeckCards = useSetRecoilState(tempDeckCardsState);
+
+  const useHandleExit = () => {
+    setShowPage("main")
+  }
+
+
+  const HandleCreate = () => {
+    createDeck((data) => { setDecks((prev) => [...prev, data]);});
   };
 
-  const handleClick = (deck: deck) => {
+  const HandleDeckClick = (deck: Deck) => {
+    console.log(deck);
     setShowDeck(deck);
-    GetDeckPlayerCards(deck.deck_id, userId, setDeckCards, setLoading);
+    setTempShowDeck(deck);
+
+    getDeckCards(deck.deck_id,
+      (data) => {
+        setDeckCards(data);
+        setTempDeckCards(data);
+      }
+    )
     setShowPage("configDeck");
   };
 
-  return (
+  return <Modal>
+    <Menu>
+      <ExitButton onClick={useHandleExit}>Eixt</ExitButton>
+    </Menu>
     <Container>
       {decks.map((value, idx) => (
-        <Deck key={idx} scale={scale} onClick={() => handleClick(value)}>
+        <DeckContainer key={idx} scale={scale} onClick={() => HandleDeckClick(value)}>
           <DeckImg src={`/static/images/character/1.png`} scale={scale} />
           <DeckName scale={scale}>{value.deck_name}</DeckName>
-        </Deck>
+        </DeckContainer>
       ))}
-      <CreateButton onClick={handleCreate}>Create Deck</CreateButton>
+      <CreateButton onClick={HandleCreate}>Create Deck</CreateButton>
     </Container>
-  );
+  </Modal>
 };
 
 export default ModalSelectDeck;
 
-const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+const Modal = styled.div`
+  width: 100%;
+  height: 100%;
+`
+
+const Menu = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  border: 1px solid rgb(0, 0, 0);
+`
+
+const ExitButton = styled.button`
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 5%;
+  height: 4%;
+  font-size: 16px;
+  border-radius: 10px;
+  &:hover {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+  }
 `;
 
-const Deck = styled.div<{ scale: number }>`
-  margin: 5vh 5vw;
+
+const Container = styled.div`
+  padding: 10px;
+`;
+
+const DeckContainer = styled.div<{ scale: number }>`
+  margin-left: 10px;
   display: inline-block;
   width: ${({ scale }) => 600 * scale}px;
   height: ${({ scale }) => 600 * scale}px;
@@ -66,20 +109,22 @@ const DeckImg = styled.img<{ scale: number }>`
 
 const DeckName = styled.div<{ scale: number }>`
   font-size: ${({ scale }) => 140 * scale}px;
+  border: 1px solid rgb(0,0,0);
 `;
 
 const CreateButton = styled.button`
   width: 200px;
   height: 50px;
-  background-color: rgb(0, 150, 255);
-  color: white;
-  border: none;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 2px solid rgb(0,0,0);
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
-  margin-top: 20px;
+  margin-left: 10px;
 
   &:hover {
-    background-color: rgb(0, 120, 200);
+    background-color: rgb(0, 0, 0);
+    color: rgb(255,255,255)
   }
 `;

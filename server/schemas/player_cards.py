@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone
-from server.schemas import cards as cards_shemas
+from schemas import cards as cards_shemas
 
 class PlayerCardBase(BaseModel):
     player_id:int

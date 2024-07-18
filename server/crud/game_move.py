@@ -1,8 +1,8 @@
 # server/DB/crud/cards.py
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models import GameMove
-from ..schemas.game_moves import GameMoveCreate, GameMoveUpdate
+from models import GameMove
+from schemas.game_moves import GameMoveCreate, GameMoveUpdate
 
 
 class game_move_crud:

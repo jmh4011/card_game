@@ -1,8 +1,8 @@
 # server/DB/crud/decks.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from ..models import Deck, DeckCard
-from ..schemas.decks import DeckCreate, DeckUpdate
+from models import Deck, DeckCard
+from schemas.decks import DeckCreate, DeckUpdate
 
 
 class deck_crud:
@@ -10,7 +10,7 @@ class deck_crud:
     @staticmethod
     async def get(db: AsyncSession, deck_id: int):
         result = await db.execute(select(Deck).filter(Deck.deck_id == deck_id))
-        return result.scalars().all()
+        return result.scalar_one_or_none()
 
     @staticmethod
     async def create(db: AsyncSession, deck: DeckCreate):

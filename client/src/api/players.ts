@@ -1,22 +1,63 @@
-import { http } from './api';
+import { useHttp } from './api';
+import { SetFn } from '../utils/types';
 
-type setFn = (data: any) => void;
+const useHttpPlayer = () => {
+  const { http } = useHttp();
 
-export const GetPlayer = (userId: number, setPlayer: setFn, setLoading: setFn) => {
-  http('get', `/players/state/${userId}`, setPlayer, setLoading);
+  const playerLogin = (username: string, password: string, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "put",
+      url: `/players/login`,
+      callback,
+      customSetLoading: setLoading,
+      onError,
+      data: { username, password }
+    });
+  }
+
+  const playerLogout = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "delete",
+      url: `/players/logout`,
+      callback,
+      onError,
+      customSetLoading: setLoading
+    });
+  }
+
+  const createPlayer = (username: string, password: string, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "post",
+      url: `/players/create`,
+      callback,
+      customSetLoading: setLoading,
+      onError,
+      data: { username, password }
+    });
+  }
+
+  const getPlayerState = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "get",
+      url: `/players/state`,
+      callback,
+      onError,
+      customSetLoading: setLoading
+    });
+  }
+
+  const getPlayerCards = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "get",
+      url: `/players/cards`,
+      callback,
+      onError,
+      customSetLoading: setLoading
+    });
+  }
+  
+  return { playerLogin, playerLogout, createPlayer, getPlayerState, getPlayerCards};
 }
 
-export const GetPlayerCards = (userId: number, setPlayerCards: setFn, setLoading: setFn) => {
-  http('get', `/players/cards/${userId}`, setPlayerCards, setLoading);
-}
 
-export const PostPlayer = (username: string, password: string, callback: setFn, setLoading: setFn) => {
-  http("post", `/players/login`, callback, setLoading, {
-    username: username,
-    password: password
-  });
-}
-
-export const PutPlayer = (username: string, password: string, callback: setFn, setLoading: setFn) => {
-  http('put', `/players/create/${username}/${password}`, callback, setLoading);
-}
+export default useHttpPlayer

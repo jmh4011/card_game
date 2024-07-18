@@ -1,35 +1,30 @@
 {
-  "name": "client",
+  "name": "recoil",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-transform-class-properties": "^7.24.7",
-    "@babel/plugin-transform-dynamic-import": "^7.24.7",
-    "@babel/plugin-transform-json-strings": "^7.24.7",
-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
-    "@babel/plugin-transform-numeric-separator": "^7.24.7",
-    "@babel/plugin-transform-optional-catch-binding": "^7.24.7",
-    "@babel/plugin-transform-optional-chaining": "^7.24.7",
-    "@babel/plugin-transform-unicode-property-regex": "^7.24.7",
-    "@testing-library/jest-dom": "^6.4.6",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.9",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
     "axios": "^1.7.2",
-    "classnames": "^2.5.1",
-    "framer-motion": "^11.2.12",
+    "framer-motion": "^11.2.13",
+    "joi": "^17.13.3",
     "react": "^18.3.1",
     "react-cookie": "^7.1.4",
     "react-dom": "^18.3.1",
     "recoil": "^0.7.7",
-    "socket.io": "^4.7.5",
-    "socket.io-client": "^4.7.5",
-    "styled-components": "^6.1.11",
-    "typescript": "^5.5.2",
-    "web-vitals": "^4.2.0"
+    "styled-components": "^6.1.11"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.40.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "react-scripts": "^5.0.1",
+    "typescript": "^3.9.10"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -55,10 +50,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@types/styled-components": "^5.1.34",
-    "@types/webpack-env": "^1.18.5",
-    "react-scripts": "5.0.1"
-  },
-  "proxy": "http://localhost:8000"
+  "proxy" : "http://localhost:8000"
 }

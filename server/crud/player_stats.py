@@ -1,8 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from ..models import PlayerStats
-from ..schemas.player_stats import PlayerStatsCreate, PlayerStatsUpdate
-
+from models import PlayerStats
+from schemas.player_stats import PlayerStatsCreate, PlayerStatsUpdate
 
 class player_stats_crud:
     @staticmethod

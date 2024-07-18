@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, TIMESTAMP, func
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 class Card(Base):
     __tablename__ = "cards"
@@ -21,6 +21,7 @@ class DeckCard(Base):
     deck_card_id = Column(Integer, primary_key=True, index=True)
     deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=False)
     card_id = Column(Integer, ForeignKey("cards.card_id"), nullable=False)
+    card_count = Column(Integer, default=1, nullable=False)
     deck = relationship("Deck", back_populates="cards")
     card = relationship("Card", back_populates="decks")
 
@@ -73,7 +74,6 @@ class PlayerStats(Base):
     __tablename__ = "playerstats"
     stat_id = Column(Integer, primary_key=True, index=True)
     player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
-    current_deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=True)
     money = Column(Integer, nullable=False)
     last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     player = relationship("Player", back_populates="stats")

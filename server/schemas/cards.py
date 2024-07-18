@@ -7,13 +7,13 @@ from datetime import datetime, timezone
 
 class CardBase(BaseModel):
     card_name: str
-    card_class: Optional[str] = None
-    attack: Optional[int] = None
-    health: Optional[int] = None
-    description: Optional[str] = None
-    image: Optional[str] = None
-    cost: Optional[int] = None
-    card_type: Optional[int] = None
+    card_class: str
+    attack: int
+    health: int
+    description: str
+    image: str
+    cost: int
+    card_type: int
 
 class CardCreate(CardBase):
     pass

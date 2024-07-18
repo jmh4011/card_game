@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
 import { OutModal, Vibration } from "../../utils/styles";
-import { PutPlayer } from "../../api/players";
+import useHttpPlayer from "../../api/players";
 import { useSetRecoilState } from "recoil";
-import { loadingState, showPageState, userIdState } from "../../atoms/global";
+import { loadingState, showPageState} from "../../atoms/global";
 
 const ModalCreateAccount: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -12,29 +12,26 @@ const ModalCreateAccount: React.FC = () => {
   const [vibration, setVibration] = useState<boolean>(false);
   const setShowPage = useSetRecoilState(showPageState);
   const setLoading = useSetRecoilState(loadingState);
-  const setUserId = useSetRecoilState(userIdState);
-
+  const {createPlayer} = useHttpPlayer()
+  
   useEffect(() => {
     if (vibration) {
-      const timer = setTimeout(() => setVibration(false), 400);
+      const timer = setTimeout(() => setVibration(false), 1000);
       return () => clearTimeout(timer);
     }
   }, [vibration]);
 
-  const createAccount = () => {
-    if (password !== againPassword) {
-      setVibration(true);
-    } else {
-      PutPlayer(username, password, (data) => {
-        if (data === -1) {
-          alert("이미 있는 아이디");
-        } else {
-          setUserId(data);
-          setShowPage('start');
-        }
-      }, setLoading);
-    }
+
+  const useHandleCreateAccount = () => {
+    createPlayer(username, password,
+      (data) => {setShowPage('start');},
+      (data) => {alert("이미 있는 아이디")},
+      setLoading); 
   };
+
+  const useHandleWeack = () => {
+    setVibration(true)
+  }
 
   return (
     <>
@@ -46,7 +43,9 @@ const ModalCreateAccount: React.FC = () => {
         <UserInput placeholder="again Password" type="password" onChange={(e) => setAgainPassword(e.target.value)} />
         {password !== againPassword && vibration && <WeakInput>비밀번호가 일치 하지 않습니다.</WeakInput>}
         <Login onClick={() => setShowPage("login")}>Login</Login>
-        <LoginButton onClick={createAccount}>완료</LoginButton>
+        {password === againPassword? 
+        <LoginButton onClick={useHandleCreateAccount}>완료</LoginButton>:
+        <LoginButton onClick={useHandleWeack}>완료</LoginButton>}
       </CreateAccount>
     </>
   );

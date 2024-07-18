@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useUserIdSync } from './utils/cookie';
 import { useRecoilState } from 'recoil';
-import { decksState, loadingState, showPageState, userIdState } from './atoms/global';
+import { decksState, loadingState, showPageState} from './atoms/global';
 import ModalMain from './pages/modals/ModalMain';
 import ModalLogin from './pages/modals/ModalLogin';
 import ModalCreateAccount from './pages/modals/ModalCreateAccount';
@@ -9,13 +8,13 @@ import ModalSelectDeck from './pages/modals/ModalSelectDeck';
 import ModalConfigDeck from './pages/modals/ModalConfigDeck';
 import styled from 'styled-components';
 import ModalStart from './pages/modals/ModalStart';
+import ModalGame from './pages/modals/ModalGame';
+import ModalPlay from './pages/modals/ModalPlay';
 
 const App: React.FC = () => {
-  const [userId, setUserId] = useRecoilState(userIdState);
   const [loading, setLoading] = useRecoilState(loadingState);
   const [decks, setDecks] = useRecoilState(decksState);
   const [showPage, setShowPage] = useRecoilState(showPageState);
-  useUserIdSync();
 
   useEffect(() => {
     // 전체 페이지에서 우클릭 막기
@@ -42,11 +41,17 @@ const App: React.FC = () => {
           {showPage === "createAccount" && <ModalCreateAccount />}
           {showPage === "selectDeck" && <ModalSelectDeck />}
           {showPage === "configDeck" && <ModalConfigDeck />}
+          {showPage === "play" && <ModalPlay />}
+          {showPage === "game" && <ModalGame />}
         </Page>
       )}
     </div>
   );
 };
+
+
+
+export type ShowPage = ('start' |"main" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game")
 
 const Page = styled.div`
   width: 100vw;
