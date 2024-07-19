@@ -2,23 +2,23 @@ import React from "react";
 import { useRecoilState } from "recoil";
 import { showPageState } from "../../atoms/global";
 import { playModState } from "../../atoms/play";
-import SelectMod from "../play/SelectMod";
-import TestPlay from "../play/TestPlay";
 
-export type PlayMod = null |"test"
-
-
-const ModalPlay: React.FC = () => {
-
+const SelectMod: React.FC = () => {
   const [showPage, setShowPage] = useRecoilState(showPageState)
   const [playMod, setPlayMod] = useRecoilState(playModState)
 
+  const handleExit = () => {
+    setShowPage("main")
+  } 
+
+
 
   return <div>
-    {playMod === null && <SelectMod/>}
-    {playMod === "test" && <TestPlay/>}
+    <button onClick={handleExit}>나가기</button>
+    <div onClick={() => {setPlayMod("test")}}>테스트 플레이</div>
   </div>
 }
 
 
-export default ModalPlay
+
+export default SelectMod

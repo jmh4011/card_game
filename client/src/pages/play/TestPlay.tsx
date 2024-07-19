@@ -8,3 +8,6 @@ const TestPlay:React.FC = () => {
     
   </div>
 }
+
+
+export default TestPlay

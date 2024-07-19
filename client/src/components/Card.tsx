@@ -6,27 +6,26 @@ import { cardsStats } from "../atoms/global";
 
 interface CardProps {
   card_id: number;
-  scale: number;
 }
 
-const Card: React.FC<CardProps> = ({ card_id, scale }) => {
+const Card: React.FC<CardProps> = ({ card_id }) => {
   const card = useRecoilValue(cardsStats)[card_id]
 
   return (
-    <CardContainer scale={scale}>
-      <CardFrame scale={scale}>
-        <Character src={`/static/images/character/${card.image}`} alt="" scale={scale} />
-        <CharacterFrame scale={scale} />
-        <Name scale={scale}>{card.card_name}</Name>
-        <Cost scale={scale}>{card.cost}</Cost>
-        <Text scale={scale}>{card.description}</Text>
+    <CardContainer>
+      <CardFrame>
+        <Character src={`/static/images/character/${card.image}`} alt="" />
+        <CharacterFrame />
+        <Name>{card.card_name}</Name>
+        <Cost>{card.cost}</Cost>
+        <Text>{card.description}</Text>
         {card.card_type === 0 && (
           <>
-            <Attack scale={scale}>{card.attack}</Attack>
-            <Health scale={scale}>{card.health}</Health>
+            <Attack>{card.attack}</Attack>
+            <Health>{card.health}</Health>
           </>
         )}
-        <Type scale={scale}>{card.card_class}</Type>
+        <Type>{card.card_class}</Type>
       </CardFrame>
     </CardContainer>
   );
@@ -34,16 +33,16 @@ const Card: React.FC<CardProps> = ({ card_id, scale }) => {
 
 export default Card;
 
-const CardContainer = styled.div<{ scale: number }>`
+const CardContainer = styled.div`
   position: relative;
-  width: ${({ scale }) => 630 * scale}px;
-  height: ${({ scale }) => 830 * scale}px;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const IconLink = styled.div<{ scale: number }>`
+const IconLink = styled.div`
   position: absolute;
   display: flex;
   align-items: center;
@@ -52,20 +51,20 @@ const IconLink = styled.div<{ scale: number }>`
   color: white;
   background-image: url(${baseSprites});
   background-repeat: no-repeat;
-  background-size: ${({ scale }) => 1410 * scale}px ${({ scale }) => 1135 * scale}px;
+  background-size: contain;
   font-weight: bold;
 `;
 
 const CardFrame = styled(IconLink)`
-  width: ${({ scale }) => 630 * scale}px;
-  height: ${({ scale }) => 830 * scale}px;
-  background-position: ${({ scale }) => -10 * scale}px ${({ scale }) => -10 * scale}px;
+  width: 100%;
+  height: 100%;
+  background-position: -10px -10px;
 `;
 
 const CharacterFrame = styled(IconLink)`
-  width: ${({ scale }) => 582 * scale}px;
-  height: ${({ scale }) => 402 * scale}px;
-  background-position: ${({ scale }) => -660 * scale}px ${({ scale }) => -10 * scale}px;
+  width: 92.38%;
+  height: 48.43%;
+  background-position: -660px -10px;
   top: 27%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -77,75 +76,75 @@ const CharacterFrame = styled(IconLink)`
   }
 `;
 
-const Character = styled.img<{ scale: number }>`
+const Character = styled.img`
   position: absolute;
-  width: ${({ scale }) => 560 * scale}px;
-  height: ${({ scale }) => 380 * scale}px;
+  width: 88.89%;
+  height: 45.78%;
   top: 27%;
   left: 50%;
   transform: translate(-50%, -50%);
 `;
 
 const Name = styled(IconLink)`
-  width: ${({ scale }) => 440 * scale}px;
-  height: ${({ scale }) => 89 * scale}px;
-  background-position: ${({ scale }) => -660 * scale}px ${({ scale }) => -726 * scale}px;
+  width: 69.84%;
+  height: 10.72%;
+  background-position: -660px -726px;
   top: 47%;
   left: 50%;
   transform: translateX(-50%);
   color: black;
-  font-size: ${({ scale, children }) => {
+  font-size: ${({ children }) => {
     const length = (children as string).length;
-    return length < 15 ? `${60 * scale}px` : `${30 * scale}px`; // Adjust font size based on length
+    return length < 15 ? '3.6vw' : '1.8vw'; // Adjust font size based on length
   }};
 `;
 
 const Attack = styled(IconLink)`
-  width: ${({ scale }) => 138 * scale}px;
-  height: ${({ scale }) => 165 * scale}px;
-  background-position: ${({ scale }) => -1262 * scale}px ${({ scale }) => -10 * scale}px;
+  width: 21.9%;
+  height: 19.88%;
+  background-position: -1262px -10px;
   bottom: 3%;
   left: 3%;
-  font-size: ${({ scale }) => 100 * scale}px;
+  font-size: 6vw;
 `;
 
 const Health = styled(IconLink)`
-  width: ${({ scale }) => 148 * scale}px;
-  height: ${({ scale }) => 163 * scale}px;
-  background-position: ${({ scale }) => -10 * scale}px ${({ scale }) => -962 * scale}px;
+  width: 23.49%;
+  height: 19.64%;
+  background-position: -10px -962px;
   bottom: 2%;
   right: 2%;
-  font-size: ${({ scale }) => 100 * scale}px;
+  font-size: 6vw;
 `;
 
 const Cost = styled(IconLink)`
-  width: ${({ scale }) => 129 * scale}px;
-  height: ${({ scale }) => 129 * scale}px;
-  background-position: ${({ scale }) => -1262 * scale}px ${({ scale }) => -195 * scale}px;
+  width: 20.48%;
+  height: 15.54%;
+  background-position: -1262px -195px;
   top: 2%;
   left: 2%;
-  font-size: ${({ scale }) => 100 * scale}px;
+  font-size: 6vw;
 `;
 
 const Text = styled(IconLink)`
-  width: ${({ scale }) => 582 * scale}px;
-  height: ${({ scale }) => 274 * scale}px;
-  background-position: ${({ scale }) => -660 * scale}px ${({ scale }) => -432 * scale}px;
+  width: 92.38%;
+  height: 33.01%;
+  background-position: -660px -432px;
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: ${({ scale, children }) => {
+  font-size: ${({ children }) => {
     const length = (children as string).length;
-    return length < 50 ? `${50 * scale}px` : `${30 * scale}px`; // Adjust font size based on length
+    return length < 50 ? '3vw' : '1.8vw'; // Adjust font size based on length
   }};
 `;
 
 const Type = styled(IconLink)`
-  width: ${({ scale }) => 332 * scale}px;
-  height: ${({ scale }) => 82 * scale}px;
-  background-position: ${({ scale }) => -10 * scale}px ${({ scale }) => -860 * scale}px;
+  width: 52.7%;
+  height: 9.88%;
+  background-position: -10px -860px;
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: ${({ scale }) => 50 * scale}px;
+  font-size: 3vw;
 `;
