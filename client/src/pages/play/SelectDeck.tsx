@@ -24,9 +24,6 @@ const ModalSelectDeck: React.FC = () => {
   }
 
 
-  const HandleCreate = () => {
-    createDeck((data) => { setDecks((prev) => [...prev, data]);});
-  };
 
   const HandleDeckClick = (deck: Deck) => {
     console.log(deck);
@@ -53,7 +50,6 @@ const ModalSelectDeck: React.FC = () => {
           <DeckName scale={scale}>{value.deck_name}</DeckName>
         </DeckContainer>
       ))}
-      <CreateButton onClick={HandleCreate}>Create Deck</CreateButton>
     </Container>
   </Modal>
 };
@@ -111,19 +107,4 @@ const DeckName = styled.div<{ scale: number }>`
   border: 1px solid rgb(0,0,0);
 `;
 
-const CreateButton = styled.button`
-  width: 200px;
-  height: 50px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  border: 2px solid rgb(0,0,0);
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: 10px;
 
-  &:hover {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255,255,255)
-  }
-`;

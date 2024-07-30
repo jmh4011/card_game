@@ -5,7 +5,7 @@ from database import get_db
 from schemas.players import PlayerCreate, PlayerLogin
 from schemas.player_stats import PlayerStats
 from schemas.player_cards import PlayerCardReturn
-from services import player_services
+from services import PlayerServices
 from auth import get_player_id
 
 
@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.put("/players/login", response_model=str)
 async def login_player_route(response: Response, player: PlayerLogin, db: AsyncSession = Depends(get_db)):
-    result = await player_services.login(db=db, player=player)
+    result = await PlayerServices.login(db=db, player=player)
     if result:
         access_token, refresh_token = result
         await set_auth_cookies(response=response, access_token=access_token, refresh_token=refresh_token)
@@ -28,7 +28,7 @@ async def login_player_route(response: Response, player: PlayerLogin, db: AsyncS
 
 @router.post("/players/create", response_model=str)
 async def create_player_route(response: Response, player: PlayerCreate, db: AsyncSession = Depends(get_db)):
-    result = await player_services.create(db=db, player=player)
+    result = await PlayerServices.create(db=db, player=player)
     if result:
         access_token, refresh_token = result
         await set_auth_cookies(response=response, access_token=access_token, refresh_token=refresh_token)
@@ -44,7 +44,7 @@ async def logout_player_route(request: Request, response: Response, db: AsyncSes
     player_id = await get_player_id(db=db,request=request,response=response)
     if player_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    await player_services.update_refresh_token(db=db,player_id=player_id, refresh_token=None)
+    await PlayerServices.update_refresh_token(db=db,player_id=player_id, refresh_token=None)
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
     return 'Logout successful'
@@ -54,7 +54,7 @@ async def read_player_state_route(request: Request, response: Response, db: Asyn
     player_id = await get_player_id(db=db, request=request, response=response)
     if player_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    stats = await player_services.get_stats(db=db, player_id=player_id)
+    stats = await PlayerServices.get_stats(db=db, player_id=player_id)
     if stats is None:
         raise HTTPException(status_code=404, detail="Player not found")
     return stats
@@ -64,7 +64,7 @@ async def read_player_cards_route(request: Request, response: Response, db: Asyn
     player_id = await get_player_id(db=db, request=request, response=response)
     if player_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    cards = await player_services.get_cards(db=db, player_id=player_id)
+    cards = await PlayerServices.get_cards(db=db, player_id=player_id)
     if cards is None:
         raise HTTPException(status_code=404, detail="Player not found")
     return cards

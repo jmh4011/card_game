@@ -6,11 +6,11 @@ import { decksState, showPageState} from "../../atoms/global";
 import styled from "styled-components";
 import { Deck } from "../../utils/types";
 import { deckCardsState, deckState,  tempDeckCardsState, tempDeckState } from "../../atoms/modalConfigDeck";
+import { characterImage } from "../../api/static";
 
 const ModalSelectDeck: React.FC = () => {
   const {createDeck, getDeckCards} = useHttpDeck()
   const [decks, setDecks] = useRecoilState(decksState);
-  const [scale, setScale] = useState(0.4);
   const setShowPage = useSetRecoilState(showPageState);
 
   const setShowDeck = useSetRecoilState(deckState);
@@ -48,9 +48,9 @@ const ModalSelectDeck: React.FC = () => {
     </Menu>
     <Container>
       {decks.map((value, idx) => (
-        <DeckContainer key={idx} scale={scale} onClick={() => HandleDeckClick(value)}>
-          <DeckImg src={`/static/images/character/${value.image}`} scale={scale} />
-          <DeckName scale={scale}>{value.deck_name}</DeckName>
+        <DeckContainer key={idx} onClick={() => HandleDeckClick(value)}>
+          <DeckImg src={characterImage(value.image)}/>
+          <DeckName>{value.deck_name}</DeckName>
         </DeckContainer>
       ))}
       <CreateButton onClick={HandleCreate}>Create Deck</CreateButton>
@@ -91,23 +91,23 @@ const Container = styled.div`
   padding: 10px;
 `;
 
-const DeckContainer = styled.div<{ scale: number }>`
+const DeckContainer = styled.div`
   margin-left: 10px;
   display: inline-block;
-  width: ${({ scale }) => 600 * scale}px;
-  height: ${({ scale }) => 600 * scale}px;
+  width: 15%;
+  height: 40%;
   border: 1px solid rgb(0, 0, 0);
   text-align: center;
   cursor: pointer;
 `;
 
-const DeckImg = styled.img<{ scale: number }>`
-  width: ${({ scale }) => 560 * scale}px;
-  height: ${({ scale }) => 380 * scale}px;
+const DeckImg = styled.img`
+  height: 100%;
+  width: 100%;
 `;
 
-const DeckName = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => 140 * scale}px;
+const DeckName = styled.div`
+  font-size: 30px;
   border: 1px solid rgb(0,0,0);
 `;
 

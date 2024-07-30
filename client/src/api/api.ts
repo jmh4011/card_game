@@ -12,6 +12,12 @@ interface HttpOptions {
   data?: any;
 }
 
+const api = axios.create({
+  baseURL: '/api',
+  headers: {
+  },
+});
+
 export const useHttp = () => {
   const setLoadingRecoil = useSetRecoilState(loadingState);
   const setShowPage = useSetRecoilState(showPageState);
@@ -29,10 +35,10 @@ export const useHttp = () => {
     setLoading(true);
 
     const request = 
-      type === 'get' ? axios.get : 
-      type === 'put' ? axios.put : 
-      type === 'post' ? axios.post : 
-      axios.delete;
+      type === 'get' ? api.get : 
+      type === 'put' ? api.put : 
+      type === 'post' ? api.post : 
+      api.delete;
 
     try {
       const response: AxiosResponse = data === undefined ? 

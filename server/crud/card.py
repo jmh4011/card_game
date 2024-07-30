@@ -5,7 +5,7 @@ from models import Card
 from schemas.cards import CardCreate, CardUpdate
 
 
-class card_crud:
+class CardCrud:
     @staticmethod
     async def get(db: AsyncSession, card_id: int):
         db_card = await db.execute(select(Card).where(Card.card_id == card_id))

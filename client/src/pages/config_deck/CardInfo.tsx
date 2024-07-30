@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { cardsStats, playerCardsStats } from "../../atoms/global";
 import { tempDeckCardsState } from "../../atoms/modalConfigDeck";
+import { characterImage } from "../../api/static";
 
 interface CardInfoProps {
   card_id: number;
@@ -17,7 +18,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
     <InfoContainer>
       <CardId>{card.card_id}</CardId>
       <Name>{card.card_name}</Name>
-      <Image src={`/static/images/character/${card.image}`} alt={card.card_name} />
+      <Image src={characterImage(card.image)} alt={card.card_name} />
       <Cost>{card.cost}</Cost>
       <Attack>{card.attack}</Attack>
       <Health>{card.health}</Health>

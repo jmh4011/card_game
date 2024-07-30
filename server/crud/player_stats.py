@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from models import PlayerStats
 from schemas.player_stats import PlayerStatsCreate, PlayerStatsUpdate
 
-class player_stats_crud:
+class PlayerStatsCrud:
     @staticmethod
     async def get(db: AsyncSession, player_id: int):
         db_player_stats = await db.execute(select(PlayerStats).filter(PlayerStats.player_id == player_id))

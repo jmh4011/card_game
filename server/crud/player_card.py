@@ -4,7 +4,7 @@ from sqlalchemy import and_, delete
 from models import PlayerCard
 from schemas.player_cards import PlayerCardCreate, PlayerCardUpdate
 
-class player_card_crud:
+class PlayerCardCrud:
 
     @staticmethod
     async def get(db: AsyncSession, player_id: int, card_id: int):

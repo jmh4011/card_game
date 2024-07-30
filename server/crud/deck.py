@@ -5,7 +5,7 @@ from models import Deck, DeckCard
 from schemas.decks import DeckCreate, DeckUpdate
 
 
-class deck_crud:
+class DeckCrud:
 
     @staticmethod
     async def get(db: AsyncSession, deck_id: int):

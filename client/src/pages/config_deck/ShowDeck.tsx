@@ -64,7 +64,7 @@ const ShowDeck: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 isExceedingPlayerCount={isExceedingPlayerCount}
               >
-                <Card card_id={cardId} scale={0.08} />
+                <Card card_id={cardId}/>
               </CardWrapper>
             );
           })
@@ -121,11 +121,9 @@ const CardList = styled.div`
   }
 `;
 
-// CardWrapper 컴포넌트 정의
-const CardWrapper = styled(motion.div).withConfig({
-  shouldForwardProp: (prop) => prop !== 'isExceedingPlayerCount'
-})<{ isExceedingPlayerCount: boolean }>`
+const CardWrapper = styled(motion.div).withConfig({shouldForwardProp: (prop) => prop !== 'isExceedingPlayerCount'})<{ isExceedingPlayerCount: boolean }>`
   display: inline-block;
+  width: 10%;
 
   ${({ isExceedingPlayerCount }) =>
     isExceedingPlayerCount &&

@@ -5,7 +5,7 @@ from models import Game
 from schemas.games import GameCreate, GameUpdate
 
 
-class game_crud:
+class GameCrud:
     @staticmethod
     async def get(db: AsyncSession, game_id: int):
         db_game = await db.execute(select(Game).where(Game.game_id == game_id))

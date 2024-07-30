@@ -70,7 +70,7 @@ const SearchCards:React.FC = () => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-        <Card card_id={value} scale={.1} key={value}/>
+        <Card card_id={value} key={value}/>
       </CardStyle>
     })}
   </CardList>
@@ -114,6 +114,7 @@ const Filter = styled.img`
 
 const CardStyle = styled(motion.div)`
   display: inline-block;
+  width: 100%;
 `
 
 const CardList = styled.div`

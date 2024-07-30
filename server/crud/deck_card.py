@@ -5,7 +5,7 @@ from models import DeckCard
 from schemas.deck_cards import DeckCardCreate, DeckCardUpdate
 
 
-class deck_card_crud:
+class DeckCardCrud:
 
     @staticmethod
     async def get(db: AsyncSession, deck_id: int, card_id:int) -> DeckCard | None:
@@ -52,7 +52,7 @@ class deck_card_crud:
 
 
     async def update_all(db: AsyncSession, deck_id: int, cards: dict[int, int]):
-        existing_deck_cards = await deck_card_crud.get_all(db, deck_id)
+        existing_deck_cards = await DeckCardCrud.get_all(db, deck_id)
         existing_card_ids = {deck_card.card_id for deck_card in existing_deck_cards}
 
         new_card_ids = set(cards.keys())

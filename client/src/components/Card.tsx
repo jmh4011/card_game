@@ -1,31 +1,64 @@
 import React from "react";
 import styled from "styled-components";
-import baseSprites from '../assets/base_sprites.png';
+import attackImg from '../assets/card-base/attack.png';
+import characterFrameImg from '../assets/card-base/character-frame.png';
+import classImg from '../assets/card-base/class.png';
+import costImg from '../assets/card-base/cost.png';
+import descriptionImg from '../assets/card-base/description.png';
+import frameImg from '../assets/card-base/frame.png';
+import healthImg from '../assets/card-base/health.png';
+import nameImg from '../assets/card-base/name.png';
 import { useRecoilValue } from "recoil";
 import { cardsStats } from "../atoms/global";
+import { characterImage } from "../api/static";
+import ResponsiveText from "./ResponsiveText";
 
 interface CardProps {
   card_id: number;
 }
 
 const Card: React.FC<CardProps> = ({ card_id }) => {
-  const card = useRecoilValue(cardsStats)[card_id]
+  const card = useRecoilValue(cardsStats)[card_id];
 
   return (
     <CardContainer>
       <CardFrame>
-        <Character src={`/static/images/character/${card.image}`} alt="" />
         <CharacterFrame />
-        <Name>{card.card_name}</Name>
-        <Cost>{card.cost}</Cost>
-        <Text>{card.description}</Text>
+        <Character src={characterImage(card.image)} />
+        <Name>
+        <ResponsiveText>
+            {card.card_name}
+          </ResponsiveText>
+        </Name>
+        <Cost>
+        <ResponsiveText>
+            {card.cost}
+          </ResponsiveText>
+        </Cost>
+        <Description>
+          <ResponsiveText>
+            {card.description}
+          </ResponsiveText>
+        </Description>
         {card.card_type === 0 && (
           <>
-            <Attack>{card.attack}</Attack>
-            <Health>{card.health}</Health>
+            <Attack>
+            <ResponsiveText>
+                {card.attack}
+              </ResponsiveText>
+            </Attack>
+            <Health>
+            <ResponsiveText>
+                {card.health}
+              </ResponsiveText>
+            </Health>
           </>
         )}
-        <Type>{card.card_class}</Type>
+        <Class>
+        <ResponsiveText>
+            {card.card_class}
+          </ResponsiveText>
+        </Class>
       </CardFrame>
     </CardContainer>
   );
@@ -36,115 +69,100 @@ export default Card;
 const CardContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  aspect-ratio: 3/4;
 `;
 
-const IconLink = styled.div`
+const CardBase = styled.div`
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: white;
-  background-image: url(${baseSprites});
   background-repeat: no-repeat;
   background-size: contain;
   font-weight: bold;
 `;
 
-const CardFrame = styled(IconLink)`
+const CardFrame = styled(CardBase)`
   width: 100%;
   height: 100%;
-  background-position: -10px -10px;
+  background-image: url(${frameImg});
 `;
 
-const CharacterFrame = styled(IconLink)`
-  width: 92.38%;
-  height: 48.43%;
-  background-position: -660px -10px;
+const CharacterFrame = styled(CardBase)`
+  width: 92%;
+  background-image: url(${characterFrameImg});
   top: 27%;
   left: 50%;
   transform: translate(-50%, -50%);
-  & > img {
-    position: absolute;
-    width: 99%;
-    height: 99%;
-    z-index: -1; /* Places the img behind the background */
-  }
+  aspect-ratio: 582/402;
 `;
 
 const Character = styled.img`
   position: absolute;
-  width: 88.89%;
-  height: 45.78%;
-  top: 27%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 4%;
+  width: 92%;
+  box-sizing: border-box;
+  aspect-ratio: 560/380;
+  z-index: -1;
 `;
 
-const Name = styled(IconLink)`
+const Name = styled(CardBase)`
   width: 69.84%;
-  height: 10.72%;
-  background-position: -660px -726px;
+  background-image: url(${nameImg});
   top: 47%;
   left: 50%;
   transform: translateX(-50%);
+  aspect-ratio: 477/91;
   color: black;
-  font-size: ${({ children }) => {
-    const length = (children as string).length;
-    return length < 15 ? '3.6vw' : '1.8vw'; // Adjust font size based on length
-  }};
 `;
 
-const Attack = styled(IconLink)`
+const Attack = styled(CardBase)`
   width: 21.9%;
-  height: 19.88%;
-  background-position: -1262px -10px;
+  background-image: url(${attackImg});
   bottom: 3%;
   left: 3%;
-  font-size: 6vw;
+  font-size: 6%;
+  aspect-ratio: 138/165;
 `;
 
-const Health = styled(IconLink)`
+const Health = styled(CardBase)`
   width: 23.49%;
-  height: 19.64%;
-  background-position: -10px -962px;
+  background-image: url(${healthImg});
   bottom: 2%;
   right: 2%;
-  font-size: 6vw;
+  aspect-ratio: 156/163;
+  font-size: 6%;
 `;
 
-const Cost = styled(IconLink)`
+const Cost = styled(CardBase)`
   width: 20.48%;
-  height: 15.54%;
-  background-position: -1262px -195px;
+  background-image: url(${costImg});
   top: 2%;
   left: 2%;
-  font-size: 6vw;
+  font-size: 6%;
+  aspect-ratio: 1;
 `;
 
-const Text = styled(IconLink)`
-  width: 92.38%;
-  height: 33.01%;
-  background-position: -660px -432px;
+const Description = styled(CardBase)`
+  width: 92%;
+  height: 33.5%; 
+  background-image: url(${descriptionImg});
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: ${({ children }) => {
-    const length = (children as string).length;
-    return length < 50 ? '3vw' : '1.8vw'; // Adjust font size based on length
-  }};
 `;
 
-const Type = styled(IconLink)`
-  width: 52.7%;
-  height: 9.88%;
-  background-position: -10px -860px;
+const Class = styled(CardBase)`
+  width: 52%;
+  background-image: url(${classImg});
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 3vw;
+  font-size: 10px;
+  aspect-ratio: 300/82;
 `;

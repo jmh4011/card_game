@@ -4,6 +4,7 @@ import { loadingState, showPageState} from "../../atoms/global";
 import styled from "styled-components";
 import useHttpPlayer from "../../api/players";
 import useHttpDeck from "../../api/decks";
+import Card from "../../components/Card";
 
 
 const ModalMain: React.FC = () => {

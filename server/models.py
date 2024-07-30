@@ -34,7 +34,6 @@ class Deck(Base):
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     player = relationship("Player", back_populates="decks")
     cards = relationship("DeckCard", back_populates="deck")
-    stats = relationship("PlayerStats", back_populates="deck")
 
 class Game(Base):
     __tablename__ = "games"
@@ -77,8 +76,7 @@ class PlayerStats(Base):
     money = Column(Integer, nullable=False)
     last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     player = relationship("Player", back_populates="stats")
-    deck = relationship("Deck", back_populates="stats")
-
+    
 class PlayerCard(Base):
     __tablename__ = "playercards"
     player_card_id = Column(Integer, primary_key=True, index=True)

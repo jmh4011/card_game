@@ -10,7 +10,7 @@ from utils import get_refresh_token_expire
 
 REFRESH_TOKEN_EXPIRE = get_refresh_token_expire()
 
-class player_crud:
+class PlayerCrud:
     @staticmethod
     async def get(db: AsyncSession, player_id: int) -> Player | None:
         result = await db.execute(select(Player).filter(Player.player_id == player_id))
