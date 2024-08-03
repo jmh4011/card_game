@@ -4,17 +4,18 @@ from datetime import datetime, timezone
 
 
 
-class PlayerStatsBase(BaseModel):
-    player_id: int
+class UserStatsBase(BaseModel):
+    user_id: int
     money: int = 0
+    nickname: str
 
-class PlayerStatsCreate(PlayerStatsBase):
+class UserStatsCreate(UserStatsBase):
     pass
 
-class PlayerStatsUpdate(PlayerStatsBase):
+class UserStatsUpdate(UserStatsBase):
     pass
 
-class PlayerStats(PlayerStatsBase):
+class UserStats(UserStatsBase):
     stat_id: int
     last_updated: datetime
 

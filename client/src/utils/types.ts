@@ -22,15 +22,15 @@ export interface Skin {
 
 export interface Deck {
   deck_id: number;
-  player_id: number;
+  user_id: number;
   deck_name: string;
   image: string;
 }
 
 
-export interface PlayerStats {
+export interface UserStats {
   stat_id: number;
-  player_id: number;
+  user_id: number;
   current_deck_id: number | null;
   money: number;
 }

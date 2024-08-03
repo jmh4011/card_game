@@ -1,9 +1,9 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, playerCardsStats } from "../../atoms/global";
-import { tempDeckCardsState } from "../../atoms/modalConfigDeck";
-import { characterImage } from "../../api/static";
+import { cardsStats, userCardsStats } from "../../../atoms/global";
+import { tempDeckCardsState } from "../../../atoms/modalConfigDeck";
+import { characterImage } from "../../../api/static";
 
 interface CardInfoProps {
   card_id: number;
@@ -12,7 +12,7 @@ interface CardInfoProps {
 const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
   const card = useRecoilValue(cardsStats)[card_id]
   const deckCount = useRecoilValue(tempDeckCardsState)[card_id]
-  const playerCount = useRecoilValue(playerCardsStats)[card_id]
+  const userCount = useRecoilValue(userCardsStats)[card_id]
   
   return (
     <InfoContainer>
@@ -25,7 +25,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
       <Class>{card.card_class}</Class>
       <Description>{card.description}</Description>
       
-      <PlayerCount>{playerCount || 0}</PlayerCount>
+      <UserCount>{userCount || 0}</UserCount>
       <DeckCount>{deckCount || 0}</DeckCount>
     </InfoContainer>
   );
@@ -116,7 +116,7 @@ const Description = styled.div`
 `;
 
 
-const PlayerCount = styled.div`
+const UserCount = styled.div`
   display: inline-block;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 10px;

@@ -1,4 +1,4 @@
-# server/DB/crud/cards.py
+# crud/cards.py
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import GameMove

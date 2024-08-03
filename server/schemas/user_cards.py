@@ -1,24 +1,23 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime, timezone
 from schemas import cards as cards_shemas
 
-class PlayerCardBase(BaseModel):
-    player_id:int
+class UserCardBase(BaseModel):
+    user_id:int
     card_id:int
 
-class PlayerCardCreate(PlayerCardBase):
+class UserCardCreate(UserCardBase):
     pass
 
-class PlayerCardUpdate(PlayerCardBase):
+class UserCardUpdate(UserCardBase):
     pass
 
-class PlayerCard(PlayerCardBase):
-    player_card_id : int
+class UserCard(UserCardBase):
+    user_card_id : int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         from_attributes = True
 
-class PlayerCardReturn(cards_shemas.Card):
+class UserCardReturn(cards_shemas.Card):
     card_count: int

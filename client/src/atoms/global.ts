@@ -1,6 +1,6 @@
 import React from "react";
 import { atom } from "recoil";
-import { Card, CardCount, Deck, PlayerStats } from "../utils/types";
+import { Card, CardCount, Deck, UserStats } from "../utils/types";
 import {ShowPage} from "../App"
 
 
@@ -15,9 +15,9 @@ export const loadingState = atom<boolean>({
   default: false,
 })
 
-export const playerStats = atom<PlayerStats>({
-  key: 'player',
-  default: {stat_id:0, player_id:0, current_deck_id: null, money:0}
+export const userStats = atom<UserStats>({
+  key: 'user',
+  default: {stat_id:0, user_id:0, current_deck_id: null, money:0}
 })
 
 export const cardsStats = atom<Record<number, Card>>({
@@ -26,8 +26,8 @@ export const cardsStats = atom<Record<number, Card>>({
 })
 
 
-export const playerCardsStats = atom<CardCount>({
-  key:  'playerCrads',
+export const userCardsStats = atom<CardCount>({
+  key:  'userCrads',
   default: {}
 })
 

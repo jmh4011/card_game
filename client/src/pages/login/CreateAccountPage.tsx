@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
 import { OutModal, Vibration } from "../../utils/styles";
-import useHttpPlayer from "../../api/players";
+import useHttpUser from "../../api/users";
 import { useSetRecoilState } from "recoil";
 import { loadingState, showPageState} from "../../atoms/global";
 
-const ModalCreateAccount: React.FC = () => {
+const CreateAccountPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [againPassword, setAgainPassword] = useState<string>('');
   const [vibration, setVibration] = useState<boolean>(false);
   const setShowPage = useSetRecoilState(showPageState);
   const setLoading = useSetRecoilState(loadingState);
-  const {createPlayer} = useHttpPlayer()
+  const {createUser} = useHttpUser()
   
   useEffect(() => {
     if (vibration) {
@@ -23,7 +23,7 @@ const ModalCreateAccount: React.FC = () => {
 
 
   const useHandleCreateAccount = () => {
-    createPlayer(username, password,
+    createUser(username, password,
       (data) => {setShowPage('start');},
       (data) => {alert("이미 있는 아이디")},
       setLoading); 
@@ -50,6 +50,8 @@ const ModalCreateAccount: React.FC = () => {
     </>
   );
 };
+
+export default CreateAccountPage
 
 const CreateAccount = styled.div`
   z-index: 15;
@@ -139,4 +141,3 @@ const WeakInput = styled.p`
   animation: ${Vibration} 0.4s infinite;
 `;
 
-export default ModalCreateAccount;

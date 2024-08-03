@@ -1,22 +1,22 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { styled } from "styled-components";
-import filerIcon from '../../assets/icon/filter.png'
-import Card from "../../components/Card";
+import filerIcon from '../../../assets/icon/filter.png'
+import Card from "../../../components/Card";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { deckCardsState, searchSettingsState, showCardState, tempDeckCardsState } from "../../atoms/modalConfigDeck";
-import { cardsStats, playerCardsStats } from "../../atoms/global";
-import { CardCount } from "../../utils/types";
+import { deckCardsState, searchSettingsState, showCardState, tempDeckCardsState } from "../../../atoms/modalConfigDeck";
+import { cardsStats, userCardsStats } from "../../../atoms/global";
+import { CardCount } from "../../../utils/types";
 
 
 const SearchCards:React.FC = () => {
   const cards = useRecoilValue(cardsStats)
-  const playerCards = useRecoilValue(playerCardsStats);
+  const userCards = useRecoilValue(userCardsStats);
   const [searchSettings, setSearchSettings] = useRecoilState(searchSettingsState);
   const setShowCard = useSetRecoilState(showCardState);
   const setDeckCards = useSetRecoilState(tempDeckCardsState)
 
-  const filteredCards =  Object.keys(playerCards).map(key => Number(key)).filter(card_id => {
+  const filteredCards =  Object.keys(userCards).map(key => Number(key)).filter(card_id => {
     let card = cards[card_id]
     let result = (searchSettings.search === '');
     if (searchSettings.search !== '') {
@@ -43,7 +43,7 @@ const SearchCards:React.FC = () => {
 
 
 
-  const handlePlayerCardRightClick = (e: React.MouseEvent, value: number) => {
+  const handleUserCardRightClick = (e: React.MouseEvent, value: number) => {
     e.preventDefault();
     setDeckCards((prev: CardCount) => {
       const newState = { ...prev };
@@ -66,7 +66,7 @@ const SearchCards:React.FC = () => {
       return <CardStyle 
       key={idx}
       onClick={() => setShowCard(value)} 
-      onContextMenu={(e) => handlePlayerCardRightClick(e,value)}
+      onContextMenu={(e) => handleUserCardRightClick(e,value)}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>

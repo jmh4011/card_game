@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 
 class GameBase(BaseModel):
-    player1_id: int
-    player2_id: int
+    user1_id: int
+    user2_id: int
     winner_id: int
 
 class GameCreate(GameBase):

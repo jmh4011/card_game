@@ -5,24 +5,24 @@ from datetime import datetime, timezone
 
 
 
-class PlayerBase(BaseModel):
+class UserBase(BaseModel):
     username: str
     password: str
 
-class PlayerCreate(PlayerBase):
+class UserCreate(UserBase):
     pass
 
-class PlayerLogin(PlayerBase):
+class UserLogin(UserBase):
     pass
 
-class Player(PlayerBase):
+class User(UserBase):
     refresh_token: str | None = None
     refresh_token_expiry: datetime | None = None
-    player_id: int
+    user_id: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         from_attributes = True
 
-class PlayerUpdate(Player):
+class UserUpdate(User):
     pass

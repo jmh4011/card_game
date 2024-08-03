@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { PlayMod } from "../pages/modals/ModalPlay";
+import { PlayMod } from "../pages/play/PlayPage";
 
 
 export const playModState = atom<PlayMod>({

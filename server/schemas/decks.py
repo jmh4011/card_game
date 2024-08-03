@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 
 class DeckBase(BaseModel):
-    player_id: int
+    user_id: int
     deck_name: str
     image: str
 

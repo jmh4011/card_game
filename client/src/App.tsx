@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { decksState, loadingState, showPageState} from './atoms/global';
-import ModalMain from './pages/modals/ModalMain';
-import ModalLogin from './pages/modals/ModalLogin';
-import ModalCreateAccount from './pages/modals/ModalCreateAccount';
-import ModalSelectDeck from './pages/modals/ModalSelectDeck';
-import ModalConfigDeck from './pages/modals/ModalConfigDeck';
 import styled from 'styled-components';
-import ModalStart from './pages/modals/ModalStart';
-import ModalGame from './pages/modals/ModalGame';
-import ModalPlay from './pages/modals/ModalPlay';
+import StartPage from './pages/start/StartPage';
+import HomePage from './pages/home/HomePage';
+import LoginPage from './pages/login/LoginPage';
+import CreateAccountPage from './pages/login/CreateAccountPage';
+import SelectDeckPage from './pages/deck/SelectDeckPage';
+import ConfigDeckPage from './pages/deck/ConfigDeckPage';
+import PlayPage from './pages/play/PlayPage';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
@@ -35,14 +34,13 @@ const App: React.FC = () => {
         <LoadingScreen>Loading...</LoadingScreen>
       ) : (
         <Page>
-          {showPage === "start" && <ModalStart />}
-          {showPage === "main" && <ModalMain />}
-          {showPage === "login" && <ModalLogin />}
-          {showPage === "createAccount" && <ModalCreateAccount />}
-          {showPage === "selectDeck" && <ModalSelectDeck />}
-          {showPage === "configDeck" && <ModalConfigDeck />}
-          {showPage === "play" && <ModalPlay />}
-          {showPage === "game" && <ModalGame />}
+          {showPage === "start" && <StartPage />}
+          {showPage === "home" && <HomePage />}
+          {showPage === "login" && <LoginPage />}
+          {showPage === "createAccount" && <CreateAccountPage />}
+          {showPage === "selectDeck" && <SelectDeckPage />}
+          {showPage === "configDeck" && <ConfigDeckPage />}
+          {showPage === "play" && <PlayPage />}
         </Page>
       )}
     </div>
@@ -51,7 +49,7 @@ const App: React.FC = () => {
 
 
 
-export type ShowPage = ('start' |"main" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game")
+export type ShowPage = ('start' |"home" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game")
 
 const Page = styled.div`
   width: 100vw;

@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
-import Card from "../../components/Card";
+import Card from "../../../components/Card";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { showCardState, tempDeckCardsState, tempDeckState } from "../../atoms/modalConfigDeck";
-import { playerCardsStats } from "../../atoms/global";
+import { showCardState, tempDeckCardsState, tempDeckState } from "../../../atoms/modalConfigDeck";
+import { userCardsStats } from "../../../atoms/global";
 
 const ShowDeck: React.FC = () => {
   const [deck, setDeck] = useRecoilState(tempDeckState);
   const [deckCards, setDeckCards] = useRecoilState(tempDeckCardsState);
-  const playerCards = useRecoilValue(playerCardsStats);
+  const userCards = useRecoilValue(userCardsStats);
   const setShowCard = useSetRecoilState(showCardState);
 
   const [isNameEditing, setIsNameEditing] = useState(false);
@@ -53,7 +53,7 @@ const ShowDeck: React.FC = () => {
         {Object.entries(deckCards).flatMap(([key, value]) =>
           Array(value).fill(Number(key)).map((cardId, index) => {
             const uniqueKey = `${cardId}-${index}`;
-            const isExceedingPlayerCount = index >= (playerCards[cardId] || 0);
+            const isExceedingUserCount = index >= (userCards[cardId] || 0);
             return (
               <CardWrapper
                 key={uniqueKey}
@@ -62,7 +62,7 @@ const ShowDeck: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: cardToRemove === uniqueKey ? 0 : 1, y: cardToRemove === uniqueKey ? -20 : 0 }}
                 transition={{ duration: 0.5 }}
-                isExceedingPlayerCount={isExceedingPlayerCount}
+                isExceedingUserCount={isExceedingUserCount}
               >
                 <Card card_id={cardId}/>
               </CardWrapper>
@@ -121,12 +121,12 @@ const CardList = styled.div`
   }
 `;
 
-const CardWrapper = styled(motion.div).withConfig({shouldForwardProp: (prop) => prop !== 'isExceedingPlayerCount'})<{ isExceedingPlayerCount: boolean }>`
+const CardWrapper = styled(motion.div).withConfig({shouldForwardProp: (prop) => prop !== 'isExceedingUserCount'})<{ isExceedingUserCount: boolean }>`
   display: inline-block;
   width: 10%;
 
-  ${({ isExceedingPlayerCount }) =>
-    isExceedingPlayerCount &&
+  ${({ isExceedingUserCount }) =>
+    isExceedingUserCount &&
     css`
       & * {
         opacity: 0.8;

@@ -8,7 +8,7 @@ const SelectMod: React.FC = () => {
   const [playMod, setPlayMod] = useRecoilState(playModState)
 
   const handleExit = () => {
-    setShowPage("main")
+    setShowPage("home")
   } 
 
 

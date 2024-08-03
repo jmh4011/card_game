@@ -4,10 +4,11 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
 from database import Base, engine
-from routers import decks, players,cards
+from routers import decks, cards
 import logging
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
+from routers import users
 
 app = FastAPI()
 
@@ -58,7 +59,7 @@ class QueueMiddleware(BaseHTTPMiddleware):
             logger.error(f"Error processing request: {e}")
             return Response("Internal Server Error", status_code=500)
 
-# app.add_middleware(QueueMiddleware)
+app.add_middleware(QueueMiddleware)
 
 # CORS 설정
 origins = [
@@ -78,7 +79,7 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 라우터 추가
-app.include_router(players.router)
+app.include_router(users.router)
 app.include_router(decks.router)
 app.include_router(cards.router)
 

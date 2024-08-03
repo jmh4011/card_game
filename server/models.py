@@ -14,10 +14,10 @@ class Card(Base):
     cost = Column(Integer, nullable=True)
     card_type = Column(Integer, nullable=True)
     decks = relationship("DeckCard", back_populates="card")
-    player_cards = relationship("PlayerCard", back_populates="card")
+    user_cards = relationship("UserCard", back_populates="card")
 
 class DeckCard(Base):
-    __tablename__ = "deckcards"
+    __tablename__ = "deck_cards"
     deck_card_id = Column(Integer, primary_key=True, index=True)
     deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=False)
     card_id = Column(Integer, ForeignKey("cards.card_id"), nullable=False)
@@ -28,61 +28,72 @@ class DeckCard(Base):
 class Deck(Base):
     __tablename__ = "decks"
     deck_id = Column(Integer, primary_key=True, index=True)
-    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     deck_name = Column(String(100), nullable=True)
     image = Column(String(255), nullable=True)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
-    player = relationship("Player", back_populates="decks")
+    user = relationship("User", back_populates="decks")
     cards = relationship("DeckCard", back_populates="deck")
 
 class Game(Base):
     __tablename__ = "games"
     game_id = Column(Integer, primary_key=True, index=True)
-    player1_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
-    player2_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
-    winner_id = Column(Integer, ForeignKey("players.player_id"), nullable=True)
+    user1_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    user2_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    winner_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
     played_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     moves = relationship("GameMove", back_populates="game")
-    player1 = relationship("Player", foreign_keys=[player1_id])
-    player2 = relationship("Player", foreign_keys=[player2_id])
-    winner = relationship("Player", foreign_keys=[winner_id])
+    user1 = relationship("User", foreign_keys=[user1_id])
+    user2 = relationship("User", foreign_keys=[user2_id])
+    winner = relationship("User", foreign_keys=[winner_id])
 
 class GameMove(Base):
-    __tablename__ = "gamemoves"
+    __tablename__ = "game_moves"
     move_id = Column(Integer, primary_key=True, index=True)
     game_id = Column(Integer, ForeignKey("games.game_id"), nullable=False)
-    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     move_description = Column(Text, nullable=True)
     move_timestamp = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     game = relationship("Game", back_populates="moves")
-    player = relationship("Player")
+    user = relationship("User")
 
-class Player(Base):
-    __tablename__ = "players"
-    player_id = Column(Integer, primary_key=True, index=True)
+class User(Base):
+    __tablename__ = "users"
+    user_id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     refresh_token_expiry = Column(DateTime, nullable=True)
-    decks = relationship("Deck", back_populates="player")
-    stats = relationship("PlayerStats", back_populates="player")
-    player_cards = relationship("PlayerCard", back_populates="player")
+    decks = relationship("Deck", back_populates="user")
+    stats = relationship("UserStats", back_populates="user")
+    user_cards = relationship("UserCard", back_populates="user")
 
-class PlayerStats(Base):
-    __tablename__ = "playerstats"
+class UserStats(Base):
+    __tablename__ = "user_stats"
     stat_id = Column(Integer, primary_key=True, index=True)
-    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    nickname= Column(String(100), nullable=False)
     money = Column(Integer, nullable=False)
     last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
-    player = relationship("Player", back_populates="stats")
+    user = relationship("User", back_populates="stats")
     
-class PlayerCard(Base):
-    __tablename__ = "playercards"
-    player_card_id = Column(Integer, primary_key=True, index=True)
-    player_id = Column(Integer, ForeignKey("players.player_id"), nullable=False)
+class UserCard(Base):
+    __tablename__ = "user_cards"
+    user_card_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     card_id = Column(Integer, ForeignKey("cards.card_id"), nullable=False)
     card_count = Column(Integer, nullable=False,default=1)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
-    player = relationship("Player", back_populates="player_cards")
-    card = relationship("Card", back_populates="player_cards")
+    user = relationship("User", back_populates="user_cards")
+    card = relationship("Card", back_populates="user_cards")
+
+class UserDeckSelection(Base):
+    __tablename__ = "user_deck_selections"
+    selection_id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    game_mode = Column(String(50), nullable=False)
+    deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=False)
+    selection_date = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    user = relationship("User", back_populates="deck_selections")
+    deck = relationship("Deck")

@@ -1,4 +1,4 @@
-# server/DB/crud/decks.py
+# crud/decks.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import Deck, DeckCard
@@ -36,14 +36,14 @@ class DeckCrud:
         return None
 
     @staticmethod
-    async def get_all(db: AsyncSession, player_id: int):
-        result = await db.execute(select(Deck).filter(Deck.player_id == player_id))
+    async def get_all(db: AsyncSession, user_id: int):
+        result = await db.execute(select(Deck).filter(Deck.user_id == user_id))
         return result.scalars().all()
     
     
     @staticmethod
-    async def delete_all(db: AsyncSession, player_id: int):
-        result = await db.execute(select(Deck).filter(Deck.player_id == player_id))
+    async def delete_all(db: AsyncSession, user_id: int):
+        result = await db.execute(select(Deck).filter(Deck.user_id == user_id))
         db_decks = result.scalars().all()
         for deck in db_decks:
             await db.delete(deck)

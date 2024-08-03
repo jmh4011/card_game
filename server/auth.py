@@ -4,7 +4,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
-from crud.player import PlayerCrud
+from crud.user import UserCrud
 from utils import (
     get_secret_key, get_jwt_algorithm, get_access_token_expire, 
     get_refresh_token_expire, handle_transaction
@@ -58,7 +58,7 @@ async def set_auth_cookies(response: Response, access_token: str, refresh_token:
         max_age=int(REFRESH_TOKEN_EXPIRE.total_seconds())  # 쿠키 만료 시간 설정
     )
 
-async def get_player_id(db: AsyncSession, request: Request, response: Response) -> int:
+async def get_user_id(db: AsyncSession, request: Request, response: Response) -> int:
     access_token = request.cookies.get("access_token")
     refresh_token = request.cookies.get("refresh_token")
     
@@ -87,7 +87,7 @@ async def get_player_id(db: AsyncSession, request: Request, response: Response) 
             logger.warning("Invalid refresh token payload")
             raise HTTPException(status_code=401, detail="Invalid refresh token")
 
-        user = await PlayerCrud.get(db=db, player_id=player_id)
+        user = await UserCrud.get(db=db, player_id=player_id)
         if user:
             refresh_token_expiry = user.refresh_token_expiry
             if refresh_token_expiry.tzinfo is None:
@@ -98,7 +98,7 @@ async def get_player_id(db: AsyncSession, request: Request, response: Response) 
                 # 새로운 access token 및 refresh token 생성
                 new_access_token = await create_access_token(data={"uid": player_id})
                 new_refresh_token = await create_refresh_token(data={"uid": player_id})
-                await handle_transaction(db, PlayerCrud.update_refresh_token, should_refresh=True, 
+                await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True, 
                     player_id=user.player_id, refresh_token=new_refresh_token)
                 await set_auth_cookies(response=response, access_token=new_access_token, refresh_token=new_refresh_token)
                 return player_id

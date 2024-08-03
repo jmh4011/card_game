@@ -2,15 +2,14 @@ import React from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, showPageState} from "../../atoms/global";
 import styled from "styled-components";
-import useHttpPlayer from "../../api/players";
+import useHttpUser from "../../api/users";
 import useHttpDeck from "../../api/decks";
-import Card from "../../components/Card";
 
 
-const ModalMain: React.FC = () => {
+const HomePage: React.FC = () => {
   const [showPage, setShowPage] = useRecoilState(showPageState)
   const setLoading = useSetRecoilState(loadingState)
-  const {playerLogout} = useHttpPlayer()
+  const {userLogout} = useHttpUser()
   const {} = useHttpDeck
 
   const useHandlePlay = () => {
@@ -30,7 +29,7 @@ const ModalMain: React.FC = () => {
   }
 
   const useHandleLogout = () => {
-    playerLogout(
+    userLogout(
       (data) => {setShowPage("login")})
   }
 
@@ -48,4 +47,4 @@ const Main = styled.div`
 `
 
 
-export default ModalMain
+export default HomePage

@@ -3,14 +3,14 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {loadingState, showPageState} from "../../atoms/global";
 import styled from "styled-components";
 import useHttpDeck from "../../api/decks";
-import CardInfo from "../config_deck/CardInfo";
-import SearchSetting from "../config_deck/SearchSetting";
-import ShowDeck from "../config_deck/ShowDeck";
-import SearchCards from "../config_deck/SearchCards";
+import CardInfo from "./components/CardInfo";
+import SearchSetting from "./components/SearchSetting";
+import ShowDeck from "./components/ShowDeck";
+import SearchCards from "./components/SearchCards";
 import { deckCardsState, deckState, showCardState, tempDeckCardsState, tempDeckState } from "../../atoms/modalConfigDeck";
 import { OutModal } from "../../utils/styles";
 
-const ModalConfigDeck: React.FC = () => {
+const ConfigDeckPage: React.FC = () => {
   const {updateDeck} = useHttpDeck()
   const setShowPage = useSetRecoilState(showPageState);
   const setLoading = useSetRecoilState(loadingState);
@@ -22,7 +22,6 @@ const ModalConfigDeck: React.FC = () => {
   const [deckCards, setDeckCards] = useRecoilState(deckCardsState)
   
   const handleSave = () => {
-    console.log("아니니ㅣㅣㅣ", tempDeckCards)
     updateDeck(deck.deck_id, {
       deck_name: tempDeck.deck_name,
       image: tempDeck.image,
@@ -35,7 +34,6 @@ const ModalConfigDeck: React.FC = () => {
   };
 
   const handleExit = () => {
-    console.log(JSON.stringify(tempDeckCards), JSON.stringify(deckCards))
     if (JSON.stringify(tempDeckCards) === JSON.stringify(deckCards) && JSON.stringify(tempDeck) ===JSON.stringify(deck)) {
       setShowPage("selectDeck");
     } else {
@@ -72,7 +70,7 @@ const ModalConfigDeck: React.FC = () => {
   );
 };
 
-export default ModalConfigDeck;
+export default ConfigDeckPage;
 
 const ConfigDeckContainer = styled.div`
   width: 100%;

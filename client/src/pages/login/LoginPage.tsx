@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { OutModal } from "../../utils/styles";
 import styled from "styled-components";
-import useHttpPlayer from "../../api/players";
+import useHttpUser from "../../api/users";
 import { useSetRecoilState } from "recoil";
 import { loadingState, showPageState} from "../../atoms/global";
 
-const ModalLogin: React.FC = () => {
+const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const setShowPage = useSetRecoilState(showPageState);
   const setLoading = useSetRecoilState(loadingState);
-  const {playerLogin} = useHttpPlayer();
+  const {userLogin} = useHttpUser();
   const useHandleLogin = () => {
-    playerLogin(username, password, 
+    userLogin(username, password, 
       (data) => {setShowPage("start");},
       (data) => {alert("틀림")},
       setLoading);
@@ -32,6 +32,8 @@ const ModalLogin: React.FC = () => {
     </>
   );
 };
+
+export default LoginPage;
 
 const Login = styled.div`
   z-index: 15;
@@ -124,5 +126,3 @@ const Cancel = styled.div`
     color: rgb(0, 0, 0);
   }
 `;
-
-export default ModalLogin;
