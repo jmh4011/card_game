@@ -6,7 +6,7 @@ from schemas.decks import Deck
 
 class RouterDeckUpdate(BaseModel):
     deck_name: str
-    image: str
+    image_path: str
     deck_cards: dict[int,int]
 
 class RouterDeckUpdateReturn(BaseModel):
@@ -16,7 +16,7 @@ class RouterDeckUpdateReturn(BaseModel):
 
 class RouterDeckCreate(BaseModel):
     deck_name: str
-    image: str
+    image_path: str
 
 class RouterDeckCard(Card):
     deck_card_count: int

@@ -11,7 +11,7 @@ class CardBase(BaseModel):
     attack: int
     health: int
     description: str
-    image: str
+    image_path: str
     cost: int
     card_type: int
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { cardsStats, decksState, loadingState, userCardsStats, userStats, showPageState} from "../../atoms/global";
+import { cardsStats, decksState, loadingState, userCardsStats, userStats, showPageState, deckSelectionState} from "../../atoms/global";
 import useHttpDeck from "../../api/decks";
 import useHttpUser from "../../api/users";
 import useHttpCard from "../../api/cards";
@@ -12,10 +12,12 @@ const StartPage: React.FC = () => {
   const setShowPage = useSetRecoilState(showPageState)
   const setUserCards = useSetRecoilState(userCardsStats)
   const setCards = useSetRecoilState(cardsStats)
+  const setDeckSelection = useSetRecoilState(deckSelectionState)
 
-  const {get} = useHttpCard()
+
+  const {getCards} = useHttpCard()
   const {getDecks} = useHttpDeck()
-  const {getUserState, getUserCards} = useHttpUser()
+  const {getUserState, getUserCards, getUserDeckSelection} = useHttpUser()
 
   const useHandleStart = () => {
     getDecks()
@@ -28,8 +30,12 @@ const StartPage: React.FC = () => {
       (data) => {setUserCards(data)}
     )
 
-    get(
+    getCards(
       (data) => {setCards(data)}
+    )
+
+    getUserDeckSelection(
+      (data) => {setDeckSelection(data)}
     )
 
     setShowPage('home')

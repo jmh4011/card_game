@@ -1,21 +1,20 @@
-from pydantic import BaseModel, Field
-from typing import Optional
-from datetime import datetime, timezone
+from pydantic import BaseModel
+from datetime import datetime
 
 
 
-class UserStatsBase(BaseModel):
+class UserStatBase(BaseModel):
     user_id: int
     money: int = 0
     nickname: str
 
-class UserStatsCreate(UserStatsBase):
+class UserStatCreate(UserStatBase):
     pass
 
-class UserStatsUpdate(UserStatsBase):
+class UserStatUpdate(UserStatBase):
     pass
 
-class UserStats(UserStatsBase):
+class UserStat(UserStatBase):
     stat_id: int
     last_updated: datetime
 

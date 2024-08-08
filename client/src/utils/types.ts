@@ -9,7 +9,7 @@ export interface Card {
   attack: number;
   health: number;
   description: string;
-  image: string;
+  image_path: string;
   cost: number;
   card_type: number;
 }
@@ -24,19 +24,26 @@ export interface Deck {
   deck_id: number;
   user_id: number;
   deck_name: string;
-  image: string;
+  image_path: string;
 }
 
 
-export interface UserStats {
+export interface UserStat {
   stat_id: number;
   user_id: number;
-  current_deck_id: number | null;
+  nickname: string;
   money: number;
 }
 
 export interface DeckUpdate {
   deck_name: string;
-  image: string;
+  image_path: string;
   deck_cards: CardCount;
+}
+
+export type DeckSelection =  Record<string, number>
+
+export interface DeckSelectionUpdate {
+  deck_id: number;
+  game_mode: string;
 }

@@ -6,7 +6,7 @@ import { SetFn} from '../utils/types';
 const useHttpCard = () => {
   const { http } = useHttp();
 
-  const get = (callback:SetFn,onError?: SetFn, setLoading?: SetFn) => {
+  const getCards = (callback:SetFn,onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/cards`,
@@ -18,7 +18,7 @@ const useHttpCard = () => {
 
 
 
-  return {get};
+  return {getCards};
 }
 
 export default useHttpCard

@@ -24,7 +24,7 @@ const Card: React.FC<CardProps> = ({ card_id }) => {
     <CardContainer>
       <CardFrame>
         <CharacterFrame />
-        <Character src={characterImage(card.image)} />
+        <Character src={characterImage(card.image_path)} />
         <Name>
         <ResponsiveText>
             {card.card_name}

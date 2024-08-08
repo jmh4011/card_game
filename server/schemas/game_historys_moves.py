@@ -1,21 +1,20 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime, timezone
 
-class GameMoveBase(BaseModel):
+class GameHistoryMoveBase(BaseModel):
     game_id: int
     user_id: int
     move_description: int
 
-class GameMoveCreate(GameMoveBase):
+class GameHistoryMoveCreate(GameHistoryMoveBase):
     pass 
 
-class GameMoveUpdate(GameMoveBase):
+class GameHistoryMoveUpdate(GameHistoryMoveBase):
     pass
 
 
 
-class GameMove(GameMoveBase):
+class GameHistoryMove(GameHistoryMoveBase):
     move_id: int
     move_timestamp : datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

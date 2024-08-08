@@ -1,25 +1,24 @@
-# server/DB/crud/cards.py
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from models import Game
-from schemas.games import GameCreate, GameUpdate
+from models import GameHistory
+from schemas.game_historys import GameHistoryCreate, GameHistoryUpdate
 
 
-class GameCrud:
+class GameHistoryCrud:
     @staticmethod
     async def get(db: AsyncSession, game_id: int):
-        db_game = await db.execute(select(Game).where(Game.game_id == game_id))
+        db_game = await db.execute(select(GameHistory).where(GameHistory.game_id == game_id))
         return db_game.scalar_one_or_none()
     
     @staticmethod
-    async def create(db: AsyncSession, card: GameCreate):
-        db_game = Game(**card.model_dump())
+    async def create(db: AsyncSession, card: GameHistoryCreate):
+        db_game = GameHistory(**card.model_dump())
         db.add(db_game)
         return db_game
 
     @staticmethod
-    async def update(db: AsyncSession, game_id: int, game: GameUpdate):
-        db_game = await db.get(Game, game_id)
+    async def update(db: AsyncSession, game_id: int, game: GameHistoryUpdate):
+        db_game = await db.get(GameHistory, game_id)
         if db_game:
             for key, value in game.model_dump().items():
                 setattr(db_game, key, value)
@@ -27,8 +26,8 @@ class GameCrud:
         return None
 
     @staticmethod
-    async def delete(db: AsyncSession, card_id: int):
-        db_game = await db.get(Game, card_id)
+    async def delete(db: AsyncSession, game_id: int):
+        db_game = await db.get(GameHistory, game_id)
         if db_game:
             await db.delete(db_game)
             return db_game

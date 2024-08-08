@@ -1,5 +1,5 @@
 import { useHttp } from './api';
-import { SetFn } from '../utils/types';
+import { DeckSelectionUpdate, SetFn } from '../utils/types';
 
 const useHttpUser = () => {
   const { http } = useHttp();
@@ -36,10 +36,10 @@ const useHttpUser = () => {
     });
   }
 
-  const getUserState = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getUserStat = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
-      url: `/users/state`,
+      url: `/users/stat`,
       callback:callback,
       onError:onError,
       customSetLoading: setLoading
@@ -56,16 +56,27 @@ const useHttpUser = () => {
     });
   }
 
-  const setUserDeckSelection = (mode : string,callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getUserDeckSelection = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
     http({
-      type: "post",
-      url: `/users/cards`,
+      type: "get",
+      url: `/users/deck-selection`,
       callback:callback,
       onError:onError,
-      customSetLoading: setLoading
+      customSetLoading: setLoading,
     });
   }
-  return { userLogin, userLogout, createUser, getUserState, getUserCards};
+
+  const updateUserDeckSelection = (data: DeckSelectionUpdate,callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "put",
+      url: `/users/deck-selection`,
+      callback:callback,
+      onError:onError,
+      customSetLoading: setLoading,
+      data:data
+    });
+  }
+  return { userLogin, userLogout, createUser, getUserStat, getUserCards, updateUserDeckSelection, getUserDeckSelection};
 }
 
 

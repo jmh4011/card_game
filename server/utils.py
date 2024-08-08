@@ -35,7 +35,7 @@ async def to_dict(instance, db: AsyncSession):
             except TypeError:
                 return instance
 
-async def handle_transaction(db: AsyncSession, func, *args, should_refresh=False, **kwargs):
+async def handle_transaction(db: AsyncSession, func, *args, should_refresh=False, **kwargs) -> any:
     try:
         result = await func(db, *args, **kwargs)
         await db.commit()

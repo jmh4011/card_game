@@ -4,13 +4,13 @@ import { CardCount, Deck} from "../utils/types";
 
 export const deckState = atom<Deck>({
   key: 'deck',
-  default: {deck_id:1,deck_name:'null',image:'0.png',user_id:0},
+  default: {deck_id:1,deck_name:'null',image_path:'0.png',user_id:0},
 });
 
 
 export const tempDeckState = atom<Deck>({
   key: 'tempDeck',
-  default: {deck_id:1,deck_name:'null',image:'0.png',user_id:0},
+  default: {deck_id:1,deck_name:'null',image_path:'0.png',user_id:0},
 });
 
 export const deckCardsState = atom<CardCount>({

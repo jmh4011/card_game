@@ -1,18 +1,18 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 
-class GameBase(BaseModel):
+class GameHistoryBase(BaseModel):
     user1_id: int
     user2_id: int
     winner_id: int
 
-class GameCreate(GameBase):
+class GameHistoryCreate(GameHistoryBase):
     pass
 
-class GameUpdate(GameBase):
+class GameHistoryUpdate(GameHistoryBase):
     pass
 
-class Game(GameBase):
+class GameHistory(GameHistoryBase):
     deck_id: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

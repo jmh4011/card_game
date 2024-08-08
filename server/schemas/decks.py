@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 class DeckBase(BaseModel):
     user_id: int
     deck_name: str
-    image: str
+    image_path: str
 
 class DeckCreate(DeckBase):
     pass

@@ -28,7 +28,7 @@ const ModalSelectDeck: React.FC<ModalConfigDeckPorps> = ({handleDeckClick, handl
     <Container>
       {decks.map((value, idx) => (
         <DeckContainer key={idx} onClick={() => handleDeckClick(value)}>
-          <DeckImg src={characterImage(value.image)}/>
+          <DeckImg src={characterImage(value.image_path)}/>
           <DeckName >{value.deck_name}</DeckName>
         </DeckContainer>
       ))}
