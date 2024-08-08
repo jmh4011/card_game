@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, ReactNode } from "react";
 import styled from "styled-components";
 
-// Container 스타일 컴포넌트 정의, fontSize를 props로 받아서 설정
+
 const Container = styled.div<{ fontSize: number }>`
   width: 100%;
   height: 100%;
@@ -19,7 +19,7 @@ interface ResponsiveTextProps {
 
 const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [fontSize, setFontSize] = useState<number>(100); // 초기 폰트 크기를 100으로 설정
+  const [fontSize, setFontSize] = useState<number>(100); 
 
   const updateFontSize = () => {
     if (!containerRef.current) return;
@@ -29,12 +29,11 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
       const parentWidth = parentElement.clientWidth;
       const parentHeight = parentElement.clientHeight;
 
-      // 폰트 크기 최적화
+      
       let newFontSize = 100;
       let fits = false;
 
       while (!fits) {
-        // 가상 텍스트 요소 생성
         const testElement = document.createElement("span");
         testElement.style.fontSize = `${newFontSize}px`;
         testElement.style.visibility = "hidden";
@@ -47,7 +46,6 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
 
         document.body.removeChild(testElement);
 
-        // 텍스트 크기가 부모 요소보다 작거나 같을 때까지 폰트 크기 조정
         if (textWidth <= parentWidth && textHeight <= parentHeight) {
           fits = true;
         } else {
@@ -65,7 +63,7 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
     return () => {
       window.removeEventListener("resize", updateFontSize);
     };
-  }, [children]); // children이 변경될 때마다 폰트 크기 재계산
+  }, [children]); 
 
   return (
     <Container ref={containerRef} fontSize={fontSize}>
