@@ -24,7 +24,7 @@ const ConfigDeckPage: React.FC = () => {
   const handleSave = () => {
     updateDeck(deck.deck_id, {
       deck_name: tempDeck.deck_name,
-      image: tempDeck.image,
+      image_path: tempDeck.image_path,
       deck_cards: tempDeckCards
     },
     (data) => {

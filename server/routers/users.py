@@ -5,7 +5,7 @@ from database import get_db
 from schemas.users import UserCreate, UserLogin
 from schemas.user_stats import UserStat
 from schemas.user_cards import UserCardReturn
-from server.schemas.user_deck_selections import UserDeckSelection, UserDeckSelectionUpdate
+from schemas.user_deck_selections import UserDeckSelection, UserDeckSelectionUpdate
 from services import UserServices
 from auth import get_user_id
 

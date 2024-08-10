@@ -17,12 +17,12 @@ const StartPage: React.FC = () => {
 
   const {getCards} = useHttpCard()
   const {getDecks} = useHttpDeck()
-  const {getUserState, getUserCards, getUserDeckSelection} = useHttpUser()
+  const {getUserStat, getUserCards, getUserDeckSelection} = useHttpUser()
 
   const useHandleStart = () => {
     getDecks()
 
-    getUserState(
+    getUserStat(
       (data) => {setUser(data)}
     )
 

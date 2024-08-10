@@ -9,6 +9,7 @@ import CreateAccountPage from './pages/login/CreateAccountPage';
 import SelectDeckPage from './pages/deck/SelectDeckPage';
 import ConfigDeckPage from './pages/deck/ConfigDeckPage';
 import PlayPage from './pages/play/PlayPage';
+import OptionPage from './pages/option/OptionPage';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           {showPage === "selectDeck" && <SelectDeckPage />}
           {showPage === "configDeck" && <ConfigDeckPage />}
           {showPage === "play" && <PlayPage />}
+          {showPage === "option" && <OptionPage />}
         </Page>
       )}
     </div>
@@ -49,7 +51,7 @@ const App: React.FC = () => {
 
 
 
-export type ShowPage = ('start' |"home" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game")
+export type ShowPage = ('start' |"home" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game" | 'option')
 
 const Page = styled.div`
   width: 100vw;

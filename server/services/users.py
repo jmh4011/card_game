@@ -7,7 +7,7 @@ from schemas.users import UserLogin, UserCreate
 from schemas.user_cards import UserCardReturn
 from schemas.user_stats import UserStat, UserStatCreate
 from models import User
-from server.schemas.user_deck_selections import UserDeckSelection,UserDeckSelectionUpdate, UserDeckSelectionCreate
+from schemas.user_deck_selections import UserDeckSelection,UserDeckSelectionUpdate, UserDeckSelectionCreate
 from utils import handle_transaction, to_dict
 import logging
 

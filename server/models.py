@@ -42,7 +42,7 @@ class GameHistory(Base):
     user2_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     winner_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
     played_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
-    moves = relationship("GameMove", back_populates="game")
+    moves = relationship("GameHistoryMove", back_populates="game")
     user1 = relationship("User", foreign_keys=[user1_id])
     user2 = relationship("User", foreign_keys=[user2_id])
     winner = relationship("User", foreign_keys=[winner_id])
@@ -50,11 +50,11 @@ class GameHistory(Base):
 class GameHistoryMove(Base):
     __tablename__ = "game_historys_moves"
     move_id = Column(Integer, primary_key=True, index=True)
-    game_id = Column(Integer, ForeignKey("games.game_id"), nullable=False)
+    game_id = Column(Integer, ForeignKey("game_historys.game_id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     move_description = Column(Text, nullable=True)
     move_timestamp = Column(TIMESTAMP, server_default=func.now(), nullable=True)
-    game = relationship("Game", back_populates="moves")
+    game = relationship("GameHistory", back_populates="moves")
     user = relationship("User")
 
 class User(Base):
@@ -66,7 +66,7 @@ class User(Base):
     refresh_token = Column(String(255), nullable=True)
     refresh_token_expiry = Column(DateTime, nullable=True)
     decks = relationship("Deck", back_populates="user")
-    stats = relationship("UserStats", back_populates="user")
+    stats = relationship("UserStat", back_populates="user")
     user_cards = relationship("UserCard", back_populates="user")
     user_deck_selections = relationship("UserDeckSelection", back_populates="user")
 

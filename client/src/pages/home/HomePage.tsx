@@ -24,8 +24,8 @@ const HomePage: React.FC = () => {
     alert("미구현")
   }
 
-  const useHandleSetting = () => {
-    alert("미구현")
+  const useHandleOption = () => {
+    setShowPage("option")
   }
 
   const useHandleLogout = () => {
@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
     <button onClick={useHandlePlay}>플레이</button>
     <button onClick={useHandleDeck}>덱</button>
     <button onClick={useHandleShap}>상점</button>
-    <button onClick={useHandleSetting}>설정</button>
+    <button onClick={useHandleOption}>설정</button>
     <button onClick={useHandleLogout}>로그아웃</button>
   </div>
 }
