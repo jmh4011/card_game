@@ -17,16 +17,16 @@ class UserCrud:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def create(db: AsyncSession, User: UserCreate) -> User:
-        db_user = User(**User.model_dump())
+    async def create(db: AsyncSession, user: UserCreate) -> User:
+        db_user = User(**user.model_dump())
         db.add(db_user)
         return db_user
 
     @staticmethod
-    async def update(db: AsyncSession, user_id: int, User: UserUpdate) -> User | None:
+    async def update(db: AsyncSession, user_id: int, user: UserUpdate) -> User | None:
         db_user = await db.get(User, user_id)
         if db_user:
-            for key, value in User.model_dump().items():
+            for key, value in user.model_dump().items():
                 setattr(db_user, key, value)
             return db_user
         return None

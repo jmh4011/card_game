@@ -1,56 +1,59 @@
+from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from module import room_manager
 from services import GameServices
-from auth import get_user_id
+from auth import get_user_id, verify_token
 from schemas.game_modes import GameMode
+import logging
 
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/game-modes", response_model=GameMode)
+@router.get("/games/modes", response_model=GameMode)
 async def read_cards_all_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    modes = await GameServices.get(db=db)
-    return modes
+    modes = await GameServices.get_mode(db=db)
+    return modes 
 
+
+@router.get("/games/tokens")
+async def websocket_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(db=db, request=request, response=response)
+    if user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    token = await GameServices.get_token(db=db, user_id=user_id)
+    return token 
 
 
 @router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
-    user_id = await get_user_id(db=db, request=request, response=response)
-    if user_id is None:
+async def websocket_endpoint(websocket: WebSocket, token: str, db: AsyncSession = Depends(get_db)):
+    try:
+        payload: dict[str, Any] = await verify_token(token)
+    except HTTPException:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
-    
+
     await websocket.accept()
-    room_id = room_manager.match_or_create_room(websocket)
+    user_id: int = payload.get('uid')
 
-    # 방 ID를 클라이언트에게 전송
-    if room_id:
-        await websocket.send_text(f"You are connected to {room_id}")
-    else:
-        await websocket.send_text("Waiting for a partner...")
-
+    # 게임 서비스에서 유저 연결 처리
+    room_id = await GameServices.connect_user(websocket, user_id)
     try:
         while True:
             data = await websocket.receive_text()
+
             if data == "disconnect":  # 특정 조건에서 연결 종료
                 await websocket.close(code=4000)  # 의도적으로 연결 종료 (코드: 4000)
                 break
 
-            # 방 내 다른 유저에게 메시지 전달
-            partners = room_manager.get_room_partners(websocket)
-            for partner in partners:
-                await partner.send_text(f"User {user_id}: {data}")
+            # 메시지를 게임 서비스로 처리 위임
+            await GameServices.handle_message(user_id, data)
 
     except WebSocketDisconnect:
-        print(f"Client {user_id} disconnected")
-        room_manager.remove_client(websocket)
-        # 방 내 다른 유저에게 연결 종료 알림
-        partners = room_manager.get_room_partners(websocket)
-        for partner in partners:
-            await partner.send_text(f"User {user_id} has disconnected.")
+        # 게임 서비스에서 유저 연결 해제 처리
+        await GameServices.disconnect_user(user_id)
+        GameServices.remove_user_from_queue(user_id)

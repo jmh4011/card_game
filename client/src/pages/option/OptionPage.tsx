@@ -1,84 +1,77 @@
 // src/pages/option/OptionPage.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import WebSocketClient from "../../api/websocket"; // WebSocketClient 싱글톤 클래스 import
-import { useSetRecoilState } from "recoil";
-import { showPageState } from "../../atoms/global";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import useHttpGame from "../../api/game";
+import { showPageState, wsTokenState } from "../../atoms/global";
+
+
 
 const OptionPage: React.FC = () => {
   const setShowPage = useSetRecoilState(showPageState);
-  const [isConnected, setIsConnected] = useState(false);
-  const [message, setMessage] = useState("");
-  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
-
-  const client = WebSocketClient.getInstance("ws://localhost:8000/ws");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const wsClientRef = useRef<WebSocketClient | null>(null);
+  const wsUrl = 'ws://localhost:8000/ws';
+  const token = useRecoilValue(wsTokenState)
 
   useEffect(() => {
-    if (isConnected) {
-      client.connect((receivedMessage) => {
-        // 메시지 수신 시 처리할 로직
-        setReceivedMessages((prevMessages) => [
-          ...prevMessages,
-          receivedMessage,
-        ]);
-      });
-    }
+    wsClientRef.current = new WebSocketClient(wsUrl);
 
-    // 컴포넌트가 언마운트되거나 연결 상태가 변경될 때 WebSocket을 닫습니다.
+    // 컴포넌트 언마운트 시 WebSocket 연결 종료
     return () => {
-      client.close();
-      setIsConnected(false);
+      if (wsClientRef.current) {
+        wsClientRef.current.disconnect();
+      }
     };
-  }, [isConnected]);
+  }, []);
 
-  const handleConnect = () => {
-    setIsConnected(true);
-  };
+  const toggleConnection = () => {
+    if (!wsClientRef.current) return;
 
-  const handleDisconnect = () => {
-    client.close();
-    setIsConnected(false);
+    if (isConnected) {
+      wsClientRef.current.disconnect();
+      setIsConnected(false);
+    } else {
+      wsClientRef.current.connect(
+        token,
+        (message) => {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        },
+        () => {
+          console.log('Connection closed by server');
+          setIsConnected(false);
+        }
+      );
+      setIsConnected(true);
+    }
   };
 
   const handleSendMessage = () => {
-    if (message.trim()) {
-      client.sendMessage(message);
-      setMessage("");
+    if (wsClientRef.current) {
+      wsClientRef.current.sendMessage('Hello, Server!');
     }
   };
 
   return (
     <div>
-      <button onClick={() => {setShowPage("home")}}>exit</button>
-      <h1>WebSocket 연결</h1>
-      <button onClick={handleConnect} disabled={isConnected}>
-        {isConnected ? "Connected" : "Connect"}
+      <button onClick={() => {setShowPage('home')}}>exit</button>
+      <h1>WebSocket Messages</h1>
+      <button onClick={toggleConnection}>
+        {isConnected ? 'Disconnect' : 'Connect'}
       </button>
-      <button onClick={handleDisconnect} disabled={!isConnected}>
-        Disconnect
+      <button onClick={handleSendMessage} disabled={!isConnected}>
+        Send Message
       </button>
-
-      {isConnected && (
-        <div>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Send a message"
-          />
-          <button onClick={handleSendMessage} disabled={!message.trim()}>
-            Send
-          </button>
-        </div>
-      )}
-
       <ul>
-        {receivedMessages.map((msg, index) => (
+        {messages.map((msg, index) => (
           <li key={index}>{msg}</li>
         ))}
       </ul>
     </div>
   );
 };
+
 
 export default OptionPage;

@@ -53,3 +53,9 @@ export const gameModeState = atom<PlayMod>({
   key: 'gameMode',
   default: null,
 })
+
+
+export const wsTokenState = atom<string>({
+  key: 'wsToekn',
+  default: "1"
+})

@@ -9,6 +9,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 ACCESS_TOKEN_EXPIRE = timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
 REFRESH_TOKEN_EXPIRE = timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")))
+WEBSOCKET_TOKEN_EXPIRE = timedelta(days=int(os.getenv("WEBSOCKET_TOKEN_EXPIRE_MIUTES")))
+
 
 def get_secret_key():
     return SECRET_KEY
@@ -21,6 +23,9 @@ def get_access_token_expire():
 
 def get_refresh_token_expire():
     return REFRESH_TOKEN_EXPIRE
+
+def get_websocket_token_expire():
+    return WEBSOCKET_TOKEN_EXPIRE
 
 async def to_dict(instance, db: AsyncSession):
     if isinstance(instance.__class__, DeclarativeMeta):

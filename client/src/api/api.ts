@@ -13,7 +13,7 @@ interface HttpOptions {
 }
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: '/',
   headers: {
   },
 });
@@ -50,17 +50,17 @@ export const useHttp = () => {
         console.error('Error response:', error.response);
         console.error('Detail:', error.response?.data?.detail);
 
-        if (error.response?.status === 401) {
-          alert("세션이 만료되었습니다.");
-          setShowPage("login");
-        } else {
-          if(onError)
-          onError(error);
-        }
+        // if (error.response?.status === 401) {
+        //   alert("세션이 만료되었습니다.");
+        //   setShowPage("login");
+        // } else {
+        //   if(onError)
+        //   onError(error);
+        // }
       } else {
         console.error('Unexpected error:', error);
-        if(onError)
-        onError(error);
+        // if(onError)
+        // onError(error);
       }
     } finally {
       setLoading(false);

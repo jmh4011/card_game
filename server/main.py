@@ -4,18 +4,13 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
 from database import Base, engine
-from routers import decks, cards
+from routers import users, decks, cards, games
 import logging
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
-from routers import users
 
 app = FastAPI()
 
-
-logging.getLogger('sqlalchemy.engine.Engine').setLevel(logging.ERROR)
-logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
-logging.getLogger('sqlalchemy.pool').setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 # 클라이언트별 큐 저장소
@@ -48,7 +43,6 @@ class QueueMiddleware(BaseHTTPMiddleware):
                         req = await queue.get()
                         logger.info(f"Processing request for client {client_ip}")
                         response = await call_next(req)
-                        await asyncio.sleep(0)  # 작업 대기 시뮬레이션
                         logger.info(f"Finished processing request for client {client_ip}")
                 finally:
                     if client_ip in client_queues:
@@ -82,6 +76,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(users.router)
 app.include_router(decks.router)
 app.include_router(cards.router)
+app.include_router(games.router)
 
 @app.get("/")
 async def read_root():

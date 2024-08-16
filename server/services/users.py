@@ -24,23 +24,23 @@ class UserServices:
     async def login(db: AsyncSession, user: UserLogin) -> tuple:
         db_user = await UserCrud.get_username(db=db, username=user.username)
         if db_user and await verify_password(user.password, db_user.password):
-            access_token = await create_access_token(data={"uid": db_user.user_id})
-            refresh_token = await create_refresh_token(data={"uid": db_user.user_id})
+            access_token = await create_access_token(db_user.user_id)
+            refresh_token = await create_refresh_token(db_user.user_id)
             await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True ,user_id=db_user.user_id, refresh_token=refresh_token)
             return (access_token, refresh_token)
         return None
     
     @staticmethod
     async def create(db: AsyncSession, user: UserCreate) -> tuple:
-        if await UserCrud.get_username(db=db, username=User.username):
+        if await UserCrud.get_username(db=db, username=user.username):
             return None
-        user_info = UserCreate(username=user.username, password= await get_password_hash(User.password))
-        user = await handle_transaction(db, UserCrud.create, user=user_info)
-        await db.refresh(user)
-        access_token = await create_access_token(data={"uid": user.user_id})
-        refresh_token = await create_refresh_token(data={"uid": user.user_id})
-        await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True,user_id=user.user_id, refresh_token=refresh_token)
-        await handle_transaction(db, UserStatCrud.create, should_refresh=True, stats=UserStatCreate(user_id=user.user_id, current_deck_id=None, money=0))
+        user_info = UserCreate(username=user.username, password= await get_password_hash(user.password))
+        db_user : User = await handle_transaction(db, UserCrud.create, user=user_info)
+        await db.refresh(db_user)
+        access_token = await create_access_token(db_user.user_id)
+        refresh_token = await create_refresh_token(db_user.user_id)
+        await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True,user_id=db_user.user_id, refresh_token=refresh_token)
+        await handle_transaction(db, UserStatCrud.create, should_refresh=True, stats=UserStatCreate(user_id=db_user.user_id, money=0, nickname=db_user.username))
         return (access_token, refresh_token)
         
     @staticmethod
@@ -59,14 +59,14 @@ class UserServices:
 
     @staticmethod
     async def get_deck_selection(db:AsyncSession,user_id:int) -> dict[str,int]:
-        decks = await handle_transaction(db=db, func=UserDeckSelectionCrud.get_all, user_id=user_id)
+        decks: list[UserDeckSelection] = await handle_transaction(db=db, func=UserDeckSelectionCrud.get_all, user_id=user_id)
         for deck in decks:
             await db.refresh(deck)
         return {deck.game_mode:deck.deck_id for deck in decks}
     
     @staticmethod
     async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelection]:
-        deck = await handle_transaction(db=db, func=UserDeckSelectionCrud.get, user_id=user_id, game_mode=data.game_mode)
+        deck: None|UserDeckSelection = await handle_transaction(db=db, func=UserDeckSelectionCrud.get, user_id=user_id, game_mode=data.game_mode)
         if deck:
             result = await handle_transaction(db=db, func=UserDeckSelectionCrud.update, selection_id=deck.selection_id, deck_selection=data)
         else:

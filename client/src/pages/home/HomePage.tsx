@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { loadingState, showPageState} from "../../atoms/global";
+import { loadingState, showPageState, wsTokenState} from "../../atoms/global";
 import styled from "styled-components";
 import useHttpUser from "../../api/users";
 import useHttpDeck from "../../api/decks";
+import useHttpGame from "../../api/game";
 
 
 const HomePage: React.FC = () => {
   const [showPage, setShowPage] = useRecoilState(showPageState)
   const setLoading = useSetRecoilState(loadingState)
+  const setWsToken = useSetRecoilState(wsTokenState)
   const {userLogout} = useHttpUser()
+  const {getToken} = useHttpGame()
   const {} = useHttpDeck
 
   const useHandlePlay = () => {
@@ -25,6 +28,11 @@ const HomePage: React.FC = () => {
   }
 
   const useHandleOption = () => {
+    getToken((
+      (data) => {
+        setWsToken(data)
+      } 
+    ))
     setShowPage("option")
   }
 
