@@ -10,7 +10,6 @@ export interface Card {
   health: number;
   description: string;
   image_path: string;
-  cost: number;
   card_type: number;
 }
 

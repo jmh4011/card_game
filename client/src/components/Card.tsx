@@ -3,7 +3,6 @@ import styled from "styled-components";
 import attackImg from '../assets/card-base/attack.png';
 import characterFrameImg from '../assets/card-base/character-frame.png';
 import classImg from '../assets/card-base/class.png';
-import costImg from '../assets/card-base/cost.png';
 import descriptionImg from '../assets/card-base/description.png';
 import frameImg from '../assets/card-base/frame.png';
 import healthImg from '../assets/card-base/health.png';
@@ -30,11 +29,6 @@ const Card: React.FC<CardProps> = ({ card_id }) => {
             {card.card_name}
           </ResponsiveText>
         </Name>
-        <Cost>
-        <ResponsiveText>
-            {card.cost}
-          </ResponsiveText>
-        </Cost>
         <Description>
           <ResponsiveText>
             {card.description}
@@ -137,15 +131,6 @@ const Health = styled(CardBase)`
   right: 2%;
   aspect-ratio: 156/163;
   font-size: 6%;
-`;
-
-const Cost = styled(CardBase)`
-  width: 20.48%;
-  background-image: url(${costImg});
-  top: 2%;
-  left: 2%;
-  font-size: 6%;
-  aspect-ratio: 1;
 `;
 
 const Description = styled(CardBase)`

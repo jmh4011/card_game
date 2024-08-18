@@ -11,7 +11,6 @@ class Card(Base):
     health = Column(Integer, nullable=True)
     description = Column(Text, nullable=True)
     image_path = Column(String(255), nullable=True)
-    cost = Column(Integer, nullable=True)
     card_type = Column(Integer, nullable=True)
     decks = relationship("DeckCard", back_populates="card")
     user_cards = relationship("UserCard", back_populates="card")

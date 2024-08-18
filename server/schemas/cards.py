@@ -12,7 +12,6 @@ class CardBase(BaseModel):
     health: int
     description: str
     image_path: str
-    cost: int
     card_type: int
 
 class CardCreate(CardBase):
