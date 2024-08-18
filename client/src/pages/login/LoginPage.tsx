@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
         <Title>Login</Title>
         <UserInput placeholder="id" type="text" onChange={(e) => setUsername(e.target.value)} />
         <UserInput placeholder="password" type="password" onChange={(e) => setPassword(e.target.value)} />
-        <CreateAccount onClick={() => setShowPage("createAccount")}>Create Account</CreateAccount>
+        <CreateAccount onClick={() => setShowPage("signUp")}>Create Account</CreateAccount>
         <FindAccount onClick={() => alert("장민혁한테 문의하세요.")}>Find Account</FindAccount>
         <LoginButton onClick={useHandleLogin}>완료</LoginButton>
       </Login>

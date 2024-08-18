@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import StartPage from './pages/start/StartPage';
 import HomePage from './pages/home/HomePage';
 import LoginPage from './pages/login/LoginPage';
-import CreateAccountPage from './pages/login/CreateAccountPage';
+import SignUpPage from './pages/login/SignUp';
 import SelectDeckPage from './pages/deck/SelectDeckPage';
 import ConfigDeckPage from './pages/deck/ConfigDeckPage';
 import PlayPage from './pages/play/PlayPage';
@@ -38,7 +38,7 @@ const App: React.FC = () => {
           {showPage === "start" && <StartPage />}
           {showPage === "home" && <HomePage />}
           {showPage === "login" && <LoginPage />}
-          {showPage === "createAccount" && <CreateAccountPage />}
+          {showPage === "signUp" && <SignUpPage />}
           {showPage === "selectDeck" && <SelectDeckPage />}
           {showPage === "configDeck" && <ConfigDeckPage />}
           {showPage === "play" && <PlayPage />}
@@ -51,7 +51,7 @@ const App: React.FC = () => {
 
 
 
-export type ShowPage = ('start' |"home" | "login" | 'createAccount' | "selectDeck" | "configDeck" | "play" |"game" | 'option')
+export type ShowPage = ('start' |"home" | "login" | 'signUp' | "selectDeck" | "configDeck" | "play" |"game" | 'option')
 
 const Page = styled.div`
   width: 100vw;

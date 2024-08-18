@@ -5,7 +5,7 @@ import useHttpUser from "../../api/users";
 import { useSetRecoilState } from "recoil";
 import { loadingState, showPageState} from "../../atoms/global";
 
-const CreateAccountPage: React.FC = () => {
+const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [againPassword, setAgainPassword] = useState<string>('');
@@ -22,7 +22,7 @@ const CreateAccountPage: React.FC = () => {
   }, [vibration]);
 
 
-  const useHandleCreateAccount = () => {
+  const useHandleSignUp = () => {
     createUser(username, password,
       (data) => {setShowPage('start');},
       (data) => {alert("이미 있는 아이디")},
@@ -36,24 +36,24 @@ const CreateAccountPage: React.FC = () => {
   return (
     <>
       <OutModal />
-      <CreateAccount>
-        <Title>Create Account</Title>
+      <SignUp>
+        <Title>sign up</Title>
         <UserInput placeholder="id" type="text" onChange={(e) => setUsername(e.target.value)} />
         <UserInput placeholder="new Password" type="password" onChange={(e) => setPassword(e.target.value)} />
         <UserInput placeholder="again Password" type="password" onChange={(e) => setAgainPassword(e.target.value)} />
         {password !== againPassword && vibration && <WeakInput>비밀번호가 일치 하지 않습니다.</WeakInput>}
         <Login onClick={() => setShowPage("login")}>Login</Login>
         {password === againPassword? 
-        <LoginButton onClick={useHandleCreateAccount}>완료</LoginButton>:
+        <LoginButton onClick={useHandleSignUp}>완료</LoginButton>:
         <LoginButton onClick={useHandleWeack}>완료</LoginButton>}
-      </CreateAccount>
+      </SignUp>
     </>
   );
 };
 
-export default CreateAccountPage
+export default SignUpPage
 
-const CreateAccount = styled.div`
+const SignUp = styled.div`
   z-index: 15;
   border: 1px solid rgb(150, 150, 150);
   border-radius: 10px;
