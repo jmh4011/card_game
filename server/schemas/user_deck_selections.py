@@ -15,7 +15,7 @@ class UserDeckSelectionUpdate(BaseModel):
     game_mode: str |None = None
     deck_id: str | None = None
 
-class UserDeckSelection(UserDeckSelectionBase):
+class UserDeckSelectionSchemas(UserDeckSelectionBase):
     selection_id: int
     selection_date: datetime  = Field(default_factory=lambda: datetime.now(timezone.utc))
 

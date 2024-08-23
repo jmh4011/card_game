@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from crud import DeckCardCrud,DeckCrud
 from schemas.decks import DeckUpdate, DeckCreate
-from schemas.routers import RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate, RouterDeckCard
+from schemas.routers import RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
 from models import Deck
 from utils import handle_transaction, to_dict
 import logging

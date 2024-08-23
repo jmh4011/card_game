@@ -4,10 +4,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from auth import create_refresh_token, verify_password, create_access_token, get_password_hash
 from crud import UserCrud, UserCardCrud, UserStatCrud, UserDeckSelectionCrud
 from schemas.users import UserLogin, UserCreate
-from schemas.user_cards import UserCardReturn
-from schemas.user_stats import UserStat, UserStatCreate
+from schemas.user_stats import UserStatSchemas, UserStatCreate
 from models import User
-from schemas.user_deck_selections import UserDeckSelection,UserDeckSelectionUpdate, UserDeckSelectionCreate
+from schemas.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
 from utils import handle_transaction, to_dict
 import logging
 
@@ -44,7 +43,7 @@ class UserServices:
         return (access_token, refresh_token)
         
     @staticmethod
-    async def get_stat(db: AsyncSession, user_id: int) -> UserStat:
+    async def get_stat(db: AsyncSession, user_id: int) -> UserStatSchemas:
         stat = await handle_transaction(db=db, func=UserStatCrud.get, user_id=user_id)
         await db.refresh(stat)
         return stat
@@ -59,14 +58,14 @@ class UserServices:
 
     @staticmethod
     async def get_deck_selection(db:AsyncSession,user_id:int) -> dict[str,int]:
-        decks: list[UserDeckSelection] = await handle_transaction(db=db, func=UserDeckSelectionCrud.get_all, user_id=user_id)
+        decks: list[UserDeckSelectionSchemas] = await handle_transaction(db=db, func=UserDeckSelectionCrud.get_all, user_id=user_id)
         for deck in decks:
             await db.refresh(deck)
         return {deck.game_mode:deck.deck_id for deck in decks}
     
     @staticmethod
-    async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelection]:
-        deck: None|UserDeckSelection = await handle_transaction(db=db, func=UserDeckSelectionCrud.get, user_id=user_id, game_mode=data.game_mode)
+    async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:
+        deck: None|UserDeckSelectionSchemas = await handle_transaction(db=db, func=UserDeckSelectionCrud.get, user_id=user_id, game_mode=data.game_mode)
         if deck:
             result = await handle_transaction(db=db, func=UserDeckSelectionCrud.update, selection_id=deck.selection_id, deck_selection=data)
         else:

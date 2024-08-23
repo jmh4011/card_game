@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, timezone
@@ -15,7 +14,7 @@ class UserCreate(UserBase):
 class UserLogin(UserBase):
     pass
 
-class User(UserBase):
+class UserSchemas(UserBase):
     refresh_token: str | None = None
     refresh_token_expiry: datetime | None = None
     user_id: int
@@ -24,5 +23,5 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
-class UserUpdate(User):
+class UserUpdate(UserSchemas):
     pass

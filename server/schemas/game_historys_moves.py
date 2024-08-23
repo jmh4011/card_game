@@ -14,7 +14,7 @@ class GameHistoryMoveUpdate(GameHistoryMoveBase):
 
 
 
-class GameHistoryMove(GameHistoryMoveBase):
+class GameHistoryMoveSchemas(GameHistoryMoveBase):
     move_id: int
     move_timestamp : datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

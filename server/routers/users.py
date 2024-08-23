@@ -3,9 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth import set_auth_cookies
 from database import get_db
 from schemas.users import UserCreate, UserLogin
-from schemas.user_stats import UserStat
-from schemas.user_cards import UserCardReturn
-from schemas.user_deck_selections import UserDeckSelection, UserDeckSelectionUpdate
+from schemas.user_stats import UserStatSchemas
+from schemas.user_deck_selections import UserDeckSelectionUpdate
 from services import UserServices
 from auth import get_user_id
 
@@ -50,7 +49,7 @@ async def logout_user_route(request: Request, response: Response, db: AsyncSessi
     response.delete_cookie(key="refresh_token")
     return 'Logout successful'
 
-@router.get("/users/stat", response_model=UserStat)
+@router.get("/users/stat", response_model=UserStatSchemas)
 async def read_user_state_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:

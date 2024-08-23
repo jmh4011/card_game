@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
-from schemas.cards import Card
-from schemas.decks import Deck
+from schemas.cards import CardSchemas
+from schemas.decks import DeckSchemas
 
 
 class RouterDeckUpdate(BaseModel):
@@ -10,14 +10,10 @@ class RouterDeckUpdate(BaseModel):
     deck_cards: dict[int,int]
 
 class RouterDeckUpdateReturn(BaseModel):
-    deck: Deck
+    deck: DeckSchemas
     deck_cards: dict[int,int]
 
 
 class RouterDeckCreate(BaseModel):
     deck_name: str
     image_path: str
-
-class RouterDeckCard(Card):
-    deck_card_count: int
-    player_card_count: int

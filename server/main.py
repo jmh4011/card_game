@@ -1,13 +1,16 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
-from database import Base, engine
+from database import Base, engine, get_db,get_db_
 from routers import users, decks, cards, games
 import logging
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
+from sqlalchemy.ext.asyncio import AsyncSession
+from services import CardServices
+
 
 app = FastAPI()
 
@@ -84,11 +87,9 @@ async def read_root():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 애플리케이션 시작 시 실행되는 코드
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
-    # 애플리케이션 종료 시 실행되는 코드
     await engine.dispose()
 
 app.router.lifespan_context = lifespan

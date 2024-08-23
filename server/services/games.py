@@ -1,10 +1,10 @@
 from fastapi import FastAPI, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 from crud import GameModeCrud
-from schemas.game_modes import GameMode
+from schemas.game_modes import GameModeSchemas
 from auth import create_websocket_token
 from utils import handle_transaction, to_dict
-from module import room_manager
+from modules import room_manager
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class GameServices:
     @staticmethod
-    async def get_mode(db:AsyncSession) -> list[GameMode]:
+    async def get_mode(db:AsyncSession) -> list[GameModeSchemas]:
         modes = await GameModeCrud.get_all(db=db)
         return modes
 

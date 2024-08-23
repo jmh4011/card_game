@@ -1,15 +1,12 @@
 import asyncio
 from fastapi import WebSocket
+from modules.player import Player
 
-
-class TaskProcessor:
-    def __init__(self):
+class GameManager:
+    def __init__(self, player1:Player, player2:Player):
         self.task_queue = asyncio.Queue()
-        self.패 = []
-        self.필드 = []
-        self.묘지 = []
-        self.덱 = []
-        
+        self.player1 = player1
+        self.player2 = player2
 
     async def add_task(self, task_data):
         await self.task_queue.put(task_data)
@@ -23,11 +20,7 @@ class TaskProcessor:
             self.task_queue.task_done()
 
     def handle_task(self, task_data):
-        # 동기적으로 작업을 처리하는 부분
-        print(f"Processing task: {task_data}")
-        import time
-        time.sleep(2)  # 동기 처리 작업 시뮬레이션
-        print(f"Task completed: {task_data}")
+        pass
 
     async def stop(self):
         await self.task_queue.put(None)

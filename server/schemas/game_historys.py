@@ -12,7 +12,7 @@ class GameHistoryCreate(GameHistoryBase):
 class GameHistoryUpdate(GameHistoryBase):
     pass
 
-class GameHistory(GameHistoryBase):
+class GameHistorySchemas(GameHistoryBase):
     deck_id: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

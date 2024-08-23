@@ -4,14 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from services import GameServices
 from auth import get_user_id, verify_token
-from schemas.game_modes import GameMode
+from schemas.game_modes import GameModeSchemas
 import logging
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/games/modes", response_model=GameMode)
+@router.get("/games/modes", response_model=list[GameModeSchemas])
 async def read_cards_all_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:

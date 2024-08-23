@@ -20,7 +20,7 @@ class CardCreate(CardBase):
 class CardUpdate(CardBase):
     pass
 
-class Card(CardBase):
+class CardSchemas(CardBase):
     card_id: int
 
     class Config:

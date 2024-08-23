@@ -10,7 +10,7 @@ class GameModeCreate(GameModeBase):
 class GameModeUpdate(GameModeBase):
     pass
 
-class GameMode(GameModeBase):
+class GameModeSchemas(GameModeBase):
     mode_id: int
 
     class Config:

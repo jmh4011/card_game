@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from services import CardServices
 from auth import get_user_id
-from schemas.cards import Card
+from schemas.cards import CardSchemas
 
 
 router = APIRouter()
 
 
-@router.get("/cards", response_model=dict[int,Card])
+@router.get("/cards", response_model=dict[int,CardSchemas])
 async def read_cards_all_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:

@@ -14,7 +14,7 @@ class UserStatCreate(UserStatBase):
 class UserStatUpdate(UserStatBase):
     pass
 
-class UserStat(UserStatBase):
+class UserStatSchemas(UserStatBase):
     stat_id: int
     last_updated: datetime
 

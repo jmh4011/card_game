@@ -3,14 +3,14 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from schemas.routers import RouterDeckUpdate, RouterDeckCreate, RouterDeckUpdateReturn
-from schemas.decks import Deck
+from schemas.decks import DeckSchemas
 from services import DeckServices
 from auth import get_user_id
 
 
 router = APIRouter()
 
-@router.get("/decks", response_model=list[Deck])
+@router.get("/decks", response_model=list[DeckSchemas])
 async def read_deck_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:
@@ -28,7 +28,7 @@ async def update_deck_route(deck_id :int, deck: RouterDeckUpdate, request: Reque
     deck = await DeckServices.update(db=db,user_id=user_id,deck_id=deck_id, deck=deck)
     return deck
 
-@router.post("/decks", response_model=Deck)
+@router.post("/decks", response_model=DeckSchemas)
 async def create_deck_route(deck: RouterDeckCreate,request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     if user_id is None:

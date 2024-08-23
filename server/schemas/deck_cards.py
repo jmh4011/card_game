@@ -13,7 +13,7 @@ class DeckCardCreate(DeckCardBase):
 class DeckCardUpdate(DeckCardBase):
     pass
 
-class DeckCard(DeckCardBase):
+class DeckCardSchemas(DeckCardBase):
     deck_card_id: int
 
     class Config:
