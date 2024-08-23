@@ -19,4 +19,8 @@ class Effect:
     
     @classmethod
     def condition(cls, condition_info: ConditionInfo) -> bool:
-        pass
+        return False
+    
+    @classmethod
+    def targer(cls, condition_info:ConditionInfo) -> list:
+        return []
