@@ -19,5 +19,5 @@ class Effect_1(Effect):
         pass
     
     @classmethod
-    def condition(cls, condition_info: ConditionInfo) -> bool:
-        pass
+    def condition(cls, condition_info: ConditionInfo) -> tuple[bool, list]:
+        return super().condition(condition_info)

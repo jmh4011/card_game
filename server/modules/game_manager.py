@@ -5,8 +5,8 @@ from modules.player import Player
 class GameManager:
     def __init__(self, player1:Player, player2:Player):
         self.task_queue = asyncio.Queue()
-        self.player1 = player1
-        self.player2 = player2
+        self.current_player = player1
+        self.waiting_player = player2
 
     async def add_task(self, task_data):
         await self.task_queue.put(task_data)

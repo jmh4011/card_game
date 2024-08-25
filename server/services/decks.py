@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from crud import DeckCardCrud,DeckCrud
 from schemas.decks import DeckUpdate, DeckCreate
 from schemas.routers import RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
-from models import Deck
+from models import Deck, DeckCard
 from utils import handle_transaction, to_dict
 import logging
 
@@ -20,7 +20,7 @@ class DeckServices:
     @staticmethod
     async def update(db: AsyncSession, user_id:int, deck_id: int, deck: RouterDeckUpdate) -> RouterDeckUpdateReturn:
         logger.info(f"\n\n{deck.deck_cards}\n\n")
-        db_deck = await handle_transaction(db=db, func=DeckCrud.get,should_refresh=True, deck_id=deck_id)
+        db_deck = await handle_transaction(db=db, func=DeckCrud.get, should_refresh=True, deck_id=deck_id)
 
         if db_deck is None or db_deck.user_id != user_id:
             return None
@@ -37,14 +37,14 @@ class DeckServices:
     
     @staticmethod
     async def create(db: AsyncSession, user_id:int, deck:RouterDeckCreate):
-        deck_data = DeckCreate(user_id=user_id, deck_name=deck.deck_name, image=deck.image)
+        deck_data = DeckCreate(user_id=user_id, deck_name=deck.deck_name, image=deck.image_path)
         deck = await handle_transaction(db, DeckCrud.create, should_refresh=True, deck=deck_data)
         return deck
     
     
     @staticmethod
     async def get_cards(db: AsyncSession, deck_id: int) -> dict[int,int]:
-        deck_cards = await handle_transaction(db=db, func=DeckCardCrud.get_all, deck_id=deck_id)
+        deck_cards: list[DeckCard] = await handle_transaction(db=db, func=DeckCardCrud.get_all, deck_id=deck_id)
         for card in deck_cards:
             await db.refresh(card)
         return {deck_card.card_id:deck_card.card_count for deck_card in deck_cards}

@@ -18,8 +18,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
     <InfoContainer>
       <CardId>{card.card_id}</CardId>
       <Name>{card.card_name}</Name>
-      <Image src={characterImage(card.image)} alt={card.card_name} />
-      <Cost>{card.cost}</Cost>
+      <Image src={characterImage(card.image_path)} alt={card.card_name} />
       <Attack>{card.attack}</Attack>
       <Health>{card.health}</Health>
       <Class>{card.card_class}</Class>

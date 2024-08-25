@@ -1,6 +1,6 @@
 from .card import CardCrud
 from .deck import DeckCrud
-from .game_mode import GameModeCrud
+from .game_mod import GameModCrud
 from .game_history import GameHistoryCrud
 from .game_history_move import GameHistoryMoveCrud
 from .user import UserCrud

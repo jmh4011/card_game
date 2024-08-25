@@ -47,6 +47,7 @@ class CardInfo(BaseModel):
 class EffectInfo(BaseModel):
     card: Card
     effect: Effect
+    targets: list[Card] = []
     
 class MoveType(Enum):
     EFFECT = "effect"

@@ -9,5 +9,5 @@ CARD_CLASS_MAP: dict[int, type[Card]] = {
     3: Card_3,
 }
 
-def get_card_instnce(card_id:int, zone: ZoneType, index: int, before_zone: ZoneType | None = None):
+def get_card_instance(card_id:int, zone: ZoneType, index: int, before_zone: ZoneType | None = None):
     return CARD_CLASS_MAP.get(card_id)(zone=zone, index=index, before_zone=before_zone)

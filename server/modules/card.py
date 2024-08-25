@@ -32,3 +32,10 @@ class Card:
             side_effect=self.side_effects,
             back=False
         )
+    
+    def move(self, new_zone: ZoneType, index: int):
+        self.zone = new_zone
+        self.index = index
+
+    # def destroy(self):
+        
