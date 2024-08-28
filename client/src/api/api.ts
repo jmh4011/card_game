@@ -14,7 +14,7 @@ interface HttpOptions {
 }
 
 const api = axios.create({
-  baseURL: "/",
+  baseURL: "/api",
   headers: {},
 });
 
@@ -46,7 +46,7 @@ export const useHttp = () => {
     try {
       const response: AxiosResponse =
         data === undefined ? await request(url) : await request(url, data);
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -89,6 +89,7 @@ export const useHttp = () => {
       customSetLoading:customSetLoading,
       data:data
     });
+    console.log(result)
     callback(result);
   };
 

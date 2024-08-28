@@ -56,7 +56,7 @@ class QueueMiddleware(BaseHTTPMiddleware):
             logger.error(f"Error processing request: {e}")
             return Response("Internal Server Error", status_code=500)
 
-app.add_middleware(QueueMiddleware)
+# app.add_middleware(QueueMiddleware)
 
 # CORS 설정
 origins = [

@@ -32,11 +32,6 @@ export const userCardsStats = atom<CardCount>({
   default: {},
 });
 
-export const decksState = atom<Deck[]>({
-  key: "decks",
-  default: [],
-});
-
 export const deckSelectionState = atom<DeckSelection>({
   key: "deckSelection",
   default: {},

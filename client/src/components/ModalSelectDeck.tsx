@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import useHttpDeck from "../api/decks";
-import { decksState } from "../atoms/global";
 import styled from "styled-components";
 import { Deck } from "../utils/types";
 import { characterImage } from "../api/static";
@@ -15,14 +14,20 @@ const ModalSelectDeck: React.FC<ModalConfigDeckPorps> = ({
   handleDeckClick,
   handleExit,
 }) => {
-  const { createDeck } = useHttpDeck();
-  const [decks, setDecks] = useRecoilState(decksState);
+  const { getDecks, createDeck } = useHttpDeck();
+  const [decks, setDecks] = useState<Deck[]>([]);
 
-  const HandleCreate = () => {
+  const handleCreate = () => {
     createDeck((data) => {
       setDecks((prev) => [...prev, data]);
     });
   };
+
+  useEffect(() => {
+    getDecks((data) => {
+      setDecks(data);
+    });
+  }, []);
 
   return (
     <Modal>
@@ -36,7 +41,7 @@ const ModalSelectDeck: React.FC<ModalConfigDeckPorps> = ({
             <DeckName>{value.deck_name}</DeckName>
           </DeckContainer>
         ))}
-        <CreateButton onClick={HandleCreate}>Create Deck</CreateButton>
+        <CreateButton onClick={handleCreate}>Create Deck</CreateButton>
       </Container>
     </Modal>
   );

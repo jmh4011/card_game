@@ -107,7 +107,7 @@ const ConfigDeckPage: React.FC<ConfigDeckProps> = ({
           <OutModal />
           <div className="in">
             <button className="cancel" onClick={() => setShowExitCheck(false)}>
-              취소
+              cancel
             </button>
             <button
               className="exit"
@@ -116,7 +116,7 @@ const ConfigDeckPage: React.FC<ConfigDeckProps> = ({
                 navigate("/deck");
               }}
             >
-              나가기
+              exit
             </button>
           </div>
         </ModalExitCheck>

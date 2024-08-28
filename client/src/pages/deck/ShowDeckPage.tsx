@@ -26,6 +26,7 @@ const ShowDeckPage: React.FC = () => {
     getDeck(
       Number(id),
       (data: any) => {
+        console.log(id , data)
         setShowType(data.read_only ? 1 : 0);
         setShowDeck(data.deck);
         setDeckCards(data.deck_cards);

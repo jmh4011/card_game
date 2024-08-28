@@ -2,7 +2,6 @@ import { useHttp } from "./api";
 import { DeckSelectionUpdate, SetFn } from "../utils/types";
 import { useSetRecoilState } from "recoil";
 import {
-  decksState,
   userStats,
   userCardsStats,
   cardsStats,
@@ -12,7 +11,6 @@ import {
 
 const useHttpUser = () => {
   const {http} = useHttp()
-  const setDecks = useSetRecoilState(decksState);
   const setUser = useSetRecoilState(userStats);
   const setIsAuthenticated = useSetRecoilState(isAuthenticatedState);
   const setUserCards = useSetRecoilState(userCardsStats);

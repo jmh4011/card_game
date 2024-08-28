@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import { useHttp } from "./api";
-import { cardsStats, decksState } from "../atoms/global";
+import { cardsStats} from "../atoms/global";
 import { SetFn } from "../utils/types";
 
 const useHttpCard = () => {

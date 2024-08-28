@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { decksState, isAuthenticatedState, loadingState } from "./atoms/global";
+import {  isAuthenticatedState, loadingState } from "./atoms/global";
 import {
   BrowserRouter,
   Route,
@@ -23,11 +23,9 @@ import ShowDeckPage from "./pages/deck/ShowDeckPage";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
-  const [decks, setDecks] = useRecoilState(decksState);
   const navigate = useNavigate();
   const {  } = useHttpUser();
   const { getCards } = useHttpCard();
-  const { getDecks } = useHttpDeck();
   const {authCheck, getUserStat, getUserCards, getUserDeckSelection } = useHttpUser();
   const [isAuthenticated, setIsAuthenticated] =
     useRecoilState(isAuthenticatedState);
@@ -51,7 +49,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      getDecks();
       getUserStat();
       getUserCards();
       getCards();

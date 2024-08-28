@@ -1,38 +1,34 @@
 import { useSetRecoilState } from "recoil";
 import { useHttp } from "./api";
-import { decksState } from "../atoms/global";
+import {} from "../atoms/global";
 import { SetFn, DeckUpdate } from "../utils/types";
 
 const useHttpDeck = () => {
   const { http } = useHttp();
-  const setDecks = useSetRecoilState(decksState);
 
-  const getDecks = (onError?: SetFn, setLoading?: SetFn) => {
+  const getDecks = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/decks`,
-      callback: (data) => {
-        setDecks(data);
-      },
+      callback: callback,
       customSetLoading: setLoading,
       onError,
     });
   };
 
-  const getDeck = async (
+  const getDeck = (
     deck_id: number,
     callback: SetFn,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
-    const result = await http({
+    http({
       type: "get",
       url: `/decks/${deck_id}`,
       callback: callback,
       customSetLoading: setLoading,
       onError,
     });
-    callback(result);
   };
 
   const createDeck = (

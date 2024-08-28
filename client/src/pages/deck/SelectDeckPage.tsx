@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const SelectDeckPage: React.FC = () => {
   // const {createDeck, getDeckCards} = useHttpDeck()
-  const [decks, setDecks] = useState<Deck[]>([]);
+  // const [decks, setDecks] = useState<Deck[]>([]);
   // const setShowPage = useSetRecoilState(showPageState);
 
   // const setShowDeck = useSetRecoilState(deckState);
@@ -23,10 +23,6 @@ const SelectDeckPage: React.FC = () => {
   const handleDeckClick = (deck: Deck) => {
     navigate(`/deck/${deck.deck_id}`);
   };
-
-  useEffect(() => {
-    setDecks
-  })
 
   return (
     <ModalSelectDeck
