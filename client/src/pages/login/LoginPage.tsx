@@ -2,20 +2,33 @@ import React, { useState } from "react";
 import { OutModal } from "../../utils/styles";
 import styled from "styled-components";
 import useHttpUser from "../../api/users";
-import { useSetRecoilState } from "recoil";
-import { loadingState, showPageState} from "../../atoms/global";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isAuthenticatedState, loadingState } from "../../atoms/global";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const setShowPage = useSetRecoilState(showPageState);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const setLoading = useSetRecoilState(loadingState);
-  const {userLogin} = useHttpUser();
+
+  const [isAuthenticated, setIsAuthenticated] =
+    useRecoilState(isAuthenticatedState);
+  const { userLogin } = useHttpUser();
+  const navigate = useNavigate();
+
   const useHandleLogin = () => {
-    userLogin(username, password, 
-      (data) => {setShowPage("start");},
-      (data) => {alert("틀림")},
-      setLoading);
+    userLogin(
+      username,
+      password,
+      (data) => {
+        setIsAuthenticated(true);
+        navigate("/");
+      },
+      (data) => {
+        alert("틀림");
+      },
+      setLoading
+    );
   };
 
   return (
@@ -23,10 +36,18 @@ const LoginPage: React.FC = () => {
       <OutModal />
       <Login>
         <Title>Login</Title>
-        <UserInput placeholder="id" type="text" onChange={(e) => setUsername(e.target.value)} />
-        <UserInput placeholder="password" type="password" onChange={(e) => setPassword(e.target.value)} />
-        <CreateAccount onClick={() => setShowPage("signUp")}>Create Account</CreateAccount>
-        <FindAccount onClick={() => alert("장민혁한테 문의하세요.")}>Find Account</FindAccount>
+        <UserInput
+          placeholder="id"
+          type="text"
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <UserInput
+          placeholder="password"
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <SignUp to={"/signup"}>Create Account</SignUp>
+        <FindAccount onClick={() => navigate("/")}>Find Account</FindAccount>
         <LoginButton onClick={useHandleLogin}>완료</LoginButton>
       </Login>
     </>
@@ -70,7 +91,7 @@ const UserInput = styled.input`
   font-size: 15px;
 `;
 
-const CreateAccount = styled.p`
+const SignUp = styled(Link)`
   display: inline;
   margin-left: 50px;
   font-size: 15px;

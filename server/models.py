@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, TIMESTAMP, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, TIMESTAMP, func,Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -30,6 +30,7 @@ class Deck(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     deck_name = Column(String(100), nullable=True)
     image_path = Column(String(255), nullable=True)
+    is_public = Column(Boolean, default=False, nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=True)
     user = relationship("User", back_populates="decks")
     cards = relationship("DeckCard", back_populates="deck")
@@ -47,7 +48,7 @@ class GameHistory(Base):
     winner = relationship("User", foreign_keys=[winner_id])
 
 class GameHistoryMove(Base):
-    __tablename__ = "game_historys_moves"
+    __tablename__ = "game_history_moves"
     move_id = Column(Integer, primary_key=True, index=True)
     game_id = Column(Integer, ForeignKey("game_historys.game_id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)

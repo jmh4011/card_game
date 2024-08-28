@@ -11,6 +11,10 @@ from auth import get_user_id
 
 router = APIRouter()
 
+@router.get("/users/auth", response_model=bool)
+async def auth_user_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(db=db,request=request,response=response)
+    return True
 
 
 @router.put("/users/login", response_model=str)
@@ -42,8 +46,6 @@ async def create_user_route(response: Response, user: UserCreate, db: AsyncSessi
 @router.delete("/users/logout", response_model=str)
 async def logout_user_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db,request=request,response=response)
-    if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     await UserServices.update_refresh_token(db=db,user_id=user_id, refresh_token=None)
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
@@ -52,8 +54,6 @@ async def logout_user_route(request: Request, response: Response, db: AsyncSessi
 @router.get("/users/stat", response_model=UserStatSchemas)
 async def read_user_state_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
-    if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     stats = await UserServices.get_stat(db=db, user_id=user_id)
     if stats is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -62,8 +62,6 @@ async def read_user_state_route(request: Request, response: Response, db: AsyncS
 @router.get("/users/cards", response_model=dict[int,int])
 async def read_user_cards_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
-    if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     cards = await UserServices.get_cards(db=db, user_id=user_id)
     if cards is None:
         raise HTTPException(status_code=404, detail="user not found")
@@ -74,8 +72,6 @@ async def read_user_cards_route(request: Request, response: Response, db: AsyncS
 @router.get("/users/deck-selection", response_model=dict[str,int])
 async def read_user_deck_selection_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
-    if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     decks = await UserServices.get_deck_selection(db=db, user_id=user_id)
     if decks is None:
         raise []
@@ -84,7 +80,5 @@ async def read_user_deck_selection_route(request: Request, response: Response, d
 @router.put("/users/deck-selection")
 async def read_user_deck_selection_route(data:UserDeckSelectionUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
-    if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     result = await UserServices.set_deck_selection(db=db, user_id=user_id, data=data)
     return result

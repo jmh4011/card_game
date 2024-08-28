@@ -1,25 +1,13 @@
 import React, { useRef, useEffect, useState, ReactNode } from "react";
 import styled from "styled-components";
 
-
-const Container = styled.div<{ fontSize: number }>`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
-  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
-  font-size: ${(props) => props.fontSize}px; /* props로 받은 fontSize 적용 */
-`;
-
 interface ResponsiveTextProps {
   children: ReactNode;
 }
 
 const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [fontSize, setFontSize] = useState<number>(100); 
+  const [fontSize, setFontSize] = useState<number>(100);
 
   const updateFontSize = () => {
     if (!containerRef.current) return;
@@ -29,7 +17,6 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
       const parentWidth = parentElement.clientWidth;
       const parentHeight = parentElement.clientHeight;
 
-      
       let newFontSize = 100;
       let fits = false;
 
@@ -53,7 +40,7 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
         }
       }
 
-      setFontSize(newFontSize * 0.90);
+      setFontSize(newFontSize * 0.9);
     }
   };
 
@@ -63,7 +50,7 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
     return () => {
       window.removeEventListener("resize", updateFontSize);
     };
-  }, [children]); 
+  }, [children]);
 
   return (
     <Container ref={containerRef} fontSize={fontSize}>
@@ -73,3 +60,14 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
 };
 
 export default ResponsiveText;
+
+const Container = styled.div<{ fontSize: number }>`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+  font-size: ${(props) => props.fontSize}px; /* props로 받은 fontSize 적용 */
+`;

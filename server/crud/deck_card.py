@@ -46,12 +46,13 @@ class DeckCardCrud:
         db.add_all(
             [DeckCard(deck_id=deck_id, card_id=card_id) for card_id in cards_ids]
         )
+    
     @staticmethod
     async def delete_all(db: AsyncSession, deck_id : int):
         await db.execute(delete(DeckCard).filter(DeckCard.deck_id == deck_id))
 
 
-    async def update_all(db: AsyncSession, deck_id: int, cards: dict[int, int]):
+    async def update_all(db: AsyncSession, deck_id: int, cards: dict[int, int]) -> list[DeckCard]:
         existing_deck_cards = await DeckCardCrud.get_all(db, deck_id)
         existing_card_ids = {deck_card.card_id for deck_card in existing_deck_cards}
 

@@ -1,24 +1,25 @@
-import { useSetRecoilState } from 'recoil';
-import { useHttp } from './api';
-import {  decksState } from '../atoms/global';
-import { SetFn} from '../utils/types';
+import { useSetRecoilState } from "recoil";
+import { useHttp } from "./api";
+import { cardsStats, decksState } from "../atoms/global";
+import { SetFn } from "../utils/types";
 
 const useHttpCard = () => {
   const { http } = useHttp();
+  const setCards = useSetRecoilState(cardsStats);
 
-  const getCards = (callback:SetFn,onError?: SetFn, setLoading?: SetFn) => {
+  const getCards = (onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/cards`,
-      callback:callback,
+      callback: (data) => {
+        setCards(data);
+      },
       customSetLoading: setLoading,
-      onError:onError
+      onError: onError,
     });
-  }
+  };
 
+  return { getCards };
+};
 
-
-  return {getCards};
-}
-
-export default useHttpCard
+export default useHttpCard;

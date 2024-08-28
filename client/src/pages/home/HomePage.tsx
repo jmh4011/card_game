@@ -1,58 +1,63 @@
 import React, { useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { loadingState, showPageState, wsTokenState} from "../../atoms/global";
+import {
+  isAuthenticatedState,
+  loadingState,
+  wsTokenState,
+} from "../../atoms/global";
 import styled from "styled-components";
 import useHttpUser from "../../api/users";
 import useHttpDeck from "../../api/decks";
 import useHttpGame from "../../api/game";
-
+import { useNavigate } from "react-router-dom";
 
 const HomePage: React.FC = () => {
-  const [showPage, setShowPage] = useRecoilState(showPageState)
-  const setLoading = useSetRecoilState(loadingState)
-  const setWsToken = useSetRecoilState(wsTokenState)
-  const {userLogout} = useHttpUser()
-  const {getToken} = useHttpGame()
-  const {} = useHttpDeck
+  const navigate = useNavigate();
+  const setLoading = useSetRecoilState(loadingState);
+  const setWsToken = useSetRecoilState(wsTokenState);
+  const { userLogout } = useHttpUser();
+  const { getToken } = useHttpGame();
+  const {} = useHttpDeck;
+  const [isAuthenticated, setIsAuthenticated] =
+    useRecoilState(isAuthenticatedState);
 
-  const useHandlePlay = () => {
-    alert("미구현")
-  }
+  const handlePlay = () => {
+    navigate("/play");
+  };
 
-  const useHandleDeck = () => {
-    setShowPage("selectDeck")
-  }
+  const handleDeck = () => {
+    navigate("/deck");
+  };
 
-  const useHandleShap = () => {
-    alert("미구현")
-  }
+  const handleShap = () => {
+    alert("미구현");
+  };
 
-  const useHandleOption = () => {
-    getToken((
-      (data) => {
-        setWsToken(data)
-      } 
-    ))
-    setShowPage("option")
-  }
+  const handleOption = () => {
+    getToken((data) => {
+      setWsToken(data);
+    });
+    navigate("/option");
+  };
 
-  const useHandleLogout = () => {
-    userLogout(
-      (data) => {setShowPage("login")})
-  }
+  const handleLogout = () => {
+    userLogout((data) => {
+      setIsAuthenticated(false);
+      navigate("/login");
+    });
+  };
 
-  return <div>
-    <button onClick={useHandlePlay}>플레이</button>
-    <button onClick={useHandleDeck}>덱</button>
-    <button onClick={useHandleShap}>상점</button>
-    <button onClick={useHandleOption}>설정</button>
-    <button onClick={useHandleLogout}>로그아웃</button>
-  </div>
-}
+  return (
+    <div>
+      <button onClick={handlePlay}>플레이</button>
+      <button onClick={handleDeck}>덱</button>
+      <button onClick={handleShap}>상점</button>
+      <button onClick={handleOption}>설정</button>
+      <button onClick={handleLogout}>로그아웃</button>
+    </div>
+  );
+};
 
-const Main = styled.div`
+const Main = styled.div``;
 
-`
-
-
-export default HomePage
+export default HomePage;

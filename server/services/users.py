@@ -7,7 +7,6 @@ from schemas.users import UserLogin, UserCreate
 from schemas.user_stats import UserStatSchemas, UserStatCreate
 from models import User
 from schemas.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
-from utils import handle_transaction, to_dict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,16 +16,29 @@ class UserServices:
     
     @staticmethod
     async def update_refresh_token(db: AsyncSession, user_id: int, refresh_token: str | None):
-        await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True, user_id=user_id, refresh_token=refresh_token)
-        
+        try:
+            user = await UserCrud.update_refresh_token(db=db,user_id=user_id, refresh_token=refresh_token)
+            await db.commit()
+            await db.refresh(user)
+            return user
+        except Exception as e:
+            await db.rollback()
+            raise e
+
     @staticmethod
     async def login(db: AsyncSession, user: UserLogin) -> tuple:
         db_user = await UserCrud.get_username(db=db, username=user.username)
         if db_user and await verify_password(user.password, db_user.password):
             access_token = await create_access_token(db_user.user_id)
             refresh_token = await create_refresh_token(db_user.user_id)
-            await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True ,user_id=db_user.user_id, refresh_token=refresh_token)
-            return (access_token, refresh_token)
+            try:
+                user = await UserCrud.update_refresh_token(db=db,user_id=db_user.user_id, refresh_token=refresh_token)
+                await db.commit()
+                await db.refresh(user)
+                return (access_token, refresh_token)    
+            except Exception as e:
+                await db.rollback()
+                raise e
         return None
     
     @staticmethod
@@ -34,23 +46,33 @@ class UserServices:
         if await UserCrud.get_username(db=db, username=user.username):
             return None
         user_info = UserCreate(username=user.username, password= await get_password_hash(user.password))
-        db_user : User = await handle_transaction(db, UserCrud.create, user=user_info)
-        await db.refresh(db_user)
-        access_token = await create_access_token(db_user.user_id)
-        refresh_token = await create_refresh_token(db_user.user_id)
-        await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True,user_id=db_user.user_id, refresh_token=refresh_token)
-        await handle_transaction(db, UserStatCrud.create, should_refresh=True, stats=UserStatCreate(user_id=db_user.user_id, money=0, nickname=db_user.username))
-        return (access_token, refresh_token)
+        try:
+            db_user : User = await UserCrud.create(db=db, user=user_info)
+            await db.commit()
+            await db.refresh(db_user)
+            access_token = await create_access_token(db_user.user_id)
+            refresh_token = await create_refresh_token(db_user.user_id)
+            refresh_user = await UserCrud.update_refresh_token(db= db,user_id=db_user.user_id, refresh_token=refresh_token)
+            user_stat = await UserStatCrud.create(db=db, stats=UserStatCreate(user_id=db_user.user_id, nickname=db_user.username))
+            await db.commit()
+            await db.refresh(refresh_user)
+            await db.refresh(user_stat)
+            return (access_token, refresh_token)
+        except Exception as e:
+            await db.rollback()
+            raise e
         
     @staticmethod
     async def get_stat(db: AsyncSession, user_id: int) -> UserStatSchemas:
-        stat = await handle_transaction(db=db, func=UserStatCrud.get, user_id=user_id)
+        stat = await UserStatCrud.get(db=db, user_id=user_id)
+        await db.commit()
         await db.refresh(stat)
         return stat
     
     @staticmethod
     async def get_cards(db: AsyncSession, user_id: int) -> dict[int,int]:
-        cards = await handle_transaction(db=db, func=UserCardCrud.get_all, user_id=user_id)
+        cards = await UserCardCrud.get_all(db=db, user_id=user_id)
+        await db.commit()
         for card in cards:
             await db.refresh(card)
         return {card.card_id:card.card_count for card in cards}
@@ -58,17 +80,24 @@ class UserServices:
 
     @staticmethod
     async def get_deck_selection(db:AsyncSession,user_id:int) -> dict[str,int]:
-        decks: list[UserDeckSelectionSchemas] = await handle_transaction(db=db, func=UserDeckSelectionCrud.get_all, user_id=user_id)
+        decks: list[UserDeckSelectionSchemas] = await UserDeckSelectionCrud.get_all(db=db, user_id=user_id)
+        await db.commit()
         for deck in decks:
             await db.refresh(deck)
         return {deck.game_mode:deck.deck_id for deck in decks}
     
     @staticmethod
     async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:
-        deck: None|UserDeckSelectionSchemas = await handle_transaction(db=db, func=UserDeckSelectionCrud.get, user_id=user_id, game_mode=data.game_mode)
-        if deck:
-            result = await handle_transaction(db=db, func=UserDeckSelectionCrud.update, selection_id=deck.selection_id, deck_selection=data)
-        else:
-            result = await handle_transaction(db=db, func=UserDeckSelectionCrud.create, deck_selection=UserDeckSelectionCreate(user_id=user_id, game_mode=data.game_mode, deck_id=data.deck_id))
-        await db.refresh(result)
-        return result
+        deck: None|UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, game_mode=data.game_mode)
+        try: 
+            if deck:
+                result = await UserDeckSelectionCrud.update(db=db, selection_id=deck.selection_id, deck_selection=data)
+            else:
+                deck_selection = UserDeckSelectionCreate(user_id=user_id, game_mode=data.game_mode, deck_id=data.deck_id)
+                result = await UserDeckSelectionCrud.create(db=db, deck_selection=deck_selection)
+            await db.commit()
+            await db.refresh(result)
+            return result
+        except Exception as e:
+            await db.rollback()
+            raise e

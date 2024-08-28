@@ -1,7 +1,7 @@
-import { useSetRecoilState } from 'recoil';
-import { useHttp } from './api';
-import {  decksState } from '../atoms/global';
-import { SetFn, DeckUpdate } from '../utils/types';
+import { useSetRecoilState } from "recoil";
+import { useHttp } from "./api";
+import { decksState } from "../atoms/global";
+import { SetFn, DeckUpdate } from "../utils/types";
 
 const useHttpDeck = () => {
   const { http } = useHttp();
@@ -11,45 +11,80 @@ const useHttpDeck = () => {
     http({
       type: "get",
       url: `/decks`,
-      callback: (data) => { setDecks(data); },
+      callback: (data) => {
+        setDecks(data);
+      },
       customSetLoading: setLoading,
-      onError
+      onError,
     });
-  }
+  };
 
-  const createDeck = (callback:SetFn,onError?: SetFn, setLoading?: SetFn, deck_name: string = `새로운 덱`, image: string = "0.png") => {
+  const getDeck = async (
+    deck_id: number,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
+    const result = await http({
+      type: "get",
+      url: `/decks/${deck_id}`,
+      callback: callback,
+      customSetLoading: setLoading,
+      onError,
+    });
+    callback(result);
+  };
+
+  const createDeck = (
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn,
+    deck_name: string = `새로운 덱`,
+    image: string = "0.png"
+  ) => {
     http({
       type: "post",
       url: `/decks`,
       callback: callback,
       customSetLoading: setLoading,
       onError,
-      data: { deck_name, image }
+      data: { deck_name, image },
     });
-  }
+  };
 
-  const getDeckCards = (deck_id: number, callback:SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getDeckCards = (
+    deck_id: number,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "get",
       url: `/decks/cards/${deck_id}`,
       callback: callback,
       customSetLoading: setLoading,
-      onError
+      onError,
     });
-  }
+  };
 
-  const updateDeck = (deck_id: number, data: DeckUpdate, callback:SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const updateDeck = (
+    deck_id: number,
+    data: DeckUpdate,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "put",
       url: `/decks/${deck_id}`,
       callback: callback,
       customSetLoading: setLoading,
       onError,
-      data
+      data,
     });
-  }
+  };
 
-  return { getDecks, createDeck, getDeckCards, updateDeck};
-}
+  return { getDeck, getDecks, createDeck, getDeckCards, updateDeck };
+};
 
-export default useHttpDeck
+export default useHttpDeck;

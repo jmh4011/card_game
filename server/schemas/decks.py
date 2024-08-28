@@ -8,6 +8,7 @@ class DeckBase(BaseModel):
     user_id: int
     deck_name: str
     image_path: str
+    is_public: bool = False
 
 class DeckCreate(DeckBase):
     pass

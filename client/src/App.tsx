@@ -1,57 +1,108 @@
-import React, { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { decksState, loadingState, showPageState} from './atoms/global';
-import styled from 'styled-components';
-import StartPage from './pages/start/StartPage';
-import HomePage from './pages/home/HomePage';
-import LoginPage from './pages/login/LoginPage';
-import SignUpPage from './pages/login/SignUp';
-import SelectDeckPage from './pages/deck/SelectDeckPage';
-import ConfigDeckPage from './pages/deck/ConfigDeckPage';
-import PlayPage from './pages/play/PlayPage';
-import OptionPage from './pages/option/OptionPage';
+import React, { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { decksState, isAuthenticatedState, loadingState } from "./atoms/global";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
+import styled from "styled-components";
+import HomePage from "./pages/home/HomePage";
+import LoginPage from "./pages/login/LoginPage";
+import SignUpPage from "./pages/login/SignUp";
+import SelectDeckPage from "./pages/deck/SelectDeckPage";
+import ConfigDeckPage from "./pages/deck/ConfigDeckPage";
+import PlayPage from "./pages/play/PlayPage";
+import OptionPage from "./pages/option/OptionPage";
+import useHttpUser from "./api/users";
+import useHttpCard from "./api/cards";
+import useHttpDeck from "./api/decks";
+import ShowDeckPage from "./pages/deck/ShowDeckPage";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
   const [decks, setDecks] = useRecoilState(decksState);
-  const [showPage, setShowPage] = useRecoilState(showPageState);
+  const navigate = useNavigate();
+  const {  } = useHttpUser();
+  const { getCards } = useHttpCard();
+  const { getDecks } = useHttpDeck();
+  const {authCheck, getUserStat, getUserCards, getUserDeckSelection } = useHttpUser();
+  const [isAuthenticated, setIsAuthenticated] =
+    useRecoilState(isAuthenticatedState);
 
   useEffect(() => {
     // 전체 페이지에서 우클릭 막기
     const handleContextMenu = (event: MouseEvent) => {
       event.preventDefault();
     };
-    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener("contextmenu", handleContextMenu);
 
     // 클린업 함수
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, []);
 
+  useEffect(() => {
+    authCheck();
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getDecks();
+      getUserStat();
+      getUserCards();
+      getCards();
+      getUserDeckSelection();
+    }
+  }, [isAuthenticated]);
+
+  if (isAuthenticated === null) {
+    // 인증 상태를 확인 중일 때 로딩 화면을 표시
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="App">
-      {loading ? (
-        <LoadingScreen>Loading...</LoadingScreen>
-      ) : (
-        <Page>
-          {showPage === "start" && <StartPage />}
-          {showPage === "home" && <HomePage />}
-          {showPage === "login" && <LoginPage />}
-          {showPage === "signUp" && <SignUpPage />}
-          {showPage === "selectDeck" && <SelectDeckPage />}
-          {showPage === "configDeck" && <ConfigDeckPage />}
-          {showPage === "play" && <PlayPage />}
-          {showPage === "option" && <OptionPage />}
-        </Page>
-      )}
-    </div>
+    <Page className="App">
+      <Routes>
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}
+        />
+        <Route
+          path="/signup"
+          element={isAuthenticated ? <Navigate to="/" /> : <SignUpPage />}
+        />
+        <Route
+          path="/"
+          element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/play"
+          element={isAuthenticated ? <PlayPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/option"
+          element={isAuthenticated ? <OptionPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/deck"
+          element={
+            isAuthenticated ? <SelectDeckPage /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/deck/:id"
+          element={
+            isAuthenticated ? <ShowDeckPage /> : <Navigate to="/login" />
+          }
+        />
+      </Routes>
+    </Page>
   );
 };
-
-
-
-export type ShowPage = ('start' |"home" | "login" | 'signUp' | "selectDeck" | "configDeck" | "play" |"game" | 'option')
 
 const Page = styled.div`
   width: 100vw;

@@ -1,6 +1,6 @@
 export type SetFn = (data: any) => void;
 
-export type CardCount = Record<number,number>
+export type CardCount = Record<number, number>;
 
 export interface Card {
   card_id: number;
@@ -18,14 +18,13 @@ export interface Skin {
   character: string;
 }
 
-
 export interface Deck {
   deck_id: number;
   user_id: number;
   deck_name: string;
   image_path: string;
+  is_public: boolean;
 }
-
 
 export interface UserStat {
   stat_id: number;
@@ -37,10 +36,11 @@ export interface UserStat {
 export interface DeckUpdate {
   deck_name: string;
   image_path: string;
+  is_public: boolean;
   deck_cards: CardCount;
 }
 
-export type DeckSelection =  Record<string, number>
+export type DeckSelection = Record<string, number>;
 
 export interface DeckSelectionUpdate {
   deck_id: number;

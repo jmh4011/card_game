@@ -1,7 +1,7 @@
 .modal {
   z-index: 10;
   display: block;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   position: fixed;
   width: 100vw;
   height: 100vh;
@@ -14,8 +14,8 @@
   position: fixed;
   width: 600px;
   height: 400px;
-  top:30vh;
-  left:30vw;
+  top: 30vh;
+  left: 30vw;
 }
 
 .createAccount {
@@ -25,10 +25,9 @@
   position: fixed;
   width: 600px;
   height: 400px;
-  top:30vh;
-  left:30vw;
+  top: 30vh;
+  left: 30vw;
 }
-
 
 .vibration {
   animation: vibration 0.1s infinite;
@@ -43,7 +42,6 @@
   }
 }
 
-
 .weakInput {
   font-size: 10px;
   color: red;
@@ -55,9 +53,6 @@
   text-align: center;
 }
 
-
-
 .a {
   position: fixed;
-  
 }

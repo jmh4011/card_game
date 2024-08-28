@@ -4,20 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import WebSocketClient from "../../api/websocket"; // WebSocketClient 싱글톤 클래스 import
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import useHttpGame from "../../api/game";
-import { showPageState, wsTokenState } from "../../atoms/global";
-
-
+import { wsTokenState } from "../../atoms/global";
+import { useNavigate } from "react-router-dom";
 
 const OptionPage: React.FC = () => {
-  const setShowPage = useSetRecoilState(showPageState);
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
-  const wsUrl = 'ws://localhost:8000/ws';
-  const token = useRecoilValue(wsTokenState)
+  const token = useRecoilValue(wsTokenState);
 
   useEffect(() => {
-    wsClientRef.current = new WebSocketClient(wsUrl);
+    wsClientRef.current = new WebSocketClient();
 
     // 컴포넌트 언마운트 시 WebSocket 연결 종료
     return () => {
@@ -40,7 +38,7 @@ const OptionPage: React.FC = () => {
           setMessages((prevMessages) => [...prevMessages, message]);
         },
         () => {
-          console.log('Connection closed by server');
+          console.log("Connection closed by server");
           setIsConnected(false);
         }
       );
@@ -50,16 +48,22 @@ const OptionPage: React.FC = () => {
 
   const handleSendMessage = () => {
     if (wsClientRef.current) {
-      wsClientRef.current.sendMessage('Hello, Server!');
+      wsClientRef.current.sendMessage("Hello, Server!");
     }
   };
 
   return (
     <div>
-      <button onClick={() => {setShowPage('home')}}>exit</button>
+      <button
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        exit
+      </button>
       <h1>WebSocket Messages</h1>
       <button onClick={toggleConnection}>
-        {isConnected ? 'Disconnect' : 'Connect'}
+        {isConnected ? "Disconnect" : "Connect"}
       </button>
       <button onClick={handleSendMessage} disabled={!isConnected}>
         Send Message
@@ -72,6 +76,5 @@ const OptionPage: React.FC = () => {
     </div>
   );
 };
-
 
 export default OptionPage;

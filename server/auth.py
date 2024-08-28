@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from crud.user import UserCrud
 from utils import (
     get_secret_key, get_jwt_algorithm, get_access_token_expire, 
-    get_refresh_token_expire, handle_transaction,
+    get_refresh_token_expire,
     get_websocket_token_expire
 )
 import logging
@@ -92,7 +92,7 @@ async def get_user_id(db: AsyncSession, request: Request, response: Response) ->
     
     if not refresh_token:
         logger.warning("Missing refresh token")
-        raise HTTPException(status_code=401, detail="Missing refresh token")
+        raise HTTPException(status_code=401, detail="User Unauthorized")
     
     if access_token:
         try:
@@ -109,17 +109,18 @@ async def get_user_id(db: AsyncSession, request: Request, response: Response) ->
     if user:
         refresh_token_expiry = user.refresh_token_expiry
 
-        if user.refresh_token == refresh_token and refresh_token_expiry > datetime.now(timezone.utc):
+        if user.refresh_token == refresh_token and refresh_token_expiry.astimezone(timezone.utc) > datetime.now(timezone.utc):
             # 새로운 access token 및 refresh token 생성
             new_access_token = await create_access_token(user_id)
             new_refresh_token = await create_refresh_token(user_id)
-            await handle_transaction(db, UserCrud.update_refresh_token, should_refresh=True, 
-                user_id=user.user_id, refresh_token=new_refresh_token)
+            refresh_user = await UserCrud.update_refresh_token(db=db, user_id=user.user_id, refresh_token=new_refresh_token)
+            await db.commit()
+            await db.refresh(refresh_user)
             await set_auth_cookies(response=response, access_token=new_access_token, refresh_token=new_refresh_token)
             return user_id
         else:
             logger.warning("Invalid or expired refresh token in database")
-            raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+            raise HTTPException(status_code=401, detail="User Unauthorized")
 
     logger.warning("Unauthorized access attempt")
-    raise HTTPException(status_code=401, detail="Unauthorized")
+    raise HTTPException(status_code=401, detail="User Unauthorized")

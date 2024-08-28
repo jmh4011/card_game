@@ -1,31 +1,45 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, userCardsStats } from "../../../atoms/global";
-import { tempDeckCardsState } from "../../../atoms/modalConfigDeck";
-import { characterImage } from "../../../api/static";
+import { cardsStats, userCardsStats } from "../atoms/global";
+import { characterImage } from "../api/static";
+import ResponsiveText from "./ResponsiveText";
 
 interface CardInfoProps {
   card_id: number;
+  deckCount: number;
 }
 
-const CardInfo: React.FC<CardInfoProps> = ({ card_id }) => {
-  const card = useRecoilValue(cardsStats)[card_id]
-  const deckCount = useRecoilValue(tempDeckCardsState)[card_id]
-  const userCount = useRecoilValue(userCardsStats)[card_id]
-  
+const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
+  const card = useRecoilValue(cardsStats)[card_id];
+  const userCount = useRecoilValue(userCardsStats)[card_id];
+
   return (
     <InfoContainer>
       <CardId>{card.card_id}</CardId>
-      <Name>{card.card_name}</Name>
+      <Name>
+        <ResponsiveText>{card.card_name}</ResponsiveText>
+      </Name>
       <Image src={characterImage(card.image_path)} alt={card.card_name} />
-      <Attack>{card.attack}</Attack>
-      <Health>{card.health}</Health>
-      <Class>{card.card_class}</Class>
-      <Description>{card.description}</Description>
-      
-      <UserCount>{userCount || 0}</UserCount>
-      <DeckCount>{deckCount || 0}</DeckCount>
+      <Attack>
+        <ResponsiveText>{card.attack}</ResponsiveText>
+      </Attack>
+      <Health>
+        <ResponsiveText>{card.health}</ResponsiveText>
+      </Health>
+      <Class>
+        <ResponsiveText>{card.card_class}</ResponsiveText>
+      </Class>
+      <Description>
+        <ResponsiveText>{card.description}</ResponsiveText>
+      </Description>
+
+      <UserCount>
+        <ResponsiveText>{userCount || 0}</ResponsiveText>
+      </UserCount>
+      <DeckCount>
+        <ResponsiveText>{deckCount || 0}</ResponsiveText>
+      </DeckCount>
     </InfoContainer>
   );
 };
@@ -42,7 +56,6 @@ const CardId = styled.div`
 `;
 
 const Name = styled.div`
-  font-size: 2vw;
   width: 90%;
   margin-left: 5%;
   border: 1px solid rgb(0, 0, 0);
@@ -61,14 +74,10 @@ const Stat = styled.div`
   display: inline-block;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 10px;
-  width: 25%;
+  width: 40%;
   text-align: center;
   margin-left: 5%;
   height: 4%;
-`;
-
-const Cost = styled(Stat)`
-  background-color: rgb(0, 150, 255);
 `;
 
 const Attack = styled(Stat)`
@@ -114,7 +123,6 @@ const Description = styled.div`
   }
 `;
 
-
 const UserCount = styled.div`
   display: inline-block;
   border: 1px solid rgb(0, 0, 0);
@@ -123,8 +131,7 @@ const UserCount = styled.div`
   text-align: center;
   margin-left: 7%;
   height: 4%;
-`
-
+`;
 
 const DeckCount = styled.div`
   display: inline-block;
@@ -134,5 +141,4 @@ const DeckCount = styled.div`
   text-align: center;
   margin-left: 5%;
   height: 4%;
-`
-
+`;

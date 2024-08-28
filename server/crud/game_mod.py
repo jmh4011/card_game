@@ -1,7 +1,7 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import GameMod
-from server.schemas.game_mods import GameModCreate, GameModUpdate
+from schemas.game_mods import GameModCreate, GameModUpdate
 
 
 class GameModCrud:

@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import attackImg from '../assets/card-base/attack.png';
-import characterFrameImg from '../assets/card-base/character-frame.png';
-import classImg from '../assets/card-base/class.png';
-import descriptionImg from '../assets/card-base/description.png';
-import frameImg from '../assets/card-base/frame.png';
-import healthImg from '../assets/card-base/health.png';
-import nameImg from '../assets/card-base/name.png';
+import attackImg from "../assets/card-base/attack.png";
+import characterFrameImg from "../assets/card-base/character-frame.png";
+import classImg from "../assets/card-base/class.png";
+import descriptionImg from "../assets/card-base/description.png";
+import frameImg from "../assets/card-base/frame.png";
+import healthImg from "../assets/card-base/health.png";
+import nameImg from "../assets/card-base/name.png";
 import { useRecoilValue } from "recoil";
 import { cardsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
@@ -25,33 +25,23 @@ const Card: React.FC<CardProps> = ({ card_id }) => {
         <CharacterFrame />
         <Character src={characterImage(card.image_path)} />
         <Name>
-        <ResponsiveText>
-            {card.card_name}
-          </ResponsiveText>
+          <ResponsiveText>{card.card_name}</ResponsiveText>
         </Name>
         <Description>
-          <ResponsiveText>
-            {card.description}
-          </ResponsiveText>
+          <ResponsiveText>{card.description}</ResponsiveText>
         </Description>
         {card.card_type === 0 && (
           <>
             <Attack>
-            <ResponsiveText>
-                {card.attack}
-              </ResponsiveText>
+              <ResponsiveText>{card.attack}</ResponsiveText>
             </Attack>
             <Health>
-            <ResponsiveText>
-                {card.health}
-              </ResponsiveText>
+              <ResponsiveText>{card.health}</ResponsiveText>
             </Health>
           </>
         )}
         <Class>
-        <ResponsiveText>
-            {card.card_class}
-          </ResponsiveText>
+          <ResponsiveText>{card.card_class}</ResponsiveText>
         </Class>
       </CardFrame>
     </CardContainer>
@@ -112,7 +102,6 @@ const Name = styled(CardBase)`
   left: 50%;
   transform: translateX(-50%);
   aspect-ratio: 477/91;
-  color: black;
 `;
 
 const Attack = styled(CardBase)`
@@ -135,7 +124,7 @@ const Health = styled(CardBase)`
 
 const Description = styled(CardBase)`
   width: 92%;
-  height: 33.5%; 
+  height: 33.5%;
   background-image: url(${descriptionImg});
   bottom: 10%;
   left: 50%;

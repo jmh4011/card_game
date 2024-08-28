@@ -1,21 +1,60 @@
-import React from "react";
-import { useRecoilState } from "recoil";
-import { showPageState } from "../../atoms/global";
+import React, { useEffect, useRef, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { wsTokenState } from "../../atoms/global";
 import SelectMod from "./components/SelectMod";
 import TestPlay from "./TestPlay";
+import WebSocketClient from "../../api/websocket";
+import { showPagePlayState } from "../../atoms/play";
+import PlayHomePage from "./PlayHomePage";
 
-export type PlayMod = null |"test"
-
+export type ShowPlayPage = "home" | "match" | "test";
 
 const PlayPage: React.FC = () => {
+  const [showPlayPage, setShowPlayPage] = useRecoilState(showPagePlayState);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const wsClientRef = useRef<WebSocketClient | null>(null);
+  const token = useRecoilValue(wsTokenState);
 
-  const [showPage, setShowPage] = useRecoilState(showPageState)
+  useEffect(() => {
+    wsClientRef.current = new WebSocketClient();
 
+    // 컴포넌트 언마운트 시 WebSocket 연결 종료
+    return () => {
+      if (wsClientRef.current) {
+        wsClientRef.current.disconnect();
+      }
+    };
+  }, []);
 
-  return <div>
+  const toggleConnection = () => {
+    if (!wsClientRef.current) return;
 
-  </div>
-}
+    if (isConnected) {
+      wsClientRef.current.disconnect();
+      setIsConnected(false);
+    } else {
+      wsClientRef.current.connect(
+        token,
+        (message) => {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        },
+        () => {
+          console.log("Connection closed by server");
+          setIsConnected(false);
+        }
+      );
+      setIsConnected(true);
+    }
+  };
 
+  const handleSendMessage = () => {
+    if (wsClientRef.current) {
+      wsClientRef.current.sendMessage("Hello, Server!");
+    }
+  };
 
-export default PlayPage
+  return <div>{showPlayPage === "home" && <PlayHomePage />}</div>;
+};
+
+export default PlayPage;

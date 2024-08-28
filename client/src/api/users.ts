@@ -1,83 +1,137 @@
-import { useHttp } from './api';
-import { DeckSelectionUpdate, SetFn } from '../utils/types';
+import { useHttp } from "./api";
+import { DeckSelectionUpdate, SetFn } from "../utils/types";
+import { useSetRecoilState } from "recoil";
+import {
+  decksState,
+  userStats,
+  userCardsStats,
+  cardsStats,
+  deckSelectionState,
+  isAuthenticatedState,
+} from "../atoms/global";
 
 const useHttpUser = () => {
-  const { http } = useHttp();
+  const {http} = useHttp()
+  const setDecks = useSetRecoilState(decksState);
+  const setUser = useSetRecoilState(userStats);
+  const setIsAuthenticated = useSetRecoilState(isAuthenticatedState);
+  const setUserCards = useSetRecoilState(userCardsStats);
+  const setCards = useSetRecoilState(cardsStats);
+  const setDeckSelection = useSetRecoilState(deckSelectionState);
 
-  const userLogin = (username: string, password: string, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const authCheck = () => {
+    http({
+      type: "get",
+      url: `/users/auth`,
+      callback: (data) => setIsAuthenticated(data),
+    });
+  };
+
+  const userLogin = (
+    username: string,
+    password: string,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "put",
       url: `/users/login`,
-      callback:callback,
-      onError:onError,
+      callback: callback,
+      onError: onError,
       customSetLoading: setLoading,
-      data: { username, password }
+      data: { username, password },
     });
-  }
+  };
 
   const userLogout = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "delete",
       url: `/users/logout`,
-      callback:callback,
-      onError:onError,
-      customSetLoading: setLoading
+      callback: callback,
+      onError: onError,
+      customSetLoading: setLoading,
     });
-  }
+  };
 
-  const createUser = (username: string, password: string, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const createUser = (
+    username: string,
+    password: string,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "post",
       url: `/users/create`,
-      callback:callback,
-      onError:onError,
+      callback: callback,
+      onError: onError,
       customSetLoading: setLoading,
-      data: { username, password }
+      data: { username, password },
     });
-  }
+  };
 
-  const getUserStat = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getUserStat = (onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/users/stat`,
-      callback:callback,
-      onError:onError,
-      customSetLoading: setLoading
+      callback: (data) => {
+        setUser(data);
+      },
+      onError: onError,
+      customSetLoading: setLoading,
     });
-  }
+  };
 
-  const getUserCards = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getUserCards = (onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/users/cards`,
-      callback:callback,
-      onError:onError,
-      customSetLoading: setLoading
+      callback: (data) => {
+        setUserCards(data);
+      },
+      onError: onError,
+      customSetLoading: setLoading,
     });
-  }
+  };
 
-  const getUserDeckSelection = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getUserDeckSelection = (onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/users/deck-selection`,
-      callback:callback,
-      onError:onError,
+      callback: (data) => {
+        setDeckSelection(data);
+      },
+      onError: onError,
       customSetLoading: setLoading,
     });
-  }
+  };
 
-  const updateUserDeckSelection = (data: DeckSelectionUpdate,callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const updateUserDeckSelection = (
+    data: DeckSelectionUpdate,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "put",
       url: `/users/deck-selection`,
-      callback:callback,
-      onError:onError,
+      callback: callback,
+      onError: onError,
       customSetLoading: setLoading,
-      data:data
+      data: data,
     });
-  }
-  return { userLogin, userLogout, createUser, getUserStat, getUserCards, updateUserDeckSelection, getUserDeckSelection};
-}
+  };
+  return {
+    authCheck,
+    userLogin,
+    userLogout,
+    createUser,
+    getUserStat,
+    getUserCards,
+    updateUserDeckSelection,
+    getUserDeckSelection,
+  };
+};
 
-
-export default useHttpUser
+export default useHttpUser;

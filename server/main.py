@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
-from database import Base, engine, get_db,get_db_
+from database import Base, engine, get_db
 from routers import users, decks, cards, games
 import logging
 import asyncio
