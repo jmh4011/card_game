@@ -12,14 +12,15 @@ import styled from "styled-components";
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/login/LoginPage";
 import SignUpPage from "./pages/login/SignUp";
-import SelectDeckPage from "./pages/deck/SelectDeckPage";
-import ConfigDeckPage from "./pages/deck/ConfigDeckPage";
+import SelectConfigDecksPage from "./pages/deck/SelectConfigDecksPage";
 import PlayPage from "./pages/play/PlayPage";
 import OptionPage from "./pages/option/OptionPage";
 import useHttpUser from "./api/users";
 import useHttpCard from "./api/cards";
 import useHttpDeck from "./api/decks";
 import ShowDeckPage from "./pages/deck/ShowDeckPage";
+import PlayDeckSelectPage from "./pages/play/PlayDeckSelectPage";
+import SelectModPage from "./pages/play/SelectModPage";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
@@ -52,7 +53,6 @@ const App: React.FC = () => {
       getUserStat();
       getUserCards();
       getCards();
-      getUserDeckSelection();
     }
   }, [isAuthenticated]);
 
@@ -78,8 +78,10 @@ const App: React.FC = () => {
         />
         <Route
           path="/play"
-          element={isAuthenticated ? <PlayPage /> : <Navigate to="/login" />}
-        />
+          element={isAuthenticated ? <PlayPage /> : <Navigate to="/login" />}>
+          <Route path="/deck" element={isAuthenticated ? <PlayDeckSelectPage /> : <Navigate to="/login" />} />
+          <Route path="/mod" element={isAuthenticated ? <SelectModPage /> : <Navigate to="/login" />}/>
+        </Route>
         <Route
           path="/option"
           element={isAuthenticated ? <OptionPage /> : <Navigate to="/login" />}
@@ -87,7 +89,7 @@ const App: React.FC = () => {
         <Route
           path="/deck"
           element={
-            isAuthenticated ? <SelectDeckPage /> : <Navigate to="/login" />
+            isAuthenticated ? <SelectConfigDecksPage /> : <Navigate to="/login" />
           }
         />
         <Route

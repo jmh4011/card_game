@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from crud import GameModCrud
 from schemas.game_mods import GameModSchemas
 from auth import create_websocket_token
-from utils import to_dict
 from modules.room_manager import room_manager
 import logging
 
@@ -11,11 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 class GameServices:
+    
+    @staticmethod
+    async def get_mod(mod_id:int, db:AsyncSession) -> GameModSchemas:
+        mod = await GameModCrud.get(db=db, mod_id=mod_id)
+        return mod
+
     @staticmethod
     async def get_mods(db:AsyncSession) -> list[GameModSchemas]:
         mods = await GameModCrud.get_all(db=db)
         return mods
-
 
     @staticmethod
     async def get_token(db:AsyncSession, user_id):

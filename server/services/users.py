@@ -2,9 +2,11 @@ import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from auth import create_refresh_token, verify_password, create_access_token, get_password_hash
-from crud import UserCrud, UserCardCrud, UserStatCrud, UserDeckSelectionCrud
+from crud import UserCrud, UserCardCrud, UserStatCrud, UserDeckSelectionCrud, DeckCrud
 from schemas.users import UserLogin, UserCreate
-from schemas.user_stats import UserStatSchemas, UserStatCreate
+from schemas.user_stats import UserStatSchemas, UserStatCreate, UserStatUpdate
+
+from schemas.decks import DeckSchemas
 from models import User
 from schemas.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
 import logging
@@ -68,6 +70,16 @@ class UserServices:
         await db.commit()
         await db.refresh(stat)
         return stat
+    @staticmethod
+    async def update_stat(db: AsyncSession, user_id:int, data: UserStatUpdate) -> UserStatSchemas:
+        try:
+            stat = await UserStatCrud.update(db=db, user_id=user_id, user_stats=data)
+            await db.commit()
+            await db.refresh(stat)
+        except Exception as e:
+            await db.rollback()
+            raise e
+        return stat
     
     @staticmethod
     async def get_cards(db: AsyncSession, user_id: int) -> dict[int,int]:
@@ -78,13 +90,29 @@ class UserServices:
         return {card.card_id:card.card_count for card in cards}
     
 
+    
     @staticmethod
-    async def get_deck_selection(db:AsyncSession,user_id:int) -> dict[str,int]:
+    async def get_deck_selection(db: AsyncSession, user_id: int, mod_id: int) -> DeckSchemas:
+        deck_selection: UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=mod_id)
+        await db.commit()
+        await db.refresh(deck_selection)
+        if deck_selection == None:
+            return None
+        deck = await DeckCrud.get(db=db, deck_id=deck_selection.deck_id)
+        await db.commit()
+        await db.refresh(deck)
+        if deck == None:
+            return None
+        return deck
+    
+    
+    @staticmethod
+    async def get_deck_selection_all(db:AsyncSession,user_id:int) -> dict[str,int]:
         decks: list[UserDeckSelectionSchemas] = await UserDeckSelectionCrud.get_all(db=db, user_id=user_id)
         await db.commit()
         for deck in decks:
             await db.refresh(deck)
-        return {deck.game_mode:deck.deck_id for deck in decks}
+        return {deck.mod_id:deck.deck_id for deck in decks}
     
     @staticmethod
     async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:

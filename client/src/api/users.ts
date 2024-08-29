@@ -1,5 +1,5 @@
 import { useHttp } from "./api";
-import { DeckSelectionUpdate, SetFn } from "../utils/types";
+import { DeckSelectionUpdate, SetFn, UserStatUpdate } from "../utils/types";
 import { useSetRecoilState } from "recoil";
 import {
   userStats,
@@ -10,7 +10,7 @@ import {
 } from "../atoms/global";
 
 const useHttpUser = () => {
-  const {http} = useHttp()
+  const { http } = useHttp();
   const setUser = useSetRecoilState(userStats);
   const setIsAuthenticated = useSetRecoilState(isAuthenticatedState);
   const setUserCards = useSetRecoilState(userCardsStats);
@@ -81,6 +81,23 @@ const useHttpUser = () => {
     });
   };
 
+  const updateUserStat = (
+    data: UserStatUpdate,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
+    http({
+      type: "put",
+      url: `/users/stat`,
+      callback: (data) => {
+        setUser(data);
+      },
+      onError: onError,
+      customSetLoading: setLoading,
+      data: data,
+    });
+  };
+
   const getUserCards = (onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
@@ -93,13 +110,16 @@ const useHttpUser = () => {
     });
   };
 
-  const getUserDeckSelection = (onError?: SetFn, setLoading?: SetFn) => {
+  const getUserDeckSelection = (
+    mod_id: number,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "get",
-      url: `/users/deck-selection`,
-      callback: (data) => {
-        setDeckSelection(data);
-      },
+      url: `/users/deck-selection/${mod_id}`,
+      callback: callback,
       onError: onError,
       customSetLoading: setLoading,
     });
@@ -126,6 +146,7 @@ const useHttpUser = () => {
     userLogout,
     createUser,
     getUserStat,
+    updateUserStat,
     getUserCards,
     updateUserDeckSelection,
     getUserDeckSelection,

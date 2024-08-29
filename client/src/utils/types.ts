@@ -31,6 +31,13 @@ export interface UserStat {
   user_id: number;
   nickname: string;
   money: number;
+  current_mod_id: number;
+}
+
+export interface UserStatUpdate {
+  nickname: string;
+  money: number;
+  current_mod_id: number;
 }
 
 export interface DeckUpdate {
@@ -44,5 +51,13 @@ export type DeckSelection = Record<string, number>;
 
 export interface DeckSelectionUpdate {
   deck_id: number;
-  game_mode: string;
+  mod_id: number;
+}
+
+export interface GameMod {
+  mod_id: number;
+  mod_name: string;
+  image_path: string;
+  description: string;
+  is_open: boolean;
 }

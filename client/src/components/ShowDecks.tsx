@@ -5,14 +5,16 @@ import styled from "styled-components";
 import { Deck } from "../utils/types";
 import { characterImage } from "../api/static";
 
-interface ModalConfigDeckPorps {
+interface ShowDecksPorps {
   handleExit: () => void;
   handleDeckClick: (deck: Deck) => void;
+  createButton: boolean
 }
 
-const ModalSelectDeck: React.FC<ModalConfigDeckPorps> = ({
+const ShowDecks: React.FC<ShowDecksPorps> = ({
   handleDeckClick,
   handleExit,
+  createButton
 }) => {
   const { getDecks, createDeck } = useHttpDeck();
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -41,13 +43,13 @@ const ModalSelectDeck: React.FC<ModalConfigDeckPorps> = ({
             <DeckName>{value.deck_name}</DeckName>
           </DeckContainer>
         ))}
-        <CreateButton onClick={handleCreate}>Create Deck</CreateButton>
+        {createButton && <CreateButton onClick={handleCreate}>Create Deck</CreateButton>}
       </Container>
     </Modal>
   );
 };
 
-export default ModalSelectDeck;
+export default ShowDecks;
 
 const Modal = styled.div`
   width: 100%;

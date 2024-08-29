@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 class UserDeckSelectionBase(BaseModel):
     user_id: int
-    game_mode: str
+    mod_id: int
     deck_id: int
 
 class UserDeckSelectionCreate(UserDeckSelectionBase):

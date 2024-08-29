@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
 class GameModBase(BaseModel):
+    mod_name: str
     image_path: str
     description: str
+    is_open: bool
 
 class GameModCreate(GameModBase):
     pass

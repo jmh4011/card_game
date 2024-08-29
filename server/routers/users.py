@@ -3,8 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth import set_auth_cookies
 from database import get_db
 from schemas.users import UserCreate, UserLogin
-from schemas.user_stats import UserStatSchemas
+from schemas.user_stats import UserStatSchemas, UserStatUpdate
 from schemas.user_deck_selections import UserDeckSelectionUpdate
+from schemas.decks import DeckSchemas
 from services import UserServices
 from auth import get_user_id
 
@@ -56,15 +57,25 @@ async def read_user_state_route(request: Request, response: Response, db: AsyncS
     user_id = await get_user_id(db=db, request=request, response=response)
     stats = await UserServices.get_stat(db=db, user_id=user_id)
     if stats is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return stats
+
+@router.put("/users/stat", response_model=UserStatSchemas)
+async def read_user_state_route(data: UserStatUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(db=db, request=request, response=response)
+    stats = await UserServices.update_stat(db=db, user_id=user_id, data=data)
+    if stats is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return stats
+
+
 
 @router.get("/users/cards", response_model=dict[int,int])
 async def read_user_cards_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     cards = await UserServices.get_cards(db=db, user_id=user_id)
     if cards is None:
-        raise HTTPException(status_code=404, detail="user not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
     return cards
 
 
@@ -72,10 +83,18 @@ async def read_user_cards_route(request: Request, response: Response, db: AsyncS
 @router.get("/users/deck-selection", response_model=dict[str,int])
 async def read_user_deck_selection_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
-    decks = await UserServices.get_deck_selection(db=db, user_id=user_id)
+    decks = await UserServices.get_deck_selection_all(db=db, user_id=user_id)
     if decks is None:
         raise []
     return decks
+
+@router.get("/users/deck-selection/{mod_id}", response_model=DeckSchemas)
+async def read_user_deck_selection_route(mod_id: int,request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(db=db, request=request, response=response)
+    deck = await UserServices.get_deck_selection(db=db, user_id=user_id, mod_id=mod_id)
+    if deck is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="decknot found")
+    return deck
 
 @router.put("/users/deck-selection")
 async def read_user_deck_selection_route(data:UserDeckSelectionUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):

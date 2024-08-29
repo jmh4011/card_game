@@ -76,6 +76,7 @@ class UserStat(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     nickname= Column(String(100), nullable=False)
     money = Column(Integer, nullable=False)
+    current_mod_id = Column(Integer, default=1, nullable=False)
     last_updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     user = relationship("User", back_populates="stats")
     
@@ -93,7 +94,7 @@ class UserDeckSelection(Base):
     __tablename__ = "user_deck_selections"
     selection_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    game_mod = Column(String(50), nullable=False)
+    mod_id = Column(Integer, nullable=False)
     deck_id = Column(Integer, ForeignKey("decks.deck_id"), nullable=False)
     selection_date = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     user = relationship("User", back_populates="user_deck_selections")
@@ -102,5 +103,7 @@ class UserDeckSelection(Base):
 class GameMod(Base):
     __tablename__ = 'game_mods'
     mod_id = Column(Integer, primary_key=True, index=True)
+    mod_name = Column(String(50), nullable=False)
+    is_open = Column(Boolean, default=False, nullable=False)
     image_path = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)

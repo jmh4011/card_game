@@ -15,6 +15,16 @@ const useHttpGame = () => {
     });
   };
 
+  const getMod = (mod_id: number, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+    http({
+      type: "get",
+      url: `/games/mods/${mod_id}`,
+      callback: callback,
+      customSetLoading: setLoading,
+      onError: onError,
+    });
+  };
+
   const getToken = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
@@ -25,7 +35,7 @@ const useHttpGame = () => {
     });
   };
 
-  return { getMods, getToken };
+  return {getMod, getMods, getToken };
 };
 
 export default useHttpGame;

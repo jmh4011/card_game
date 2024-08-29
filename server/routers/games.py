@@ -11,6 +11,15 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+@router.get("/games/mods/{mod_id}", response_model=list[GameModSchemas])
+async def read_cards_all_route(mod_id:int, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    user_id = await get_user_id(db=db, request=request, response=response)
+    mod = await GameServices.get_mod(mod_id=mod_id, db=db)
+    if mod == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="not found mod")
+    return mod
+
+
 @router.get("/games/mods", response_model=list[GameModSchemas])
 async def read_cards_all_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)

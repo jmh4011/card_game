@@ -5,15 +5,17 @@ from datetime import datetime, timezone
 
 
 class DeckBase(BaseModel):
-    user_id: int
     deck_name: str
     image_path: str
     is_public: bool = False
 
 class DeckCreate(DeckBase):
-    pass
+    user_id: int
 
 class DeckUpdate(DeckBase):
+    pass
+
+class DeckRetrun(BaseModel):
     pass
 
 class DeckSchemas(DeckBase):
@@ -22,3 +24,24 @@ class DeckSchemas(DeckBase):
 
     class Config:
         from_attributes = True
+
+
+
+class RouterDeckUpdate(BaseModel):
+    deck_name: str
+    image_path: str
+    deck_cards: dict[int,int]
+    is_public: bool
+
+class RouterDeckUpdateReturn(BaseModel):
+    deck: DeckSchemas
+    deck_cards: dict[int,int]
+
+class RouterDeckGetReturn(BaseModel):
+    deck: DeckSchemas
+    deck_cards: dict[int,int]
+    read_only: bool
+
+class RouterDeckCreate(BaseModel):
+    deck_name: str
+    image_path: str

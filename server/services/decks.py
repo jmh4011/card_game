@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from crud import DeckCardCrud,DeckCrud
 from schemas.decks import DeckUpdate, DeckCreate
-from schemas.routers import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
+from schemas.decks import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
 from models import Deck, DeckCard
 import logging
 
@@ -39,7 +39,7 @@ class DeckServices:
         if db_deck is None or db_deck.user_id != user_id:
             return None
         try:
-            deck_info = DeckUpdate(user_id=user_id, deck_name=deck.deck_name, image_path=deck.image_path, is_public=deck.is_public)
+            deck_info = DeckUpdate(deck_name=deck.deck_name, image_path=deck.image_path, is_public=deck.is_public)
             result_deck = await DeckCrud.update(db=db,deck_id=deck_id, deck=deck_info)
             result_cards:list[DeckCard] = await DeckCardCrud.update_all(db=db,deck_id=deck_id, cards=deck.deck_cards)
             await db.commit()

@@ -7,8 +7,8 @@ from schemas.user_deck_selections import UserDeckSelectionUpdate, UserDeckSelect
 class UserDeckSelectionCrud:
 
     @staticmethod
-    async def get(db: AsyncSession, user_id: int, game_mode: str):
-        db_user_deck_selection = await db.execute(select(UserDeckSelection).filter_by(user_id=user_id, game_mode=game_mode))
+    async def get(db: AsyncSession, user_id: int, mod_id: int):
+        db_user_deck_selection = await db.execute(select(UserDeckSelection).filter_by(user_id=user_id, mod_id=mod_id))
         return db_user_deck_selection.scalar_one_or_none()
 
     @staticmethod

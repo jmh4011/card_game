@@ -4,12 +4,12 @@ from datetime import datetime
 
 
 class UserStatBase(BaseModel):
-    user_id: int
     money: int = 0
     nickname: str
+    current_mod_id: int = 1
 
 class UserStatCreate(UserStatBase):
-    pass
+    user_id: int
 
 class UserStatUpdate(UserStatBase):
     pass

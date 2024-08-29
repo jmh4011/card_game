@@ -19,7 +19,7 @@ export const loadingState = atom<boolean>({
 
 export const userStats = atom<UserStat>({
   key: "user",
-  default: { stat_id: 0, user_id: 0, nickname: "", money: 0 },
+  default: { stat_id: 0, user_id: 0, nickname: "", money: 0, current_mod_id: 1 },
 });
 
 export const cardsStats = atom<Record<number, Card>>({

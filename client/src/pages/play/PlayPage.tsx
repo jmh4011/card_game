@@ -1,16 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { wsTokenState } from "../../atoms/global";
-import SelectMod from "./components/SelectMod";
-import TestPlay from "./TestPlay";
 import WebSocketClient from "../../api/websocket";
-import { showPagePlayState } from "../../atoms/play";
 import PlayHomePage from "./PlayHomePage";
 
-export type ShowPlayPage = "home" | "match" | "test";
-
 const PlayPage: React.FC = () => {
-  const [showPlayPage, setShowPlayPage] = useRecoilState(showPagePlayState);
   const [messages, setMessages] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
@@ -54,7 +48,7 @@ const PlayPage: React.FC = () => {
     }
   };
 
-  return <div>{showPlayPage === "home" && <PlayHomePage />}</div>;
+  return <div></div>;
 };
 
 export default PlayPage;
