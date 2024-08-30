@@ -95,9 +95,9 @@ class UserServices:
     async def get_deck_selection(db: AsyncSession, user_id: int, mod_id: int) -> DeckSchemas:
         deck_selection: UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=mod_id)
         await db.commit()
-        await db.refresh(deck_selection)
         if deck_selection == None:
             return None
+        await db.refresh(deck_selection)
         deck = await DeckCrud.get(db=db, deck_id=deck_selection.deck_id)
         await db.commit()
         await db.refresh(deck)
@@ -107,12 +107,17 @@ class UserServices:
     
     
     @staticmethod
-    async def get_deck_selection_all(db:AsyncSession,user_id:int) -> dict[str,int]:
-        decks: list[UserDeckSelectionSchemas] = await UserDeckSelectionCrud.get_all(db=db, user_id=user_id)
+    async def get_deck_selection_all(db:AsyncSession,user_id:int) -> dict[int,DeckSchemas]:
+        deckSelections: list[UserDeckSelectionSchemas] = await UserDeckSelectionCrud.get_all(db=db, user_id=user_id)
         await db.commit()
-        for deck in decks:
+        result = {}
+        for deckSelection in deckSelections:
+            await db.refresh(deckSelection)
+            deck = await DeckCrud.get(db=db, deck_id=deckSelection.deck_id)
+            await db.commit()
             await db.refresh(deck)
-        return {deck.mod_id:deck.deck_id for deck in decks}
+            result.update({deckSelection.mod_id:deck})
+        return result
     
     @staticmethod
     async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:

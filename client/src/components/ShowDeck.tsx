@@ -91,9 +91,10 @@ const CardList = styled.div`
   border: 1px solid rgb(1, 0, 1);
   width: 100%;
   height: 90%;
+  box-sizing: border-box;
   max-height: 90%;
   overflow-y: auto;
-  gap: 10px;
+  gap: 0.1%;
 
   &::-webkit-scrollbar {
     width: 8px;

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/games/mods/{mod_id}", response_model=list[GameModSchemas])
+@router.get("/games/mods/{mod_id}", response_model=GameModSchemas)
 async def read_cards_all_route(mod_id:int, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     mod = await GameServices.get_mod(mod_id=mod_id, db=db)

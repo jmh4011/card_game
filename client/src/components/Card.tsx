@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import attackImg from "../assets/card-base/attack.png";
 import characterFrameImg from "../assets/card-base/character-frame.png";
@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { cardsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
+import ResDescription from "./ResDescription";
 
 interface CardProps {
   card_id: number;
@@ -22,13 +23,14 @@ const Card: React.FC<CardProps> = ({ card_id }) => {
   return (
     <CardContainer>
       <CardFrame>
-        <CharacterFrame />
         <Character src={characterImage(card.image_path)} />
         <Name>
           <ResponsiveText>{card.card_name}</ResponsiveText>
         </Name>
         <Description>
-          <ResponsiveText>{card.description}</ResponsiveText>
+          <ResDescription>
+            {card.description}
+          </ResDescription>
         </Description>
         {card.card_type === 0 && (
           <>
@@ -51,6 +53,7 @@ const Card: React.FC<CardProps> = ({ card_id }) => {
 export default Card;
 
 const CardContainer = styled.div`
+  box-sizing: border-box;
   position: relative;
   width: 100%;
   display: flex;
@@ -78,7 +81,7 @@ const CardFrame = styled(CardBase)`
 `;
 
 const CharacterFrame = styled(CardBase)`
-  width: 92%;
+  width: 92.1%;
   background-image: url(${characterFrameImg});
   top: 27%;
   left: 50%;
@@ -92,6 +95,8 @@ const Character = styled.img`
   width: 92%;
   box-sizing: border-box;
   aspect-ratio: 560/380;
+  border-radius: 4px;
+  border: 1px solid rgb(0, 0, 0);
   z-index: -1;
 `;
 
@@ -109,7 +114,6 @@ const Attack = styled(CardBase)`
   background-image: url(${attackImg});
   bottom: 3%;
   left: 3%;
-  font-size: 6%;
   aspect-ratio: 138/165;
 `;
 
@@ -119,7 +123,6 @@ const Health = styled(CardBase)`
   bottom: 2%;
   right: 2%;
   aspect-ratio: 156/163;
-  font-size: 6%;
 `;
 
 const Description = styled(CardBase)`
@@ -127,16 +130,13 @@ const Description = styled(CardBase)`
   height: 33.5%;
   background-image: url(${descriptionImg});
   bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
+  white-space: pre-wrap; 
 `;
 
 const Class = styled(CardBase)`
   width: 52%;
   background-image: url(${classImg});
   bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
   aspect-ratio: 300/82;
 `;
+

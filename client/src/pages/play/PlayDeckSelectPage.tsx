@@ -26,11 +26,14 @@ const PlayDeckSelectPage = () => {
   };
 
   return (
-    <ShowDecks
-      handleExit={handleExit}
-      handleDeckClick={handleDeckClick}
-      createButton
-    />
+    <div>
+      이ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ
+      <ShowDecks
+        handleExit={handleExit}
+        handleDeckClick={handleDeckClick}
+        createButton
+      />
+    </div>
   );
 };
 

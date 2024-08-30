@@ -111,14 +111,13 @@ const useHttpUser = () => {
   };
 
   const getUserDeckSelection = (
-    mod_id: number,
     callback: SetFn,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
     http({
       type: "get",
-      url: `/users/deck-selection/${mod_id}`,
+      url: `/users/deck-selection`,
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,

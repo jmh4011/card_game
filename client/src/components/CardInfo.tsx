@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { cardsStats, userCardsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
+import ResDescription from "./ResDescription";
+import ScrollableDescription from "./ScrollableDescription";
 
 interface CardInfoProps {
   card_id: number;
@@ -31,7 +33,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
         <ResponsiveText>{card.card_class}</ResponsiveText>
       </Class>
       <Description>
-        <ResponsiveText>{card.description}</ResponsiveText>
+        <ScrollableDescription>{card.description}</ScrollableDescription>
       </Description>
 
       <UserCount>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import {  isAuthenticatedState, loadingState } from "./atoms/global";
+import { isAuthenticatedState, loadingState } from "./atoms/global";
 import {
   BrowserRouter,
   Route,
@@ -21,13 +21,15 @@ import useHttpDeck from "./api/decks";
 import ShowDeckPage from "./pages/deck/ShowDeckPage";
 import PlayDeckSelectPage from "./pages/play/PlayDeckSelectPage";
 import SelectModPage from "./pages/play/SelectModPage";
+import PlayHomePage from "./pages/play/PlayHomePage";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
   const navigate = useNavigate();
-  const {  } = useHttpUser();
+  const {} = useHttpUser();
   const { getCards } = useHttpCard();
-  const {authCheck, getUserStat, getUserCards, getUserDeckSelection } = useHttpUser();
+  const { authCheck, getUserStat, getUserCards, getUserDeckSelection } =
+    useHttpUser();
   const [isAuthenticated, setIsAuthenticated] =
     useRecoilState(isAuthenticatedState);
 
@@ -78,10 +80,18 @@ const App: React.FC = () => {
         />
         <Route
           path="/play"
-          element={isAuthenticated ? <PlayPage /> : <Navigate to="/login" />}>
-          <Route path="/deck" element={isAuthenticated ? <PlayDeckSelectPage /> : <Navigate to="/login" />} />
-          <Route path="/mod" element={isAuthenticated ? <SelectModPage /> : <Navigate to="/login" />}/>
-        </Route>
+          element={
+            isAuthenticated ? <PlayHomePage /> : <Navigate to="/login" />
+          }
+        />
+
+        <Route
+          path="/play/deck"
+          element={
+            isAuthenticated ? <PlayDeckSelectPage /> : <Navigate to="/login" />
+          }
+        />
+
         <Route
           path="/option"
           element={isAuthenticated ? <OptionPage /> : <Navigate to="/login" />}
@@ -89,7 +99,11 @@ const App: React.FC = () => {
         <Route
           path="/deck"
           element={
-            isAuthenticated ? <SelectConfigDecksPage /> : <Navigate to="/login" />
+            isAuthenticated ? (
+              <SelectConfigDecksPage />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
         <Route

@@ -80,7 +80,7 @@ async def read_user_cards_route(request: Request, response: Response, db: AsyncS
 
 
 
-@router.get("/users/deck-selection", response_model=dict[str,int])
+@router.get("/users/deck-selection", response_model=dict[int,DeckSchemas])
 async def read_user_deck_selection_route(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     decks = await UserServices.get_deck_selection_all(db=db, user_id=user_id)
