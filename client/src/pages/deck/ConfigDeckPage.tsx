@@ -9,6 +9,7 @@ import SearchCards from "../../components/SearchCards";
 import { OutModal } from "../../utils/styles";
 import { CardCount, Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 
 interface ConfigDeckProps {
   deck: Deck;
@@ -96,11 +97,12 @@ const ConfigDeckPage: React.FC<ConfigDeckProps> = ({
 
   return (
     <ConfigDeckContainer>
-      <PublicButton onClick={handlePublic}>
-        {tempDeck.is_public ? "public" : "not public"}
-      </PublicButton>
-      <SaveButton onClick={handleSave}>save</SaveButton>
-      <ExitButton onClick={handleExit}>eixt</ExitButton>
+      <Navbar name="config deck" to={handleExit}>
+        <SaveButton onClick={handleSave}>save</SaveButton>
+        <PublicButton onClick={handlePublic}>
+          {tempDeck.is_public ? "public" : "not public"}
+        </PublicButton>
+      </Navbar>
 
       {showExitCheck && (
         <ModalExitCheck>
@@ -184,20 +186,6 @@ const SaveButton = styled.button`
   top: 0;
   right: 10%;
   width: 80px;
-  height: 40px;
-  font-size: 16px;
-  border-radius: 10px;
-  &:hover {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-  }
-`;
-
-const ExitButton = styled.button`
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100px;
   height: 40px;
   font-size: 16px;
   border-radius: 10px;

@@ -5,6 +5,7 @@ import { useSetRecoilState } from "recoil";
 import ConfigDeckPage from "./ConfigDeckPage";
 import ReadOnlyDeckPage from "./ReadOnlyDeckPage";
 import { CardCount, Deck } from "../../utils/types";
+import Navbar from "../../components/Navbar";
 
 const ShowDeckPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,8 +58,8 @@ const ShowDeckPage: React.FC = () => {
           )}
           {showType === 2 && (
             <div>
+              <Navbar to={-1} name=""></Navbar>
               권한 없음
-              <button onClick={() => navigate(-1)}>back</button>
             </div>
           )}
         </>

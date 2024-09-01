@@ -5,15 +5,12 @@ import { Deck } from "../../utils/types";
 import useHttpUser from "../../api/users";
 import { useRecoilValue } from "recoil";
 import { userStats } from "../../atoms/global";
+import Navbar from "../../components/Navbar";
 
 const PlayDeckSelectPage = () => {
   const navigate = useNavigate();
   const { updateUserDeckSelection } = useHttpUser();
   const user = useRecoilValue(userStats);
-
-  const handleExit = () => {
-    navigate("/play");
-  };
 
   const handleDeckClick = (deck: Deck) => {
     updateUserDeckSelection(
@@ -27,9 +24,8 @@ const PlayDeckSelectPage = () => {
 
   return (
     <div>
-      이ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ
+      <Navbar to={"/play/home"} name="select play deck"></Navbar>
       <ShowDecks
-        handleExit={handleExit}
         handleDeckClick={handleDeckClick}
         createButton
       />

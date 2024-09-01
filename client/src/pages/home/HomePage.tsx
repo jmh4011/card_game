@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
     useRecoilState(isAuthenticatedState);
 
   const handlePlay = () => {
-    navigate("/play");
+    navigate("/play/home");
   };
 
   const handleDeck = () => {

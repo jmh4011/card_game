@@ -12,8 +12,8 @@ class UserDeckSelectionCreate(UserDeckSelectionBase):
     pass
 
 class UserDeckSelectionUpdate(BaseModel):
-    game_mode: str |None = None
-    deck_id: str | None = None
+    mod_id: int
+    deck_id: int
 
 class UserDeckSelectionSchemas(UserDeckSelectionBase):
     selection_id: int

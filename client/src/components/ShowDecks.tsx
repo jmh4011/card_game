@@ -6,15 +6,13 @@ import { Deck } from "../utils/types";
 import { characterImage } from "../api/static";
 
 interface ShowDecksPorps {
-  handleExit: () => void;
   handleDeckClick: (deck: Deck) => void;
-  createButton: boolean
+  createButton: boolean;
 }
 
 const ShowDecks: React.FC<ShowDecksPorps> = ({
   handleDeckClick,
-  handleExit,
-  createButton
+  createButton,
 }) => {
   const { getDecks, createDeck } = useHttpDeck();
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -33,9 +31,6 @@ const ShowDecks: React.FC<ShowDecksPorps> = ({
 
   return (
     <Modal>
-      <Menu>
-        <ExitButton onClick={handleExit}>Eixt</ExitButton>
-      </Menu>
       <Container>
         {decks.map((value, idx) => (
           <DeckContainer key={idx} onClick={() => handleDeckClick(value)}>
@@ -43,7 +38,9 @@ const ShowDecks: React.FC<ShowDecksPorps> = ({
             <DeckName>{value.deck_name}</DeckName>
           </DeckContainer>
         ))}
-        {createButton && <CreateButton onClick={handleCreate}>Create Deck</CreateButton>}
+        {createButton && (
+          <CreateButton onClick={handleCreate}>Create Deck</CreateButton>
+        )}
       </Container>
     </Modal>
   );
@@ -53,28 +50,7 @@ export default ShowDecks;
 
 const Modal = styled.div`
   width: 100%;
-  height: 100%;
-`;
-
-const Menu = styled.div`
-  box-sizing: border-box;
-  width: 100%;
-  height: 50px;
-  border: 1px solid rgb(0, 0, 0);
-`;
-
-const ExitButton = styled.button`
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 5%;
-  height: 4%;
-  font-size: 16px;
-  border-radius: 10px;
-  &:hover {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-  }
+  height: 80%;
 `;
 
 const Container = styled.div`

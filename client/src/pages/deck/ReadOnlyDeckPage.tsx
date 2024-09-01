@@ -9,6 +9,7 @@ import { OutModal } from "../../utils/styles";
 import { CardCount, Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import ResponsiveText from "../../components/ResponsiveText";
+import Navbar from "../../components/Navbar";
 
 interface ReadOnlyDeckProps {
   deck: Deck;
@@ -32,8 +33,9 @@ const ReadOnlyDeckPage: React.FC<ReadOnlyDeckProps> = ({ deck, deckCards }) => {
 
   return (
     <ReadOnlyDeckContainer>
-      <ReadOnly>read only</ReadOnly>
-      <ExitButton onClick={handleExit}>exit</ExitButton>
+      <Navbar to={-1} name="deck">
+        <ReadOnly>read only</ReadOnly>
+      </Navbar>
 
       {showExitCheck && (
         <ModalExitCheck>
