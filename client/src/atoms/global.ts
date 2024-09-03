@@ -7,9 +7,9 @@ export const modalState = atom<{ id: string; element: React.FC }[]>({
   default: [],
 });
 
-export const isAuthenticatedState = atom<boolean | null>({
+export const isAuthenticatedState = atom<boolean>({
   key: "isAuthenticated",
-  default: null,
+  default: false,
 });
 
 export const loadingState = atom<boolean>({

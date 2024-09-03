@@ -22,6 +22,8 @@ import ShowDeckPage from "./pages/deck/ShowDeckPage";
 import PlayDeckSelectPage from "./pages/play/PlayDeckSelectPage";
 import SelectModPage from "./pages/play/SelectModPage";
 import PlayHomePage from "./pages/play/PlayHomePage";
+import PlayModSelectPage from "./pages/play/PlayModSelectPage";
+import PlayTestPage from "./pages/play/PlayTestPage";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useRecoilState(loadingState);
@@ -58,11 +60,6 @@ const App: React.FC = () => {
     }
   }, [isAuthenticated]);
 
-  if (isAuthenticated === null) {
-    // 인증 상태를 확인 중일 때 로딩 화면을 표시
-    return <div>Loading...</div>;
-  }
-
   return (
     <Page className="App">
       <Routes>
@@ -78,6 +75,11 @@ const App: React.FC = () => {
           path="/"
           element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />}
         />
+
+        <Route
+          path="/play"
+          element={isAuthenticated ? <PlayPage /> : <Navigate to="/login" />}
+        />
         <Route
           path="/play/home"
           element={
@@ -91,6 +93,15 @@ const App: React.FC = () => {
             isAuthenticated ? <PlayDeckSelectPage /> : <Navigate to="/login" />
           }
         />
+
+        <Route
+          path="/play/mod"
+          element={
+            isAuthenticated ? <PlayModSelectPage /> : <Navigate to="/login" />
+          }
+        />
+
+        <Route path="/play/test" element={<PlayTestPage />} />
 
         <Route
           path="/option"

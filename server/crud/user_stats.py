@@ -20,7 +20,8 @@ class UserStatCrud:
         db_user_stats = await db.get(UserStat, user_id)
         if db_user_stats:
             for key, value in user_stats.model_dump().items():
-                setattr(db_user_stats, key, value)
+                if value is not None:
+                    setattr(db_user_stats, key, value)
             return db_user_stats
         return None
 

@@ -1,9 +1,11 @@
 from enum import Enum
 from pydantic import BaseModel
-from typing import Any
-from modules.card import Card
-from modules.effect import Effect
-from modules.player import Player
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from modules.card import Card
+    from modules.effect import Effect
+    from modules.player import Player
+
 
 class TriggerType(Enum):
     SUMMON = "summon"  # 소환 시
@@ -27,9 +29,9 @@ class ZoneType(Enum):
     DECK = "deck"
     
 class ConditionInfo(BaseModel):
-    player: Player
-    opponent: Player
-    trigger_cards: Card
+    player: 'Player'
+    opponent: 'Player'
+    trigger_cards: 'Card'
     
 
 
@@ -45,9 +47,9 @@ class CardInfo(BaseModel):
     back: bool
 
 class EffectInfo(BaseModel):
-    card: Card
-    effect: Effect
-    targets: list[Card] = []
+    card: 'Card'
+    effect: 'Effect'
+    targets: list['Card'] = []
     
 class MoveType(Enum):
     EFFECT = "effect"

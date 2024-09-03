@@ -10,13 +10,13 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <BrowserRouter>
-    <RecoilRoot>
-      <CookiesProvider>
-        <React.StrictMode>
+  <RecoilRoot>
+    <CookiesProvider>
+      <BrowserRouter>
+        {/* <React.StrictMode> */}
           <App />
-        </React.StrictMode>
-      </CookiesProvider>
-    </RecoilRoot>
-  </BrowserRouter>
+        {/* </React.StrictMode> */}
+      </BrowserRouter>
+    </CookiesProvider>
+  </RecoilRoot>
 );

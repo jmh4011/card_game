@@ -90,7 +90,10 @@ export const useHttp = () => {
       data:data
     });
     console.log(result)
-    callback(result);
+    if(result !== undefined){
+      
+      callback(result);
+    }
   };
 
   return { http };

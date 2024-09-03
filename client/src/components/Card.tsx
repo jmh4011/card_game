@@ -60,6 +60,8 @@ const CardContainer = styled.div`
   align-items: center;
   justify-content: center;
   aspect-ratio: 3/4;
+  background-color: rgb(255,255,255);
+  z-index: -20;
 `;
 
 const CardBase = styled.div`

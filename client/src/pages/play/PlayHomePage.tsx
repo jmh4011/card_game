@@ -10,22 +10,23 @@ import { characterImage } from "../../api/static";
 import { useNavigate } from "react-router-dom";
 import ResDescription from "../../components/ResDescription";
 import ScrollableDescription from "../../components/ScrollableDescription";
+import Navbar from "../../components/Navbar";
 
 const PlayHomePage: React.FC = () => {
   const { getUserDeckSelection } = useHttpUser();
   const navigate = useNavigate();
   const { getDecks } = useHttpDeck();
-  const { getMods } = useHttpGame();
-  const [decks, setDecks] = useState<Record<number, Deck>>();
-  const [mods, setMods] = useState<GameMod[]>();
+  const { getMod } = useHttpGame();
+  const [deck, setDeck] = useState<Deck>();
+  const [mod, setMod] = useState<GameMod>();
   const [user, setUser] = useRecoilState(userStats);
 
   useEffect(() => {
-    getUserDeckSelection((data) => {
-      setDecks(data);
+    getUserDeckSelection(user.current_mod_id, (data) => {
+      setDeck(data);
     });
-    getMods((data) => {
-      setMods(data);
+    getMod(user.current_mod_id, (data) => {
+      setMod(data);
     });
   }, [user]);
 
@@ -33,46 +34,45 @@ const PlayHomePage: React.FC = () => {
     navigate("/play/deck");
   };
 
-  const handleModClick = (val: GameMod) => {
+  const handleModClick = () => {
     navigate("/play/mod");
   };
 
+  const handlePlayClick = () => {
+    navigate("/play")
+  }
+
   return (
     <Container>
-      <ModContainer>
-        {mods?.map((val, idx) => {
-          return (
-            <ModBox key={idx} onClick={() => handleModClick(val)}>
-              <ModImg src={characterImage(val.image_path)} />
-              <ModTextContainer>
-                <ModName>{val.mod_name}</ModName>
-                  <ModDescription>
-                    <ScrollableDescription>{val.description}</ScrollableDescription>
-                  </ModDescription>
-              </ModTextContainer>
-            </ModBox>
-          );
-        })}
-      </ModContainer>
+      <Navbar name="play home" to={"/"} />
+      {mod ? (
+        <ModBox onClick={handleModClick}>
+          <ModImg src={characterImage(mod.image_path)} />
+          <ModTextContainer>
+            <ModName>{mod.mod_name}</ModName>
+            <ModDescription>
+              <ScrollableDescription>{mod.description}</ScrollableDescription>
+            </ModDescription>
+          </ModTextContainer>
+        </ModBox>
+      ) : (
+        <ModBox onClick={handleModClick}></ModBox>
+      )}
 
       <DeckContainer onClick={() => handleDeckClick()}>
-        {decks && decks[user.current_mod_id] ? (
+        {deck ? (
           <>
-            <DeckImg
-              src={characterImage(decks[user.current_mod_id].image_path)}
-            />
-            <DeckName>{decks[user.current_mod_id].deck_name}</DeckName>
+            <DeckImg src={characterImage(deck.image_path)} />
+            <DeckName>{deck.deck_name}</DeckName>
           </>
         ) : (
           <>
-            <DeckImg
-              src={characterImage("3.png")}
-            />
+            <DeckImg src={characterImage("3.png")} />
             <DeckName>deck select</DeckName>
           </>
         )}
       </DeckContainer>
-      <PlayButton>play</PlayButton>
+      <PlayButton onClick={handlePlayClick}>play</PlayButton>
     </Container>
   );
 };
@@ -114,9 +114,11 @@ const ModContainer = styled.div`
 `;
 
 const ModBox = styled.div`
-  margin-top: 10px;
-  width: 100%;
+
+  width: 60%;
   height: 20%;
+  float: left;
+  margin-top: 10px;
   border: 1px solid rgb(0, 0, 0);
   display: flex;
   align-items: flex-start;
@@ -164,8 +166,6 @@ const DeckContainer = styled.div`
   cursor: pointer;
 `;
 
-
-
 const DeckImg = styled.img`
   width: 100%;
 `;
@@ -175,6 +175,4 @@ const DeckName = styled.div`
   border: 1px solid rgb(0, 0, 0);
 `;
 
-const PlayButton = styled.button`
-
-`
+const PlayButton = styled.button``;

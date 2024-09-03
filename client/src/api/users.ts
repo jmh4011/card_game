@@ -110,7 +110,7 @@ const useHttpUser = () => {
     });
   };
 
-  const getUserDeckSelection = (
+  const getUserDeckSelectionAll = (
     callback: SetFn,
     onError?: SetFn,
     setLoading?: SetFn
@@ -118,6 +118,21 @@ const useHttpUser = () => {
     http({
       type: "get",
       url: `/users/deck-selection`,
+      callback: callback,
+      onError: onError,
+      customSetLoading: setLoading,
+    });
+  };
+
+  const getUserDeckSelection = (
+    mod_id: number,
+    callback: SetFn,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
+    http({
+      type: "get",
+      url: `/users/deck-selection/${mod_id}`,
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,
@@ -149,6 +164,7 @@ const useHttpUser = () => {
     getUserCards,
     updateUserDeckSelection,
     getUserDeckSelection,
+    getUserDeckSelectionAll
   };
 };
 

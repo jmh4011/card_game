@@ -3,33 +3,19 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { wsTokenState } from "../../atoms/global";
 import WebSocketClient from "../../api/websocket";
 import PlayHomePage from "./PlayHomePage";
+import useHttpGame from "../../api/game";
 
 const PlayPage: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
-  const token = useRecoilValue(wsTokenState);
+  const { getToken } = useHttpGame();
 
   useEffect(() => {
-    wsClientRef.current = new WebSocketClient();
-
-    // 컴포넌트 언마운트 시 WebSocket 연결 종료
-    return () => {
-      if (wsClientRef.current) {
-        wsClientRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  const toggleConnection = () => {
-    if (!wsClientRef.current) return;
-
-    if (isConnected) {
-      wsClientRef.current.disconnect();
-      setIsConnected(false);
-    } else {
+    getToken((data) => {
+      wsClientRef.current = new WebSocketClient();
       wsClientRef.current.connect(
-        token,
+        data,
         (message) => {
           setMessages((prevMessages) => [...prevMessages, message]);
         },
@@ -39,8 +25,16 @@ const PlayPage: React.FC = () => {
         }
       );
       setIsConnected(true);
-    }
-  };
+    });
+
+    // 컴포넌트 언마운트 시 WebSocket 연결 종료
+    return () => {
+      if (wsClientRef.current) {
+        wsClientRef.current.disconnect();
+        setIsConnected(false);
+      }
+    };
+  }, []);
 
   const handleSendMessage = () => {
     if (wsClientRef.current) {
@@ -48,7 +42,11 @@ const PlayPage: React.FC = () => {
     }
   };
 
-  return <div></div>;
+  return (
+    <div>
+      <button onClick={handleSendMessage}>메ㅔㅔㅔㅔㅔㅔㅔㅔ</button>
+    </div>
+  );
 };
 
 export default PlayPage;

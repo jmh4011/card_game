@@ -35,9 +35,9 @@ export interface UserStat {
 }
 
 export interface UserStatUpdate {
-  nickname: string;
-  money: number;
-  current_mod_id: number;
+  nickname: string | null;
+  money: number | null;
+  current_mod_id: number | null;
 }
 
 export interface DeckUpdate {

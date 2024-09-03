@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OutModal } from "../../utils/styles";
 import styled from "styled-components";
 import useHttpUser from "../../api/users";
@@ -21,8 +21,8 @@ const LoginPage: React.FC = () => {
       username,
       password,
       (data) => {
-        setIsAuthenticated(true);
         navigate("/");
+        setIsAuthenticated(true);
       },
       (data) => {
         alert("틀림");
@@ -47,7 +47,6 @@ const LoginPage: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <SignUp to={"/signup"}>Create Account</SignUp>
-        <FindAccount onClick={() => navigate("/")}>Find Account</FindAccount>
         <LoginButton onClick={useHandleLogin}>완료</LoginButton>
       </Login>
     </>

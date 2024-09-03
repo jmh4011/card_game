@@ -121,12 +121,12 @@ class UserServices:
     
     @staticmethod
     async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:
-        deck: None|UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, game_mode=data.game_mode)
+        deck: None|UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=data.mod_id)
         try: 
             if deck:
                 result = await UserDeckSelectionCrud.update(db=db, selection_id=deck.selection_id, deck_selection=data)
             else:
-                deck_selection = UserDeckSelectionCreate(user_id=user_id, game_mode=data.game_mode, deck_id=data.deck_id)
+                deck_selection = UserDeckSelectionCreate(user_id=user_id, mod_id=data.mod_id, deck_id=data.deck_id)
                 result = await UserDeckSelectionCrud.create(db=db, deck_selection=deck_selection)
             await db.commit()
             await db.refresh(result)

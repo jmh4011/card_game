@@ -11,8 +11,10 @@ class UserStatBase(BaseModel):
 class UserStatCreate(UserStatBase):
     user_id: int
 
-class UserStatUpdate(UserStatBase):
-    pass
+class UserStatUpdate(BaseModel):
+    money: int | None
+    nickname: str | None
+    current_mod_id: int | None
 
 class UserStatSchemas(UserStatBase):
     stat_id: int

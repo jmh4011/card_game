@@ -1,5 +1,4 @@
 import asyncio
-from modules.player import Player
 from modules.types import ZoneType, EffectInfo,ConditionInfo
 from modules.card import Card
 

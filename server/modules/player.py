@@ -12,15 +12,14 @@ import random
 
 
 class Player:
-    def __init__(self, user_id: int,websocket: WebSocket, cards: dict[int, int]) -> None:
+    def __init__(self, user_id: int, websocket: WebSocket) -> None:
         self.user_id = user_id
         self.websocket = websocket
         self.effect_manager = EffectManager()
         self.hands: deque[Card] = deque()
         self.fields: dict[int, Card] = {}
         self.graves: deque[Card] = deque()
-        self.decks: deque[Card] = self._initialize_deck(cards)
-        self.effect_manager.effects_check(self.decks)
+        self.decks: deque[Card] = deque()
 
     def _initialize_deck(self, cards: dict[int, int]) -> deque[Card]:
         """Initializes and shuffles the deck with the given card information."""
@@ -29,7 +28,8 @@ class Player:
             for key, val in cards.items()
             for _ in range(val)
         )
-        return self._shuffle(deck)
+        self.decks = deck
+        self.effect_manager.effects_check(self.decks)
 
     def _shuffle(self, cards: deque[Card]) -> deque[Card]:
         """Shuffles the cards and updates their indices."""
