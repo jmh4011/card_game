@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import filerIcon from "../assets/icon/filter.png";
-import Card from "./Card";
+import { IoSettingsOutline } from "react-icons/io5";
+import Card from "../../../components/Card";
 import { useRecoilValue } from "recoil";
-import { cardsStats, userCardsStats } from "../atoms/global";
+import { cardsStats, userCardsStats } from "../../../atoms/global";
 import SearchSetting from "./SearchSetting";
 
 interface SearchCardsPorps {
@@ -92,9 +92,8 @@ const SearchCards: React.FC<SearchCardsPorps> = ({
           }}
         />
         <Filter
-          src={filerIcon}
           onClick={() => {
-            setShowSetting(true);
+            setShowSetting(!showSetting);
           }}
         />
       </Container>
@@ -115,7 +114,7 @@ const SearchCards: React.FC<SearchCardsPorps> = ({
               onClick={() => onCardClick(value)}
               onContextMenu={(e) => onCardContextMenu(e, value)}
             >
-              <Card card_id={value} key={value} />
+              <Card card={cards[value]} key={value} />
             </CardStyle>
           );
         })}
@@ -147,9 +146,10 @@ const Search = styled.input`
   font-size: 100%;
 `;
 
-const Filter = styled.img`
+const Filter = styled(IoSettingsOutline)`
   margin-left: 2%;
-  width: 5%;
+  width: 10%;
+  height: 100%;
   border: 1px solid rgb(0, 0, 0);
 `;
 

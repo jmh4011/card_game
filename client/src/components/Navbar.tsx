@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarPorps> = ({ to, name, children}) => {
         }}
       />
       <Name>{name}</Name>
-      <div>{children}</div>
+      {children}
     </Container>
   );
 };

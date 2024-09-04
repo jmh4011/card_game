@@ -12,14 +12,14 @@ import { cardsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
 import ResDescription from "./ResDescription";
+import { Card as CardType } from "../utils/types";
 
 interface CardProps {
-  card_id: number;
+  card: CardType;
 }
 
-const Card: React.FC<CardProps> = ({ card_id }) => {
-  const card = useRecoilValue(cardsStats)[card_id];
-
+const Card: React.FC<CardProps> = ({ card }) => {
+  
   return (
     <CardContainer>
       <CardFrame>

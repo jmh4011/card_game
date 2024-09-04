@@ -7,7 +7,7 @@ import useHttpGame from "../../api/game";
 import { Card as CardType } from "../../utils/types";
 import styled from "styled-components";
 import Card from "../../components/Card";
-import CardInfo from "../../components/CardInfo";
+import CardInfo from "../deck/components/CardInfo";
 
 const PlayTestPage: React.FC = () => {
   const cards = useRecoilValue(cardsStats);
@@ -38,7 +38,7 @@ const PlayTestPage: React.FC = () => {
           {hands.map((val, idx) => {
             return (
               <MyHandCard key={idx} index={idx} total={hands.length}>
-                <Card card_id={val} />
+                <Card card={cards[val]} />
               </MyHandCard>
             );
           })}
@@ -164,8 +164,9 @@ const CardInfoContener = styled.div`
   top: 50%;
   transform: translate(0, -50%);
   z-index: 1;
-  height: 70vh;
-  aspect-ratio: 3 / 4; /* 3:4 비율 고정 */
+  width: 30vh;
+  height: 40vh;
+  border: 1px solid rgb(100, 0, 100);
 
 
 `

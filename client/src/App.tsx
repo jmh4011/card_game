@@ -105,7 +105,7 @@ const App: React.FC = () => {
 
         <Route
           path="/option"
-          element={isAuthenticated ? <OptionPage /> : <Navigate to="/login" />}
+          element={isAuthenticated ? <PlayTestPage /> : <Navigate to="/login" />}
         />
         <Route
           path="/deck"

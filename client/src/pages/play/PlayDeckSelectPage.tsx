@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ShowDecks from "../../components/ShowDecks";
 import { Deck } from "../../utils/types";
 import useHttpUser from "../../api/users";
 import { useRecoilValue } from "recoil";

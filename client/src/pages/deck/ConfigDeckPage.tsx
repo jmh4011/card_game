@@ -3,9 +3,9 @@ import { useSetRecoilState } from "recoil";
 import { loadingState } from "../../atoms/global";
 import styled from "styled-components";
 import useHttpDeck from "../../api/decks";
-import CardInfo from "../../components/CardInfo";
-import ShowDeck from "../../components/ShowDeck";
-import SearchCards from "../../components/SearchCards";
+import CardInfo from "./components/CardInfo";
+import ShowDeck from "./components/ShowDeck";
+import SearchCards from "./components/SearchCards";
 import { OutModal } from "../../utils/styles";
 import { CardCount, Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
@@ -168,11 +168,11 @@ const InfoSection = styled.div`
 `;
 
 const PublicButton = styled.button`
-  position: fixed;
-  top: 0;
-  right: 20%;
-  width: 80px;
-  height: 40px;
+  display: inline-block;
+  
+  transform: translate(0, -30%);
+  width: 5vw;
+  height: 5vh;
   font-size: 16px;
   border-radius: 10px;
   &:hover {
@@ -182,11 +182,10 @@ const PublicButton = styled.button`
 `;
 
 const SaveButton = styled.button`
-  position: fixed;
-  top: 0;
-  right: 10%;
-  width: 80px;
-  height: 40px;
+  display: inline-block;
+  transform: translate(0, -30%);
+  width: 5vw;
+  height: 5vh;
   font-size: 16px;
   border-radius: 10px;
   &:hover {

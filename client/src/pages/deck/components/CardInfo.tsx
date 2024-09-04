@@ -1,11 +1,11 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, userCardsStats } from "../atoms/global";
-import { characterImage } from "../api/static";
-import ResponsiveText from "./ResponsiveText";
-import ResDescription from "./ResDescription";
-import ScrollableDescription from "./ScrollableDescription";
+import { cardsStats, userCardsStats } from "../../../atoms/global";
+import { characterImage } from "../../../api/static";
+import ResponsiveText from "../../../components/ResponsiveText";
+import ResDescription from "../../../components/ResDescription";
+import ScrollableDescription from "../../../components/ScrollableDescription";
 
 interface CardInfoProps {
   card_id: number;
@@ -49,8 +49,8 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
 export default CardInfo;
 
 const InfoContainer = styled.div`
-  width: 100%;
   height: 100%;
+  aspect-ratio: 3 / 4; /* 3:4 비율 고정 */
 `;
 
 const CardId = styled.div`
@@ -64,7 +64,8 @@ const Name = styled.div`
 `;
 
 const Image = styled.img`
-  width: 80%;
+  height: 40%;
+  aspect-ratio: 560 / 380; /* 3:4 비율 고정 */
   margin-top: 2%;
   margin-left: 10%;
   margin-right: 10%;
@@ -100,7 +101,7 @@ const Class = styled.div`
 const Description = styled.div`
   overflow: auto;
   max-width: 100%;
-  height: 40%;
+  height: 30%;
   width: 90%;
   border: 1px solid rgb(0, 0, 0);
   border-radius: 10px;
