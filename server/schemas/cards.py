@@ -1,7 +1,5 @@
+from pydantic import BaseModel
 
-from pydantic import BaseModel, Field
-from typing import Optional
-from datetime import datetime, timezone
 
 
 
@@ -10,7 +8,6 @@ class CardBase(BaseModel):
     card_class: str
     attack: int
     health: int
-    description: str
     image_path: str
     card_type: int
 

@@ -5,24 +5,30 @@ from collections import deque
 from modules.effect import Effect
 from modules.effect_manager import EffectManager
 from modules.registry import get_card_instance
-from modules.types import ZoneType
+from schemas.enum import ZoneType
+from schemas.game import PlayerInfo
+from services import DeckServices
 
 import asyncio
 import random
 
 
 class Player:
-    def __init__(self, user_id: int, websocket: WebSocket) -> None:
+    def __init__(self, user_id: int, websocket: WebSocket, deck_id:int) -> None:
         self.user_id = user_id
         self.websocket = websocket
+        self.deck_id = deck_id
         self.effect_manager = EffectManager()
+        self.cost = 0
+        self.health = 40
         self.hands: deque[Card] = deque()
         self.fields: dict[int, Card] = {}
         self.graves: deque[Card] = deque()
         self.decks: deque[Card] = deque()
 
-    def _initialize_deck(self, cards: dict[int, int]) -> deque[Card]:
+    async def start(self, db:AsyncSession) -> deque[Card]:
         """Initializes and shuffles the deck with the given card information."""
+        cards = await DeckServices.get_cards(db=db, deck_id=self.deck_id)
         deck = deque(
             get_card_instance(card_id=key, zone=ZoneType.DECK, index=0)
             for key, val in cards.items()
@@ -30,6 +36,18 @@ class Player:
         )
         self.decks = deck
         self.effect_manager.effects_check(self.decks)
+        
+        self.draw(5)
+        
+    async def get_info(self) -> PlayerInfo:
+        return PlayerInfo(
+            cost=self.cost,
+            health=self.health,
+            hands=[card.get_info() for card in self.hands],
+            fields={idx:card.get_info() for idx,card in self.fields.items()},
+            graves=[card.get_info() for card in self.graves],
+            decks=len(self.decks)
+        )
 
     def _shuffle(self, cards: deque[Card]) -> deque[Card]:
         """Shuffles the cards and updates their indices."""
@@ -38,16 +56,19 @@ class Player:
             card.index = idx
         return cards
 
-    def draw(self) -> Card | None:
+    def draw(self, num = 1) -> list[Card]:
         """Draws a card from the deck to the hand."""
-        if not self.decks:
-            return None
-        
-        card = self.decks.pop()
-        self.effect_manager.on_card_moved(card=card, new_zone=ZoneType.HAND)
-        card.move(new_zone=ZoneType.HAND, index=len(self.hands))
-        self.hands.append(card)
-        return card
+        result = []
+        for _ in range(num):
+            if not self.decks:
+                break
+            
+            card = self.decks.pop()
+            self.effect_manager.on_card_moved(card=card, new_zone=ZoneType.HAND)
+            card.move(new_zone=ZoneType.HAND, index=len(self.hands))
+            self.hands.append(card)
+            result.append(card)
+        return result
 
     def to_field(self, card: Card, index: int) -> None:
         """Moves a card from hand to the field at the specified index."""

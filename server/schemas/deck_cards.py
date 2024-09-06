@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 class DeckCardBase(BaseModel):
     deck_id: int
     card_id: int
-    card_count: int
+    card_count: int = 1
 
 class DeckCardCreate(DeckCardBase):
     pass

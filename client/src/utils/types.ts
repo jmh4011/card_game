@@ -61,3 +61,22 @@ export interface GameMod {
   description: string;
   is_open: boolean;
 }
+
+export type ZoneType = "hand" | "field" | "grave" | "deck";
+
+export type MoveType = "effect" | "attact" | "end";
+
+export interface Targets {
+  targer_num: number;
+  zone: ZoneType[];
+  exception: Card[];
+}
+export interface Move {
+  move_id: number;
+  move_type: MoveType;
+  select: boolean;
+  card: Card;
+  targets: Targets;
+  effect_index: number;
+  tmp: any;
+}

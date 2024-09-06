@@ -19,6 +19,7 @@ class DeckRetrun(BaseModel):
     pass
 
 class DeckSchemas(DeckBase):
+    user_id: int
     deck_id: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

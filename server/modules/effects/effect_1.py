@@ -1,5 +1,6 @@
 from modules.effect import Effect
-from modules.types import ZoneType, ConditionInfo, TriggerType, TargetType
+from schemas.enum import ZoneType, TriggerType, TargetType
+from schemas.game import ConditionInfo
 
 
 class Effect_1(Effect):

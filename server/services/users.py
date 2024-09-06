@@ -70,6 +70,7 @@ class UserServices:
         await db.commit()
         await db.refresh(stat)
         return stat
+    
     @staticmethod
     async def update_stat(db: AsyncSession, user_id:int, data: UserStatUpdate) -> UserStatSchemas:
         try:
@@ -92,7 +93,7 @@ class UserServices:
 
     
     @staticmethod
-    async def get_deck_selection(db: AsyncSession, user_id: int, mod_id: int) -> DeckSchemas:
+    async def get_deck_selection(db: AsyncSession, user_id: int, mod_id: int) -> DeckSchemas | None:
         deck_selection: UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=mod_id)
         await db.commit()
         if deck_selection == None:

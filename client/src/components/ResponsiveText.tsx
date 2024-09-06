@@ -18,16 +18,17 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
       const parentHeight = parentElement.clientHeight;
 
       // 텍스트 길이 (글자 수)
-      const textLength = (children as string).length;
+      const textLength = typeof children === 'string' ? children.length : React.Children.count(children);
 
       // 부모 요소의 크기와 텍스트 길이를 고려한 폰트 크기 계산
       const widthFactor = 0.9; // Width factor to fit text within width
       const heightFactor = 0.8; // Height factor to fit text within height
-
+      
+      
       // 부모 요소의 너비와 텍스트 길이에 따라 폰트 크기 조정
       const calculatedFontSizeByWidth = (parentWidth / textLength) * widthFactor;
       const calculatedFontSizeByHeight = parentHeight * heightFactor;
-
+      
       // 최종 폰트 크기: 둘 중 더 작은 값을 사용
       const newFontSize = Math.min(calculatedFontSizeByWidth, calculatedFontSizeByHeight);
 
@@ -42,6 +43,8 @@ const ResponsiveText: React.FC<ResponsiveTextProps> = ({ children }) => {
       window.removeEventListener("resize", updateFontSize);
     };
   }, [children]);
+
+  
 
   return (
     <Container ref={containerRef} fontSize={fontSize}>
@@ -62,6 +65,6 @@ const Container = styled.div<{ fontSize: number }>`
   overflow: hidden;
   white-space: nowrap;
   padding: 0 5px;
-  font-size: ${(props) => props.fontSize}px;
+  font-size: ${({fontSize}) => `${fontSize}`}px;
 `;
 

@@ -29,9 +29,14 @@ const ScrollableDescription: React.FC<ScrollableDescriptionProps> = ({
   };
 
   useEffect(() => {
-    updateSize();
+    const timeoutId = setTimeout(() => {
+      updateSize();
+    }, 0); // 0 밀리초 지연, 브라우저가 렌더링을 완료한 후 실행
+  
     window.addEventListener("resize", updateSize);
+  
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener("resize", updateSize);
     };
   }, [children]);

@@ -44,6 +44,10 @@ async def websocket_endpoint(websocket: WebSocket, token: str, db: AsyncSession 
     except HTTPException:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
+    
+    if not await GameServices.check_user(db=db, user_id=user_id):
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
 
     await websocket.accept()
     user_id: int = payload.get('uid')

@@ -12,13 +12,13 @@ import { cardsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
 import ResDescription from "./ResDescription";
-import { Card as CardType } from "../utils/types";
+import { Card } from "../utils/types";
 
-interface CardProps {
-  card: CardType;
+interface ShowCardProps {
+  card: Card;
 }
 
-const Card: React.FC<CardProps> = ({ card }) => {
+const ShowCard: React.FC<ShowCardProps> = ({ card }) => {
   
   return (
     <CardContainer>
@@ -50,7 +50,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
   );
 };
 
-export default Card;
+export default ShowCard;
 
 const CardContainer = styled.div`
   box-sizing: border-box;

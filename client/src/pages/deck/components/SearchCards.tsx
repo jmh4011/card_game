@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import { IoSettingsOutline } from "react-icons/io5";
-import Card from "../../../components/Card";
+import ShowCard from "../../../components/ShowCard";
 import { useRecoilValue } from "recoil";
 import { cardsStats, userCardsStats } from "../../../atoms/global";
 import SearchSetting from "./SearchSetting";
@@ -114,7 +114,7 @@ const SearchCards: React.FC<SearchCardsPorps> = ({
               onClick={() => onCardClick(value)}
               onContextMenu={(e) => onCardContextMenu(e, value)}
             >
-              <Card card={cards[value]} key={value} />
+              <ShowCard card={cards[value]} key={value} />
             </CardStyle>
           );
         })}

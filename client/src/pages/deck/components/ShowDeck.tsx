@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
-import Card from "../../../components/Card";
+import ShowCard from "../../../components/ShowCard";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { cardsStats, userCardsStats } from "../../../atoms/global";
 import { CardCount, Deck } from "../../../utils/types";
@@ -62,7 +62,7 @@ const ShowDeck: React.FC<ShowDeckPorps> = ({
                   onContextMenu={(e) => onCardContextMenu(e, cardId)}
                   isExceedingUserCount={isExceedingUserCount}
                 >
-                  <Card card={cards[cardId]} />
+                  <ShowCard card={cards[cardId]} />
                 </CardWrapper>
               );
             })

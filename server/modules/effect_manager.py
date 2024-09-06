@@ -1,5 +1,6 @@
 import asyncio
-from modules.types import ZoneType, EffectInfo,ConditionInfo
+from schemas.enum import ZoneType
+from schemas.game import EffectInfo,ConditionInfo
 from modules.card import Card
 
 
