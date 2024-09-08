@@ -38,6 +38,8 @@ const Navbar: React.FC<NavbarPorps> = ({ to, name, children}) => {
 export default Navbar;
 
 const Container = styled.div`
+  align-items: center;
+  display: flex;
   width: 100%;
   height: 6vh;
   background-color: rgb(100, 100, 100);
@@ -45,12 +47,13 @@ const Container = styled.div`
 `;
 
 const Icon = styled(IoMdArrowBack)`
-  display: inline-block;
+  float: left;
   width: 5vh;
   height: 5vh;
 `
 
 const Name = styled.div`
-  display: inline-block;
+  float: left;
   font-size: 4vh;
 `
+

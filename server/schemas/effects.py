@@ -3,7 +3,9 @@ from pydantic import BaseModel
 
 class EffectBase(BaseModel):
     effect_name: str
-    description: str
+    condition: str | None
+    cost: str | None
+    effect: str | None 
 
 class EffectCreate(EffectBase):
     pass

@@ -1,6 +1,6 @@
 import React from "react";
 import { atom } from "recoil";
-import { Card, CardCount, Deck, DeckSelection, UserStat } from "../utils/types";
+import { Card, CardCount, Deck, DeckSelection, Effect, UserStat } from "../utils/types";
 
 export const modalState = atom<{ id: string; element: React.FC }[]>({
   key: "modalState",
@@ -24,6 +24,11 @@ export const userStats = atom<UserStat>({
 
 export const cardsStats = atom<Record<number, Card>>({
   key: "cards",
+  default: {},
+});
+
+export const effectsStats = atom<Record<number, Effect>>({
+  key: "effects",
   default: {},
 });
 

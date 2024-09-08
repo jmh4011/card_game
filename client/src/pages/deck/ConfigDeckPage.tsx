@@ -168,12 +168,8 @@ const InfoSection = styled.div`
 `;
 
 const PublicButton = styled.button`
-  display: inline-block;
-  
-  transform: translate(0, -30%);
-  width: 5vw;
-  height: 5vh;
   font-size: 16px;
+  height: 5vh;
   border-radius: 10px;
   &:hover {
     background-color: rgb(0, 0, 0);
@@ -182,8 +178,6 @@ const PublicButton = styled.button`
 `;
 
 const SaveButton = styled.button`
-  display: inline-block;
-  transform: translate(0, -30%);
   width: 5vw;
   height: 5vh;
   font-size: 16px;

@@ -57,7 +57,7 @@ class DeckServices:
     @staticmethod
     async def create(db: AsyncSession, user_id:int, deck:RouterDeckCreate):
         try:
-            deck_data = DeckCreate(user_id=user_id, deck_name=deck.deck_name, image=deck.image_path)
+            deck_data = DeckCreate(user_id=user_id, deck_name=deck.deck_name, image_path=deck.image_path)
             deck = await DeckCrud.create(db, deck=deck_data)
             await db.commit()
             await db.refresh(deck)

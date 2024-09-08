@@ -25,7 +25,10 @@ class Effect(Base):
     __tablename__ = "effects"
     effect_id = Column(Integer, primary_key=True, index=True)
     effect_name = Column(String(100), nullable=False)
-    description = Column(Text, nullable=True)
+    effect_name = Column(String(100), nullable=False)
+    condition = Column(Text, nullable=True)
+    cost = Column(Text, nullable=True)
+    effect = Column(Text, nullable=True)
 
 class Deck(Base):
     __tablename__ = "decks"

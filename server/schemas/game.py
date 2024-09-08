@@ -66,9 +66,9 @@ class MoveReturn(BaseModel):
 class PlayerInfo(BaseModel):
     cost: int
     health: int
-    hands: list[Card]
-    fields: dict[int, Card] = {}
-    graves: list[Card]
+    hands: list['Card']
+    fields: dict[int, 'Card'] = {}
+    graves: list['Card']
     decks: int
 
 class GameStat(BaseModel):

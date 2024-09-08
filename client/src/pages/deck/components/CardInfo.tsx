@@ -1,7 +1,7 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, userCardsStats } from "../../../atoms/global";
+import { cardsStats, effectsStats, userCardsStats } from "../../../atoms/global";
 import { characterImage } from "../../../api/static";
 import ResponsiveText from "../../../components/ResponsiveText";
 import ResDescription from "../../../components/ResDescription";
@@ -15,6 +15,7 @@ interface CardInfoProps {
 const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
   const card = useRecoilValue(cardsStats)[card_id];
   const userCount = useRecoilValue(userCardsStats)[card_id];
+  const effects = useRecoilValue(effectsStats);
 
   return (
     <InfoContainer>
@@ -33,7 +34,17 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
         <ResponsiveText>{card.card_class}</ResponsiveText>
       </Class>
       <Description>
-        <ScrollableDescription>{card.description}</ScrollableDescription>
+        <ScrollableDescription>{card.effects
+              .map((val, idx) => {
+                let effect = effects[val];
+                return (
+                  `${effect.effect_name}\n` +
+                  `${effect.condition}\n` +
+                  `${effect.cost}\n` +
+                  `${effect.effect}`
+                );
+              })
+              .join("\n\n")}</ScrollableDescription>
       </Description>
 
       <UserCount>
@@ -50,7 +61,6 @@ export default CardInfo;
 
 const InfoContainer = styled.div`
   height: 100%;
-  aspect-ratio: 3 / 4; /* 3:4 비율 고정 */
 `;
 
 const CardId = styled.div`
@@ -64,7 +74,7 @@ const Name = styled.div`
 `;
 
 const Image = styled.img`
-  height: 40%;
+  width: 80%;
   aspect-ratio: 560 / 380; /* 3:4 비율 고정 */
   margin-top: 2%;
   margin-left: 10%;

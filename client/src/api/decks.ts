@@ -36,7 +36,7 @@ const useHttpDeck = () => {
     onError?: SetFn,
     setLoading?: SetFn,
     deck_name: string = `새로운 덱`,
-    image: string = "0.png"
+    image_path: string = "0.png"
   ) => {
     http({
       type: "post",
@@ -44,7 +44,7 @@ const useHttpDeck = () => {
       callback: callback,
       customSetLoading: setLoading,
       onError,
-      data: { deck_name, image },
+      data: { deck_name, image_path },
     });
   };
 

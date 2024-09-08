@@ -8,9 +8,18 @@ export interface Card {
   card_class: string;
   attack: number;
   health: number;
-  description: string;
+  effects: number[];
   image_path: string;
   card_type: number;
+}
+
+export interface Effect {
+  effect_id: number;
+  effect_name: string;
+  condition: string | null;
+  cost: string | null;
+  effect: string | null; 
+
 }
 
 export interface Skin {

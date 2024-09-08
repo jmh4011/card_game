@@ -8,3 +8,5 @@ from .user_stats import UserStatCrud
 from .user_card import UserCardCrud
 from .deck_card import DeckCardCrud
 from .user_deck_selection import UserDeckSelectionCrud
+from .effect import EffectCrud
+from .card_effect import CardEffectCrud

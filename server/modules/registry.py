@@ -1,4 +1,4 @@
-from server.schemas.enum import ZoneType
+from schemas.enum import ZoneType
 from modules.card import Card
 from modules.cards import *
 

@@ -5,36 +5,36 @@ from models import CardEffect
 from schemas.card_effects import CardEffectCreate, CardEffectUpdate
 
 
-class cardEffectCrud:
+class CardEffectCrud:
     @staticmethod
-    async def get(db: AsyncSession, cardeffect_id: int):
-        db_cardeffect = await db.execute(select(CardEffect).where(CardEffect.cardeffect_id == cardeffect_id))
-        return db_cardeffect.scalar_one_or_none()
+    async def get(db: AsyncSession, card_effect_id: int):
+        db_card_effect = await db.execute(select(CardEffect).where(CardEffect.card_effect_id == card_effect_id))
+        return db_card_effect.scalar_one_or_none()
     
     @staticmethod
-    async def create(db: AsyncSession, cardeffect: CardEffectCreate):
-        db_cardeffect = cardeffect(**cardeffect.model_dump())
-        db.add(db_cardeffect)
-        return db_cardeffect
+    async def create(db: AsyncSession, card_effect: CardEffectCreate):
+        db_card_effect = card_effect(**card_effect.model_dump())
+        db.add(db_card_effect)
+        return db_card_effect
 
     @staticmethod
-    async def update(db: AsyncSession, cardeffect_id: int, cardeffect: CardEffectUpdate):
-        db_cardeffect = await db.get(cardeffect, cardeffect_id)
-        if db_cardeffect:
-            for key, value in cardeffect.model_dump().items():
-                setattr(db_cardeffect, key, value)
-            return db_cardeffect
+    async def update(db: AsyncSession, card_effect_id: int, card_effect: CardEffectUpdate):
+        db_card_effect = await db.get(card_effect, card_effect_id)
+        if db_card_effect:
+            for key, value in card_effect.model_dump().items():
+                setattr(db_card_effect, key, value)
+            return db_card_effect
         return None
 
     @staticmethod
-    async def delete(db: AsyncSession, cardeffect_id: int):
-        db_cardeffect = await db.get(CardEffect, cardeffect_id)
-        if db_cardeffect:
-            await db.delete(db_cardeffect)
-            return db_cardeffect
+    async def delete(db: AsyncSession, card_effect_id: int):
+        db_card_effect = await db.get(CardEffect, card_effect_id)
+        if db_card_effect:
+            await db.delete(db_card_effect)
+            return db_card_effect
         return None
     
     @staticmethod
     async def get_all(db: AsyncSession):
-        db_cardeffects = await db.execute(select(CardEffect))
-        return db_cardeffects.scalars().all()
+        db_card_effects = await db.execute(select(CardEffect))
+        return db_card_effects.scalars().all()

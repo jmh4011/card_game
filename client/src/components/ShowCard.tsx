@@ -8,7 +8,7 @@ import frameImg from "../assets/card-base/frame.png";
 import healthImg from "../assets/card-base/health.png";
 import nameImg from "../assets/card-base/name.png";
 import { useRecoilValue } from "recoil";
-import { cardsStats } from "../atoms/global";
+import { cardsStats, effectsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
 import ResDescription from "./ResDescription";
@@ -19,7 +19,8 @@ interface ShowCardProps {
 }
 
 const ShowCard: React.FC<ShowCardProps> = ({ card }) => {
-  
+  const effects = useRecoilValue(effectsStats);
+
   return (
     <CardContainer>
       <CardFrame>
@@ -29,7 +30,17 @@ const ShowCard: React.FC<ShowCardProps> = ({ card }) => {
         </Name>
         <Description>
           <ResDescription>
-            {card.description}
+            {card.effects
+              .map((val, idx) => {
+                let effect = effects[val];
+                return (
+                  `name: ${effect.effect_name}\n` +
+                  `condition: ${effect.condition}\n` +
+                  `cost: ${effect.cost}\n` +
+                  `effect: ${effect.effect}`
+                );
+              })
+              .join("\n\n")}
           </ResDescription>
         </Description>
         {card.card_type === 0 && (
@@ -60,7 +71,7 @@ const CardContainer = styled.div`
   align-items: center;
   justify-content: center;
   aspect-ratio: 3/4;
-  background-color: rgb(255,255,255);
+  background-color: rgb(255, 255, 255);
   z-index: -20;
 `;
 
@@ -132,7 +143,7 @@ const Description = styled(CardBase)`
   height: 33.5%;
   background-image: url(${descriptionImg});
   bottom: 10%;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
 `;
 
 const Class = styled(CardBase)`
@@ -141,4 +152,3 @@ const Class = styled(CardBase)`
   bottom: 5%;
   aspect-ratio: 300/82;
 `;
-
