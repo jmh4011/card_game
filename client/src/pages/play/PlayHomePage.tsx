@@ -140,7 +140,6 @@ const ModTextContainer = styled.div`
 `;
 
 const ModName = styled.div`
-  height: 20%;
   font-size: 30px;
   border: 1px solid rgb(0, 0, 0);
   display: inline;

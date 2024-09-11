@@ -2,7 +2,7 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import Card
-from schemas.cards import CardCreate, CardUpdate
+from schemas.db.cards import CardCreate, CardUpdate
 
 
 class CardCrud:
@@ -35,6 +35,6 @@ class CardCrud:
         return None
     
     @staticmethod
-    async def get_all(db: AsyncSession):
+    async def get_all(db: AsyncSession) -> list[Card]:
         db_cards = await db.execute(select(Card))
         return db_cards.scalars().all()

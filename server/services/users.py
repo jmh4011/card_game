@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from auth import create_refresh_token, verify_password, create_access_token, get_password_hash
 from crud import UserCrud, UserCardCrud, UserStatCrud, UserDeckSelectionCrud, DeckCrud
-from schemas.users import UserLogin, UserCreate
-from schemas.user_stats import UserStatSchemas, UserStatCreate, UserStatUpdate
-
-from schemas.decks import DeckSchemas
-from models import User
-from schemas.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
+from schemas.db.users import UserCreate
+from schemas.db.user_stats import UserStatSchemas, UserStatCreate, UserStatUpdate
+from schemas.db.decks import DeckSchemas
+from schemas.router.user_stats import RouterUserStatUpdate
+from schemas.db.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
 import logging
+from schemas.router.users import UserLogin
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class UserServices:
             return None
         user_info = UserCreate(username=user.username, password= await get_password_hash(user.password))
         try:
-            db_user : User = await UserCrud.create(db=db, user=user_info)
+            db_user = await UserCrud.create(db=db, user=user_info)
             await db.commit()
             await db.refresh(db_user)
             access_token = await create_access_token(db_user.user_id)
@@ -67,20 +67,32 @@ class UserServices:
     @staticmethod
     async def get_stat(db: AsyncSession, user_id: int) -> UserStatSchemas:
         stat = await UserStatCrud.get(db=db, user_id=user_id)
-        await db.commit()
         await db.refresh(stat)
         return stat
     
     @staticmethod
-    async def update_stat(db: AsyncSession, user_id:int, data: UserStatUpdate) -> UserStatSchemas:
+    async def update_stat(db: AsyncSession, user_id: int, data: RouterUserStatUpdate) -> UserStatSchemas | None:
+        db_stat = await UserStatCrud.get(db=db, user_id=user_id)
+        if db_stat is None:
+            return None
+
+        updated_values = {
+            "money": data.money if data.money is not None else db_stat.money,
+            "nickname": data.nickname if data.nickname is not None else db_stat.nickname,
+            "current_mod_id": data.current_mod_id if data.current_mod_id is not None else db_stat.current_mod_id
+        }
+
         try:
-            stat = await UserStatCrud.update(db=db, user_id=user_id, user_stats=data)
+            stat_info = UserStatUpdate(**updated_values)
+            update_stat = await UserStatCrud.update(db=db, user_id=user_id, user_stats=stat_info)
+            
             await db.commit()
-            await db.refresh(stat)
+            await db.refresh(update_stat)
+            return update_stat
         except Exception as e:
             await db.rollback()
             raise e
-        return stat
+
     
     @staticmethod
     async def get_cards(db: AsyncSession, user_id: int) -> dict[int,int]:

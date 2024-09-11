@@ -23,14 +23,14 @@ class RoomManager:
             if player in self.waiting_users[mod_id]:
                 self.waiting_users[mod_id].remove(player)
 
-    def register_game(self, user_id: int, game_manager: GameManager):
+    async def register_game(self, user_id: int, game_manager: GameManager):
         self.active_games[user_id] = game_manager
 
-    def unregister_game(self, user_id: int):
+    async def unregister_game(self, user_id: int):
         if user_id in self.active_games:
             del self.active_games[user_id]
 
-    def get_active_game(self, user_id: int) -> GameManager | None:
+    async def get_active_game(self, user_id: int) -> GameManager | None:
         return self.active_games.get(user_id, None)
 
 # 싱글톤 인스턴스

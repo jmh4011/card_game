@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import and_, delete
 from models import UserCard
-from schemas.user_cards import UserCardCreate, UserCardUpdate
+from schemas.db.user_cards import UserCardCreate, UserCardUpdate
 
 class UserCardCrud:
 

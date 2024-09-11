@@ -1,10 +1,5 @@
 from pydantic import BaseModel
 
-from schemas.effects import EffectSchemas
-
-
-
-
 class CardBase(BaseModel):
     card_name: str
     card_class: str
@@ -25,7 +20,3 @@ class CardSchemas(CardBase):
 
     class Config:
         from_attributes = True
-
-class CardRetrun(BaseModel):
-    cards: dict[int, CardSchemas] 
-    effects: dict[int, EffectSchemas]

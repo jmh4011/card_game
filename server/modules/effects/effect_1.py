@@ -1,24 +1,24 @@
+from typing import TYPE_CHECKING
 from modules.effect import Effect
-from schemas.enum import ZoneType, TriggerType, TargetType
-from schemas.game import ConditionInfo
+from schemas.game.enums import ZoneType
+from schemas.game.games import ConditionInfo
+if TYPE_CHECKING:
+    from modules.card import Card
 
 
 class Effect_1(Effect):
-    effect_id: int = 1
-    triggers: list[TriggerType] = [TriggerType.SUMMON] # 트리거 타입 리스트
-    targets: list[TargetType] = [TargetType.SELF] # 대상 타입 리스트
-    zones: list[ZoneType]  = [ZoneType.FIELD] # 존 타입 리스트
-    select: bool = True # 사용자 선택 여부
-    cost: int = 1# 사용하는 코스트
+    def __init__(self, card: 'Card') -> None:
+        super().__init__(card)
+        self.effect_id = 1 
+        self.card = card
+        self.zones = [ZoneType.HAND]
+        self.select = True
 
-    @classmethod
-    def before(cls, condition_info: ConditionInfo):
+    async def before(self, condition_info: ConditionInfo):
         pass
 
-    @classmethod
-    def after(cls):
+    async def after(self):
         pass
     
-    @classmethod
-    def condition(cls, condition_info: ConditionInfo) -> tuple[bool, list]:
-        return super().condition(condition_info)
+    async def condition(self, condition_info: ConditionInfo) -> tuple[bool,list]:
+        return False,[]

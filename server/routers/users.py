@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from auth import set_auth_cookies
 from database import get_db
-from schemas.users import UserCreate, UserLogin
-from schemas.user_stats import UserStatSchemas, UserStatUpdate
-from schemas.user_deck_selections import UserDeckSelectionUpdate
-from schemas.decks import DeckSchemas
+from schemas.db.users import UserCreate
+from schemas.router.users import UserLogin
+from schemas.db.user_stats import UserStatSchemas
+from schemas.router.user_stats import RouterUserStatUpdate
+from schemas.db.user_deck_selections import UserDeckSelectionUpdate
+from schemas.db.decks import DeckSchemas
 from services import UserServices
 from auth import get_user_id
 
@@ -61,7 +63,7 @@ async def read_user_state_route(request: Request, response: Response, db: AsyncS
     return stats
 
 @router.put("/users/stat", response_model=UserStatSchemas)
-async def update_user_state_route(data: UserStatUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+async def update_user_state_route(data: RouterUserStatUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     stats = await UserServices.update_stat(db=db, user_id=user_id, data=data)
     if stats is None:

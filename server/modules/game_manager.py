@@ -3,8 +3,7 @@ import random
 import logging
 from modules.player import Player
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from schemas.game import GameStat
+from schemas.game.games import GameStat
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,6 +25,7 @@ class GameManager:
 
     async def process_tasks(self):
         while self.active:
+            logger.warning("??")
             task_data = await self.task_queue.get()
             if task_data is None:
                 break
@@ -39,23 +39,37 @@ class GameManager:
 
     async def stop(self):
         self.active = False
-        await self.task_queue.put(None)
-        await self.task_queue.join()
+        await self.task_queue.put(None)  # process_tasks를 멈추기 위해 None을 전달
+        try:
+            await asyncio.gather(
+                self.task_queue.join(),
+                self.process_tasks()  # queue 처리 멈추기
+            )   
+        except Exception as e:
+            logger.error(f"Error while stopping: {e}")
+
 
     async def receive_message(self, player: Player):
         try:
             while self.active:
-                message = await player.websocket.receive_text()
+                logger.warning("Receiving message")
+                message = await player.websocket.receive_text()  # 비동기적으로 메시지 수신
                 await self.add_task(f"Player {player.user_id}: {message}")
         except Exception as e:
             logger.error(f"Error in receiving message from Player {player.user_id}: {e}")
+        finally:
+            await self.handle_disconnect(player)
 
     async def receive_and_process_messages(self):
-        await asyncio.gather(
-            self.receive_message(self.current_player),
-            self.receive_message(self.opponent_player)
-        )
-        await self.stop()
+        try:
+            await asyncio.gather(
+                self.receive_message(self.current_player),
+                self.receive_message(self.opponent_player)
+            )
+        except Exception as e:
+            logger.error(f"Error in receive_and_process_messages: {e}")
+        finally:
+            await self.stop()
 
     async def handle_disconnect(self, player: Player):
         """ 플레이어의 연결이 끊겼을 때 호출됩니다. """
@@ -81,16 +95,29 @@ class GameManager:
             trun=self.turn,
             is_player_turn=False
         )
+        logger.info(game_stat_current.model_dump())
         
-        self.current_player.websocket.send_json(game_stat_current, mode="gameStat")
-        self.opponent_player.websocket.send_json(game_stat_opponent,mode="gameStat")
+        await self.current_player.websocket.send_json(game_stat_current.model_dump(), mode="text")
+        await self.opponent_player.websocket.send_json(game_stat_opponent.model_dump(),mode="text")
         
     async def game_start(self):
-        if random.randint(0,1):
-            self.opponent_player, self.current_player = self.current_player, self.opponent_player
-        await asyncio.gather(self.current_player.start(self.db),
-                            self.opponent_player.start(self.db))
-        self.send_game_stat()
+        try:
+            if random.randint(0, 1):
+                self.opponent_player, self.current_player = self.current_player, self.opponent_player
+            await self.current_player.start(self.db)
+            await self.opponent_player.start(self.db)
+
+            await self.send_game_stat()
+
+            await asyncio.gather(
+                self.process_tasks(),
+                self.receive_and_process_messages(),
+            )
+        except Exception as e:
+            logger.error(f"Error in game start: {e}")
+        finally:
+            await self.stop()
+
 
     async def send_available_move(self):
         available_effects = await self.current_player.effect_manager.get_available_effects()

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models import UserStat
-from schemas.user_stats import UserStatCreate, UserStatUpdate
+from schemas.db.user_stats import UserStatCreate, UserStatUpdate
 
 class UserStatCrud:
     @staticmethod
@@ -20,8 +20,7 @@ class UserStatCrud:
         db_user_stats = await db.get(UserStat, user_id)
         if db_user_stats:
             for key, value in user_stats.model_dump().items():
-                if value is not None:
-                    setattr(db_user_stats, key, value)
+                setattr(db_user_stats, key, value)
             return db_user_stats
         return None
 

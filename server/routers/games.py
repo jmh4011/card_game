@@ -7,7 +7,7 @@ from modules.game_manager import GameManager
 from modules.player import Player
 from services import GameServices
 from auth import get_user_id, verify_token
-from schemas.game_mods import GameModSchemas
+from schemas.db.game_mods import GameModSchemas
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,12 +45,12 @@ async def websocket_endpoint(websocket: WebSocket, token: str, db: AsyncSession 
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
     
+    user_id: int = payload.get('uid')
     if not await GameServices.check_user(db=db, user_id=user_id):
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
     await websocket.accept()
-    user_id: int = payload.get('uid')
 
     # 게임 서비스에서 유저 연결 처리
     await GameServices.connect_user(db=db, websocket=websocket, user_id=user_id)

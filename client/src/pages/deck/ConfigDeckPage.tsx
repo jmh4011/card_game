@@ -160,16 +160,16 @@ const ConfigDeckContainer = styled.div`
 
 const InfoSection = styled.div`
   margin-left: 3%;
-  margin-top: 5%;
+  margin-top: 1%;
   float: left;
   border: 1px solid rgb(0, 100, 255);
-  height: 80%;
-  width: 25%;
+  height: 90%;
+  width: 20%;
 `;
 
 const PublicButton = styled.button`
   font-size: 16px;
-  height: 5vh;
+  height: 100%;
   border-radius: 10px;
   &:hover {
     background-color: rgb(0, 0, 0);
@@ -178,8 +178,7 @@ const PublicButton = styled.button`
 `;
 
 const SaveButton = styled.button`
-  width: 5vw;
-  height: 5vh;
+  height: 100%;
   font-size: 16px;
   border-radius: 10px;
   &:hover {
@@ -216,17 +215,16 @@ const ShowDeckContainer = styled.div`
   float: left;
   border: 1px solid black;
   width: 35%;
-  height: 80%;
-  margin-top: 5%;
+  height: 90%;
+  margin-top: 1%;
   margin-left: 3%;
 `;
 
 const SearchCardsContainer = styled.div`
   border: 1px solid rgb(255, 0, 255);
   float: left;
-  width: 27%;
+  width: 35%;
   margin-left: 3%;
-  margin-right: 3%;
-  height: 80%;
-  margin-top: 5%;
+  height: 90%;
+  margin-top: 1%;
 `;

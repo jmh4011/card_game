@@ -1,7 +1,7 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import GameHistory
-from schemas.game_historys import GameHistoryCreate, GameHistoryUpdate
+from schemas.db.game_historys import GameHistoryCreate, GameHistoryUpdate
 
 
 class GameHistoryCrud:

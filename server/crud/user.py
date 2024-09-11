@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import and_
 from models import User
-from schemas.users import UserCreate, UserUpdate
+from schemas.db.users import UserCreate, UserUpdate
 from utils import get_refresh_token_expire
 
 

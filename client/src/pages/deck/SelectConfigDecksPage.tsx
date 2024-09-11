@@ -30,7 +30,7 @@ const SelectConfigDecksPage: React.FC = () => {
 
   return (
     <Modal>
-      <Navbar name="select deck" to={"/home"} />
+      <Navbar name="select deck" to={"/"} />
       <Container>
         {decks.map((value, idx) => (
           <DeckContainer key={idx} onClick={() => handleDeckClick(value)}>

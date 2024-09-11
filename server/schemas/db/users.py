@@ -11,8 +11,9 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-class UserLogin(UserBase):
-    pass
+class UserUpdate(UserBase):
+    refresh_token: str | None = None
+    refresh_token_expiry: datetime | None = None
 
 class UserSchemas(UserBase):
     refresh_token: str | None = None
@@ -23,5 +24,4 @@ class UserSchemas(UserBase):
     class Config:
         from_attributes = True
 
-class UserUpdate(UserSchemas):
-    pass
+

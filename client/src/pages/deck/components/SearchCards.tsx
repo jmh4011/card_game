@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import { IoSettingsOutline } from "react-icons/io5";
-import ShowCard from "../../../components/ShowCard";
+import ShowCard, { CardDescription } from "../../../components/ShowCard";
 import { useRecoilValue } from "recoil";
 import { cardsStats, userCardsStats } from "../../../atoms/global";
 import SearchSetting from "./SearchSetting";
@@ -57,7 +57,7 @@ const SearchCards: React.FC<SearchCardsPorps> = ({
         if (searchSettings.searchDescription)
           result =
             result ||
-            card.description
+            CardDescription(card)
               .toLowerCase()
               .includes(searchSettings.search.toLowerCase());
       }
@@ -132,7 +132,6 @@ const Config = styled.div`
 const Container = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 3%;
   width: 100%;
   height: 4%;
 `;

@@ -2,14 +2,14 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import CardEffect
-from schemas.card_effects import CardEffectCreate, CardEffectUpdate
+from schemas.db.card_effects import CardEffectCreate, CardEffectUpdate
 
 
 class CardEffectCrud:
     @staticmethod
-    async def get(db: AsyncSession, card_effect_id: int):
-        db_card_effect = await db.execute(select(CardEffect).where(CardEffect.card_effect_id == card_effect_id))
-        return db_card_effect.scalar_one_or_none()
+    async def get(db: AsyncSession, card_id: int):
+        db_card_effect = await db.execute(select(CardEffect).where(CardEffect.card_id == card_id))
+        return db_card_effect.scalars().all()
     
     @staticmethod
     async def create(db: AsyncSession, card_effect: CardEffectCreate):
@@ -35,6 +35,6 @@ class CardEffectCrud:
         return None
     
     @staticmethod
-    async def get_all(db: AsyncSession):
+    async def get_all(db: AsyncSession) -> list[CardEffect]:
         db_card_effects = await db.execute(select(CardEffect))
         return db_card_effects.scalars().all()

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from crud import DeckCardCrud,DeckCrud
-from schemas.decks import DeckUpdate, DeckCreate
-from schemas.decks import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
+from schemas.db.decks import DeckUpdate, DeckCreate
+from schemas.router.decks import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckUpdateReturn, RouterDeckCreate
 from models import Deck, DeckCard
 import logging
 
@@ -25,7 +25,6 @@ class DeckServices:
         if deck.user_id != user_id and not deck.is_public:
             return None
         deck_cards: list[DeckCard] = await DeckCardCrud.get_all(db=db, deck_id=deck_id)
-        await db.commit()
         for card in deck_cards:
             await db.refresh(card)
         deck_cards = {deck_card.card_id:deck_card.card_count for deck_card in deck_cards}
@@ -69,8 +68,8 @@ class DeckServices:
     
     @staticmethod
     async def get_cards(db: AsyncSession, deck_id: int) -> dict[int,int]:
+        logger.warning(f"\n\n{deck_id}\n\n")
         deck_cards: list[DeckCard] = await DeckCardCrud.get_all(db=db, deck_id=deck_id)
-        await db.commit()
         for card in deck_cards:
             await db.refresh(card)
         return {deck_card.card_id:deck_card.card_count for deck_card in deck_cards}

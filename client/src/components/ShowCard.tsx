@@ -30,17 +30,7 @@ const ShowCard: React.FC<ShowCardProps> = ({ card }) => {
         </Name>
         <Description>
           <ResDescription>
-            {card.effects
-              .map((val, idx) => {
-                let effect = effects[val];
-                return (
-                  `name: ${effect.effect_name}\n` +
-                  `condition: ${effect.condition}\n` +
-                  `cost: ${effect.cost}\n` +
-                  `effect: ${effect.effect}`
-                );
-              })
-              .join("\n\n")}
+            {CardDescription(card)}
           </ResDescription>
         </Description>
         {card.card_type === 0 && (
@@ -62,6 +52,22 @@ const ShowCard: React.FC<ShowCardProps> = ({ card }) => {
 };
 
 export default ShowCard;
+
+export const CardDescription = (card: Card) => {
+  const effects = useRecoilValue(effectsStats);
+  return (card.effects
+    .map((val, idx) => {
+      let effect = effects[val];
+      return (
+        `name: ${effect.effect_name}\n` +
+        `condition: ${effect.condition}\n` +
+        `cost: ${effect.cost}\n` +
+        `effect: ${effect.effect}`
+      );
+    })
+    .join("\n\n"))
+}
+
 
 const CardContainer = styled.div`
   box-sizing: border-box;

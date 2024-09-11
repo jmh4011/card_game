@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import delete
 from models import DeckCard
-from schemas.deck_cards import DeckCardCreate, DeckCardUpdate
+from schemas.db.deck_cards import DeckCardCreate, DeckCardUpdate
 
 
 class DeckCardCrud:

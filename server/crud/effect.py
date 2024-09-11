@@ -2,7 +2,7 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import Effect
-from schemas.effects import EffectCreate, EffectUpdate
+from schemas.db.effects import EffectCreate, EffectUpdate
 
 
 class EffectCrud:
@@ -35,6 +35,6 @@ class EffectCrud:
         return None
     
     @staticmethod
-    async def get_all(db: AsyncSession):
+    async def get_all(db: AsyncSession) -> list[Effect]:
         db_effects = await db.execute(select(Effect))
         return db_effects.scalars().all()

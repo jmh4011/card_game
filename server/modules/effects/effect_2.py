@@ -1,16 +1,17 @@
 from typing import TYPE_CHECKING
+from modules.effect import Effect
 from schemas.game.enums import ZoneType
 from schemas.game.games import ConditionInfo
 if TYPE_CHECKING:
     from modules.card import Card
 
-
-class Effect:
-    def __init__(self, card:'Card') -> None:
-        self.effect_id: int 
+class Effect_2(Effect):
+    def __init__(self, card: 'Card') -> None:
+        super().__init__(card)
+        self.effect_id = 2 
         self.card = card
-        self.zones: list[ZoneType]
-        self.select: bool
+        self.zones = [ZoneType.HAND]
+        self.select = True
 
     async def before(self, condition_info: ConditionInfo):
         pass

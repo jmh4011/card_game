@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { cardsStats, wsTokenState } from "../../atoms/global";
-import { Card as CardType } from "../../utils/types";
+import { Card } from "../../utils/types";
 import styled from "styled-components";
-import Card from "../../components/ShowCard";
 import CardInfo from "./components/CardInfo";
 import PlayerField from "./components/PlayerField";
 
@@ -11,8 +10,8 @@ const PlayTestPage: React.FC = () => {
   const cards = useRecoilValue(cardsStats);
 
   const [hands, setHands] = useState<number[]>([1, 2, 3, 3]);
-  const [fields, setFields] = useState<Record<number, CardType>>({});
-  const [graves, setGraves] = useState<CardType[]>([]);
+  const [fields, setFields] = useState<Record<number, Card>>({});
+  const [graves, setGraves] = useState<Card[]>([]);
   const [decks, setDecks] = useState<number>(40);
   const [showCardInfo, setShowCardInfo] = useState<number>(1)
 

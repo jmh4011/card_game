@@ -1,53 +1,49 @@
 
 from pydantic import BaseModel
 from typing import Any, TYPE_CHECKING
-from schemas.enum import MoveType, TargetType, ZoneType
-from schemas.cards import CardSchemas
+from schemas.game.enums import MoveType, ActionType, EntityZoneType, ZoneType
+from schemas.db.cards import CardSchemas
 if TYPE_CHECKING:
     from modules.card import Card
     from modules.effect import Effect
     from modules.player import Player
 
 
-    
+class Entity(BaseModel):
+    zone: EntityZoneType
+    index: int
+    opponent: bool
+    class Config:
+        use_enum_values = True
+
 class ConditionInfo(BaseModel):
     player: 'Player'
     opponent: 'Player'
     trigger_cards: 'Card'
     
 
-class EffectInfo(BaseModel):
-    card: 'Card'
-    effect: 'Effect'
-    targets: list['Card'] = []
-
 class CardInfo(CardSchemas):
     zone: ZoneType
     index: int
     opponent: bool
-    before_zone: ZoneType | None = None
     side_effects: list[Any] = []
     effects: list[int]
+    class Config:
+        use_enum_values = True
     
-class Target(BaseModel):
-    target_id: int
-    target_type: TargetType
-    zone: ZoneType | None = None  # 카드가 아닌 경우에는 zone이 필요 없을 수 있음
-    card: CardInfo | None = None  # 카드가 아닌 경우에도 사용 가능하게 None 허용
-
 class MoveEffect(BaseModel):
     move_id: int
-    card: CardInfo
+    entity: Entity
     effect_id: int      
     select: bool
-    targets: list[Target]
+    targets: list[Entity]
     tmp: Any
 
 class MoveAttack(BaseModel):
     move_id: int
+    entity: Entity
     select: bool
-    card: CardInfo
-    targets: list[Target]
+    targets: list[Entity]
     tmp: Any
     
 class Move(BaseModel):
@@ -61,14 +57,15 @@ class MoveReturn(BaseModel):
     move_id: int
     target: list[int]
     tmp: Any
-    
+    class Config:
+        use_enum_values = True
 
 class PlayerInfo(BaseModel):
     cost: int
     health: int
-    hands: list['Card']
-    fields: dict[int, 'Card'] = {}
-    graves: list['Card']
+    hands: list[CardInfo]
+    fields: dict[int, CardInfo] = {}
+    graves: list[CardInfo]
     decks: int
 
 class GameStat(BaseModel):
@@ -76,5 +73,13 @@ class GameStat(BaseModel):
     opponent: PlayerInfo
     trun: int
     is_player_turn: bool
-    
-    
+    class Config:
+        use_enum_values = True
+
+
+class Action(BaseModel):
+    action_type: ActionType
+    subject: Entity  
+    object: Entity
+    subject_state: CardInfo | PlayerInfo
+    object_state: CardInfo | PlayerInfo

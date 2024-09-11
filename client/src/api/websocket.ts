@@ -18,7 +18,6 @@ class WebSocketClient {
 
     this.websocket.onmessage = (event: MessageEvent) => {
       const message = event.data;
-      console.log("Message received from server:", message);
       onMessage(message);
     };
 
@@ -45,7 +44,6 @@ class WebSocketClient {
     if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
       this.websocket.onmessage = (event: MessageEvent) => {
         const message = event.data;
-        console.log("Message received from server:", message);
         onMessage(message);
       };
     } else {

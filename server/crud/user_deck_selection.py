@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import and_, delete
 from models import UserDeckSelection
-from schemas.user_deck_selections import UserDeckSelectionUpdate, UserDeckSelectionCreate
+from schemas.db.user_deck_selections import UserDeckSelectionUpdate, UserDeckSelectionCreate
 
 class UserDeckSelectionCrud:
 

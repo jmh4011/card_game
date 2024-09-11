@@ -1,11 +1,16 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, effectsStats, userCardsStats } from "../../../atoms/global";
+import {
+  cardsStats,
+  effectsStats,
+  userCardsStats,
+} from "../../../atoms/global";
 import { characterImage } from "../../../api/static";
 import ResponsiveText from "../../../components/ResponsiveText";
 import ResDescription from "../../../components/ResDescription";
 import ScrollableDescription from "../../../components/ScrollableDescription";
+import { CardDescription } from "../../../components/ShowCard";
 
 interface CardInfoProps {
   card_id: number;
@@ -34,17 +39,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id, deckCount }) => {
         <ResponsiveText>{card.card_class}</ResponsiveText>
       </Class>
       <Description>
-        <ScrollableDescription>{card.effects
-              .map((val, idx) => {
-                let effect = effects[val];
-                return (
-                  `${effect.effect_name}\n` +
-                  `${effect.condition}\n` +
-                  `${effect.cost}\n` +
-                  `${effect.effect}`
-                );
-              })
-              .join("\n\n")}</ScrollableDescription>
+        <ScrollableDescription>{CardDescription(card)}</ScrollableDescription>
       </Description>
 
       <UserCount>

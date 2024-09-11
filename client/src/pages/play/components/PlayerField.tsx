@@ -9,9 +9,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface PlayerFieldProps {
   handleCard: (val: number) => void;
+  handleDrop: (index: number, cardIndex: number) => void
 }
 
-const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard }) => {
+const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard, handleDrop }) => {
   const cards = useRecoilValue(cardsStats);
 
   const [hands, setHands] = useState<number[]>([1, 2, 3, 3]);
@@ -24,9 +25,6 @@ const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard }) => {
   });
   const [decks, setDecks] = useState<number>(40);
 
-  const handleDrop = (index: number, cardIndex: number) => {
-    console.log(`Card with index ${cardIndex} dropped on field ${index}`);
-  };
 
   return (
     <DndProvider backend={HTML5Backend}>

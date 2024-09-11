@@ -2,8 +2,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from schemas.decks import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckCreate, RouterDeckUpdateReturn
-from schemas.decks import DeckSchemas
+from schemas.router.decks import RouterDeckGetReturn, RouterDeckUpdate, RouterDeckCreate, RouterDeckUpdateReturn
+from schemas.db.decks import DeckSchemas
 from services import DeckServices
 from auth import get_user_id
 
