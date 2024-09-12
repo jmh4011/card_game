@@ -30,7 +30,7 @@ async def read_cards_all_route(request: Request, response: Response, db: AsyncSe
     return mods 
 
 
-@router.get("/games/tokens")
+@router.get("/games/tokens", response_model=str)
 async def websocket_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     token = await GameServices.get_token(db=db, user_id=user_id)

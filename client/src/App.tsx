@@ -11,7 +11,7 @@ import {
 import styled from "styled-components";
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/login/LoginPage";
-import SignUpPage from "./pages/login/SignUp";
+import SignUpPage from "./pages/login/SignUpPage";
 import SelectConfigDecksPage from "./pages/deck/SelectConfigDecksPage";
 import PlayPage from "./pages/play/PlayPage";
 import OptionPage from "./pages/option/OptionPage";

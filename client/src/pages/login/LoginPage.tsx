@@ -18,8 +18,7 @@ const LoginPage: React.FC = () => {
 
   const useHandleLogin = () => {
     userLogin(
-      username,
-      password,
+      { username: username, password: password },
       (data) => {
         navigate("/");
         setIsAuthenticated(true);

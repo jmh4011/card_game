@@ -3,7 +3,8 @@ import random
 import logging
 from modules.player import Player
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.game.games import GameStat
+from schemas.game.games import GameStat, MessageModel
+from schemas.game.enums import MessageType
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,8 +18,9 @@ class GameManager:
         self.active = True
         self.turn = 0
         
-
-
+    async def _send_message(self, player:Player ,message_type: MessageType, data):
+        message = MessageModel(type=message_type, data=data)
+        await player.websocket.send_json(message.model_dump())
     
     async def add_task(self, task_data):
         await self.task_queue.put(task_data)
@@ -95,11 +97,10 @@ class GameManager:
             trun=self.turn,
             is_player_turn=False
         )
-        logger.info(game_stat_current.model_dump())
-        
-        await self.current_player.websocket.send_json(game_stat_current.model_dump(), mode="text")
-        await self.opponent_player.websocket.send_json(game_stat_opponent.model_dump(),mode="text")
-        
+        await self._send_message(self.current_player, message_type=MessageType.GAMESTAT, data=game_stat_current)
+        await self._send_message(self.opponent_player, message_type=MessageType.GAMESTAT, data=game_stat_opponent)
+
+
     async def game_start(self):
         try:
             if random.randint(0, 1):

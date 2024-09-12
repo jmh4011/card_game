@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth import set_auth_cookies
 from database import get_db
 from schemas.db.users import UserCreate
-from schemas.router.users import UserLogin
+from schemas.router.users import UserLogin, UserSignUp
 from schemas.db.user_stats import UserStatSchemas
 from schemas.router.user_stats import RouterUserStatUpdate
 from schemas.db.user_deck_selections import UserDeckSelectionUpdate
@@ -21,7 +21,7 @@ async def auth_user_route(request: Request, response: Response, db: AsyncSession
 
 
 @router.put("/users/login", response_model=str)
-async def login_user_route(response: Response, user: UserLogin, db: AsyncSession = Depends(get_db)):
+async def login_user_route(user: UserLogin, response: Response, db: AsyncSession = Depends(get_db)):
     result = await UserServices.login(db=db, user=user)
     if result:
         access_token, refresh_token = result
@@ -33,9 +33,9 @@ async def login_user_route(response: Response, user: UserLogin, db: AsyncSession
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-@router.post("/users/create", response_model=str)
-async def create_user_route(response: Response, user: UserCreate, db: AsyncSession = Depends(get_db)):
-    result = await UserServices.create(db=db, user=user)
+@router.post("/users/signup", response_model=str)
+async def create_user_route(user: UserSignUp, response: Response, db: AsyncSession = Depends(get_db)):
+    result = await UserServices.signup(db=db, user=user)
     if result:
         access_token, refresh_token = result
         await set_auth_cookies(response=response, access_token=access_token, refresh_token=refresh_token)
@@ -98,7 +98,7 @@ async def read_user_deck_selection_route(mod_id: int,request: Request, response:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="deck not found")
     return deck
 
-@router.put("/users/deck-selection")
+@router.put("/users/deck-selection", response_model=DeckSchemas)
 async def read_user_deck_selection_route(data:UserDeckSelectionUpdate, request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)
     result = await UserServices.set_deck_selection(db=db, user_id=user_id, data=data)

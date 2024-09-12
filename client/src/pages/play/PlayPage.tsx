@@ -2,55 +2,69 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { cardsStats, wsTokenState } from "../../atoms/global";
 import WebSocketClient from "../../api/websocket";
-import PlayHomePage from "./PlayHomePage";
 import useHttpGame from "../../api/game";
 import styled from "styled-components";
-import PlayerField from "./components/PlayerField";
-import CardInfo from "./components/CardInfo";
-import { Card } from "../../utils/types";
+import PlayerField from "../../components/plays/PlayerField";
+import ShowCardInfo from "../../components/plays/ShowCardInfo";
+import { Card } from "../../types/models";
+import { Action, CardInfo, GameStat, MessageModel } from "../../types/games";
+import {
+  playerDecksState,
+  playerFieldsState,
+  playerGravesState,
+  playerHandsState,
+} from "../../atoms/play";
 
 const PlayPage: React.FC = () => {
-  const cards = useRecoilValue(cardsStats);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
   const { getToken } = useHttpGame();
 
-  const [hands, setHands] = useState<number[]>([1, 2, 3, 3]);
-  const [fields, setFields] = useState<Record<number, Card>>({});
-  const [graves, setGraves] = useState<Card[]>([]);
-  const [decks, setDecks] = useState<number>(40);
-  const [showCardInfo, setShowCardInfo] = useState<number>(1)
+  const [playerHands, setPlayerHands] = useRecoilState(playerHandsState);
+  const [playerFields, setPlayerFields] = useRecoilState(playerFieldsState);
+  const [playerGraves, setPlayerGraves] = useRecoilState(playerGravesState);
+  const [playerDecks, setPlayerDecks] = useRecoilState(playerDecksState);
+  const [showCardInfo, setShowCardInfo] = useState<CardInfo | null>(null);
 
-  const handleCard = (val:number) => {
-    setShowCardInfo(val)
-  }
+  const handleCard = (val: CardInfo) => {
+    setShowCardInfo(val);
+  };
 
-  const handleSubmit = (data:string) => {
-    try {
-      console.log((JSON.parse(data)));
-    } catch (error) {
-      console.log(data);
+  const handleMessage = (message: string) => {
+    let messageJson: MessageModel = JSON.parse(message);
+    console.log(messageJson);
+    switch (messageJson.type) {
+      case "text":
+        let data: string = messageJson.data;
+        break;
+      case "gamestat":
+        let gameStat: GameStat = messageJson.data;
+        setPlayerHands(gameStat.Player.hands)
+        setPlayerFields(gameStat.Player.fields)
+        setPlayerGraves(gameStat.Player.graves)
+        setPlayerDecks(gameStat.Player.decks)
+        break;
+      case "action":
+        let action: Action = messageJson.data;
+        break;
+      default:
+        console.log(messageJson);
     }
   };
 
   const handleDrop = (index: number, cardIndex: number) => {
-    wsClientRef.current?.sendMessage(`Card with index ${cardIndex} dropped on field ${index}`);
+    wsClientRef.current?.sendMessage(
+      `Card with index ${cardIndex} dropped on field ${index}`
+    );
   };
-  
 
   useEffect(() => {
     getToken((data) => {
       wsClientRef.current = new WebSocketClient();
-      wsClientRef.current.connect(
-        data,
-        (message) => {
-          handleSubmit(message)
-        },
-        () => {
-          console.log("Connection closed by server");
-          setIsConnected(false);
-        }
-      );
+      wsClientRef.current.connect(data, handleMessage, () => {
+        console.log("Connection closed by server");
+        setIsConnected(false);
+      });
       setIsConnected(true);
     });
 
@@ -65,14 +79,14 @@ const PlayPage: React.FC = () => {
 
   return (
     <Contener>
-      <Enemy>
-        {/* <PlayerField handleCard={handleCard}/> */}
-      </Enemy>
-      <CardInfoContener>
-        <CardInfo card_id={showCardInfo} />
-      </CardInfoContener>
+      <Enemy>{/* <PlayerField handleCard={handleCard}/> */}</Enemy>
+      {showCardInfo ? (
+        <CardInfoContener>
+          <ShowCardInfo card={showCardInfo} />
+        </CardInfoContener>
+      ) : null}
       <My>
-        <PlayerField handleCard={handleCard} handleDrop={handleDrop}/>
+        <PlayerField handleCard={handleCard} handleDrop={handleDrop} />
       </My>
     </Contener>
   );
@@ -93,7 +107,7 @@ const Enemy = styled.div`
   width: 100%;
   height: 50%;
   border: 3px solid rgb(100, 0, 0);
-  transform: scale(1, -1)
+  transform: scale(1, -1);
 `;
 const Center = styled.div`
   box-sizing: border-box;

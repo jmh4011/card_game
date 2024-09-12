@@ -1,16 +1,17 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
-import ShowCard from "../../../components/ShowCard";
+import ShowCard from "../ShowCard";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { cardsStats, userCardsStats } from "../../../atoms/global";
-import { CardCount, Deck } from "../../../utils/types";
+import { cardsStats, userCardsStats } from "../../atoms/global";
+import { DeckCards } from "../../types/routers";
+import { Deck } from "../../types/models";
 
 interface ShowDeckPorps {
   readOnly: boolean;
   deck: Deck;
   setDeck?: (data: any) => void;
-  deckCards: CardCount;
+  deckCards: DeckCards;
   onCardClick: (value: number) => void;
   onCardContextMenu: (e: React.MouseEvent, value: number) => void;
 }

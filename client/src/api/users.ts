@@ -1,5 +1,5 @@
 import { useHttp } from "./api";
-import { DeckSelectionUpdate, SetFn, UserStatUpdate } from "../utils/types";
+import {SetFn} from "../types/types";
 import { useSetRecoilState } from "recoil";
 import {
   userStats,
@@ -8,6 +8,8 @@ import {
   deckSelectionState,
   isAuthenticatedState,
 } from "../atoms/global";
+import { UserStatUpdate, DeckSelectionUpdate, UserLogin, UserSignUp, UserStat, UserCards, DeckSelection } from "../types/routers";
+import { Deck } from "../types/models";
 
 const useHttpUser = () => {
   const { http } = useHttp();
@@ -21,13 +23,12 @@ const useHttpUser = () => {
     http({
       type: "get",
       url: `/users/auth`,
-      callback: (data) => setIsAuthenticated(data),
+      callback: (data:boolean) => setIsAuthenticated(data),
     });
   };
 
   const userLogin = (
-    username: string,
-    password: string,
+    data:UserLogin,
     callback: SetFn,
     onError?: SetFn,
     setLoading?: SetFn
@@ -38,7 +39,7 @@ const useHttpUser = () => {
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,
-      data: { username, password },
+      data: { data },
     });
   };
 
@@ -52,9 +53,8 @@ const useHttpUser = () => {
     });
   };
 
-  const createUser = (
-    username: string,
-    password: string,
+  const userSignUp = (
+    data:UserSignUp,
     callback: SetFn,
     onError?: SetFn,
     setLoading?: SetFn
@@ -65,7 +65,7 @@ const useHttpUser = () => {
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,
-      data: { username, password },
+      data: { data },
     });
   };
 
@@ -73,7 +73,7 @@ const useHttpUser = () => {
     http({
       type: "get",
       url: `/users/stat`,
-      callback: (data) => {
+      callback: (data:UserStat) => {
         setUser(data);
       },
       onError: onError,
@@ -89,7 +89,7 @@ const useHttpUser = () => {
     http({
       type: "put",
       url: `/users/stat`,
-      callback: (data) => {
+      callback: (data:UserStat) => {
         setUser(data);
       },
       onError: onError,
@@ -102,7 +102,7 @@ const useHttpUser = () => {
     http({
       type: "get",
       url: `/users/cards`,
-      callback: (data) => {
+      callback: (data:UserCards) => {
         setUserCards(data);
       },
       onError: onError,
@@ -111,7 +111,7 @@ const useHttpUser = () => {
   };
 
   const getUserDeckSelectionAll = (
-    callback: SetFn,
+    callback: (data: DeckSelection) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
@@ -126,7 +126,7 @@ const useHttpUser = () => {
 
   const getUserDeckSelection = (
     mod_id: number,
-    callback: SetFn,
+    callback: (data: Deck) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
@@ -141,7 +141,7 @@ const useHttpUser = () => {
 
   const updateUserDeckSelection = (
     data: DeckSelectionUpdate,
-    callback: SetFn,
+    callback: (data: Deck) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
@@ -158,7 +158,7 @@ const useHttpUser = () => {
     authCheck,
     userLogin,
     userLogout,
-    createUser,
+    userSignUp,
     getUserStat,
     updateUserStat,
     getUserCards,

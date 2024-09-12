@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useHttpGame from "../../api/game";
-import { GameMod } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import { characterImage } from "../../api/static";
 import styled from "styled-components";
 import { userStats } from "../../atoms/global";
 import useHttpUser from "../../api/users";
+import { GameMod } from "../../types/models";
 
 const SelectModPage: React.FC = ({}) => {
   const { getMods } = useHttpGame();

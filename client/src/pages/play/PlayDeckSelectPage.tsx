@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Deck } from "../../utils/types";
 import useHttpUser from "../../api/users";
 import { useRecoilValue } from "recoil";
 import { userStats } from "../../atoms/global";
@@ -8,6 +7,7 @@ import Navbar from "../../components/Navbar";
 import styled from "styled-components";
 import useHttpDeck from "../../api/decks";
 import { characterImage } from "../../api/static";
+import { Deck } from "../../types/models";
 
 const PlayDeckSelectPage = () => {
   const navigate = useNavigate();

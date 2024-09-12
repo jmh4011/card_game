@@ -4,8 +4,9 @@ import useHttpDeck from "../../api/decks";
 import { useSetRecoilState } from "recoil";
 import ConfigDeckPage from "./ConfigDeckPage";
 import ReadOnlyDeckPage from "./ReadOnlyDeckPage";
-import { CardCount, Deck } from "../../utils/types";
 import Navbar from "../../components/Navbar";
+import { DeckCards } from "../../types/routers";
+import { Deck } from "../../types/models";
 
 const ShowDeckPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +22,7 @@ const ShowDeckPage: React.FC = () => {
     user_id: 0,
     is_public: false,
   });
-  const [deckCards, setDeckCards] = useState<CardCount>({});
+  const [deckCards, setDeckCards] = useState<DeckCards>({});
 
   useEffect(() => {
     getDeck(

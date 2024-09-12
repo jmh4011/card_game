@@ -12,7 +12,7 @@ import { cardsStats, effectsStats } from "../atoms/global";
 import { characterImage } from "../api/static";
 import ResponsiveText from "./ResponsiveText";
 import ResDescription from "./ResDescription";
-import { Card } from "../utils/types";
+import { Card } from "../types/models";
 
 interface ShowCardProps {
   card: Card;

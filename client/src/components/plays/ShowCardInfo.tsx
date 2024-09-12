@@ -1,19 +1,16 @@
 import React from "react";
-import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats, userCardsStats } from "../../../atoms/global";
-import { characterImage } from "../../../api/static";
-import ResponsiveText from "../../../components/ResponsiveText";
-import ResDescription from "../../../components/ResDescription";
-import ScrollableDescription from "../../../components/ScrollableDescription";
+import { characterImage } from "../../api/static";
+import ResponsiveText from "../ResponsiveText";
+import ScrollableDescription from "../ScrollableDescription";
+import { CardDescription } from "../ShowCard";
+import { CardInfo } from "../../types/games";
 
-interface CardInfoProps {
-  card_id: number;
+interface ShowCardInfoProps {
+  card: CardInfo;
 }
 
-const CardInfo: React.FC<CardInfoProps> = ({ card_id}) => {
-  const card = useRecoilValue(cardsStats)[card_id];
-
+const ShowCardInfo: React.FC<ShowCardInfoProps> = ({ card }) => {
   return (
     <InfoContainer>
       <CardId>{card.card_id}</CardId>
@@ -31,13 +28,13 @@ const CardInfo: React.FC<CardInfoProps> = ({ card_id}) => {
         <ResponsiveText>{card.card_class}</ResponsiveText>
       </Class>
       <Description>
-        <ScrollableDescription>{card.description}</ScrollableDescription>
+        <ScrollableDescription>{CardDescription(card)}</ScrollableDescription>
       </Description>
     </InfoContainer>
   );
 };
 
-export default CardInfo;
+export default ShowCardInfo;
 
 const InfoContainer = styled.div`
   height: 100%;

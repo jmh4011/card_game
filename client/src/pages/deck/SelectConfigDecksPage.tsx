@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import styled from "styled-components";
 import { characterImage } from "../../api/static";
 import useHttpDeck from "../../api/decks";
+import { Deck } from "../../types/models";
 
 const SelectConfigDecksPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +12,8 @@ const SelectConfigDecksPage: React.FC = () => {
   const [decks, setDecks] = useState<Deck[]>([]);
 
   const handleCreate = () => {
-    createDeck((data) => {
+    createDeck({deck_name:"new deck", image_path:"0.png"},
+      (data) => {
       setDecks((prev) => [...prev, data]);
     });
   };

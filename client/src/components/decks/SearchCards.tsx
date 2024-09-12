@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import { IoSettingsOutline } from "react-icons/io5";
-import ShowCard, { CardDescription } from "../../../components/ShowCard";
+import ShowCard, { CardDescription } from "../ShowCard";
 import { useRecoilValue } from "recoil";
-import { cardsStats, userCardsStats } from "../../../atoms/global";
+import { cardsStats, userCardsStats } from "../../atoms/global";
 import SearchSetting from "./SearchSetting";
 
 interface SearchCardsPorps {

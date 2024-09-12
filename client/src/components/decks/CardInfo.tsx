@@ -5,12 +5,12 @@ import {
   cardsStats,
   effectsStats,
   userCardsStats,
-} from "../../../atoms/global";
-import { characterImage } from "../../../api/static";
-import ResponsiveText from "../../../components/ResponsiveText";
-import ResDescription from "../../../components/ResDescription";
-import ScrollableDescription from "../../../components/ScrollableDescription";
-import { CardDescription } from "../../../components/ShowCard";
+} from "../../atoms/global";
+import { characterImage } from "../../api/static";
+import ResponsiveText from "../ResponsiveText";
+import ResDescription from "../ResDescription";
+import ScrollableDescription from "../ScrollableDescription";
+import { CardDescription } from "../ShowCard";
 
 interface CardInfoProps {
   card_id: number;

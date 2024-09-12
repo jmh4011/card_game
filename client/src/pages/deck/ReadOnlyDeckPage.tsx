@@ -2,18 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { loadingState } from "../../atoms/global";
 import styled from "styled-components";
-import CardInfo from "./components/CardInfo";
-import ShowDeck from "./components/ShowDeck";
-import SearchCards from "./components/SearchCards";
+import CardInfo from "../../components/decks/CardInfo";
+import ShowDeck from "../../components/decks/ShowDeck";
+import SearchCards from "../../components/decks/SearchCards";
 import { OutModal } from "../../utils/styles";
-import { CardCount, Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import ResponsiveText from "../../components/ResponsiveText";
 import Navbar from "../../components/Navbar";
+import { DeckCards } from "../../types/routers";
+import { Deck } from "../../types/models";
 
 interface ReadOnlyDeckProps {
   deck: Deck;
-  deckCards: CardCount;
+  deckCards: DeckCards;
 }
 
 const ReadOnlyDeckPage: React.FC<ReadOnlyDeckProps> = ({ deck, deckCards }) => {

@@ -1,30 +1,34 @@
 import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
-import { Card } from "../../../utils/types";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { cardsStats } from "../../../atoms/global";
-import ShowCard from "../../../components/ShowCard";
+import { cardsStats } from "../../atoms/global";
+import ShowCard from "../ShowCard";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Card } from "../../types/models";
+import {
+  playerHandsState,
+  playerFieldsState,
+  playerGravesState,
+  playerDecksState,
+} from "../../atoms/play";
+import { CardInfo } from "../../types/games";
 
 interface PlayerFieldProps {
-  handleCard: (val: number) => void;
-  handleDrop: (index: number, cardIndex: number) => void
+  handleCard: (val: CardInfo) => void;
+  handleDrop: (index: number, cardIndex: number) => void;
 }
 
-const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard, handleDrop }) => {
+const PlayerField: React.FC<PlayerFieldProps> = ({
+  handleCard,
+  handleDrop,
+}) => {
   const cards = useRecoilValue(cardsStats);
 
-  const [hands, setHands] = useState<number[]>([1, 2, 3, 3]);
-  const [fields, setFields] = useState<Record<number, Card | null>>({
-    0: null,
-    1: null,
-    2: null,
-    3: null,
-    4: null,
-  });
-  const [decks, setDecks] = useState<number>(40);
-
+  const [hands, setHands] = useRecoilState(playerHandsState);
+  const [fields, setFields] = useRecoilState(playerFieldsState);
+  const [graves, setGraves] = useRecoilState(playerGravesState);
+  const [decks, setDecks] = useRecoilState(playerDecksState);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -46,12 +50,12 @@ const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard, handleDrop }) => 
               key={idx}
               index={idx}
               total={hands.length}
-              card={cards[val]}
+              card={val}
               onClick={() => handleCard(val)}
             />
           ))}
         </Hands>
-        <Graves>묘지</Graves>
+        <Graves>{graves.length}</Graves>
         <Deck>{decks}</Deck>
       </Contener>
     </DndProvider>
@@ -61,7 +65,12 @@ const PlayerField: React.FC<PlayerFieldProps> = ({ handleCard, handleDrop }) => 
 export default PlayerField;
 
 // 드래그 가능한 HandCard 컴포넌트
-const DraggableHandCard: React.FC<{ card: Card; index: number; total: number; onClick: () => void }> = ({ card, index, total, onClick }) => {
+const DraggableHandCard: React.FC<{
+  card: Card;
+  index: number;
+  total: number;
+  onClick: () => void;
+}> = ({ card, index, total, onClick }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "card",
     item: { index },
@@ -84,7 +93,11 @@ const DraggableHandCard: React.FC<{ card: Card; index: number; total: number; on
 };
 
 // 드롭 가능한 FieldCard 컴포넌트
-const DroppableFieldCard: React.FC<{ index: number; card: Card | null; onDrop: (index: number, cardIndex: number) => void }> = ({ index, card, onDrop }) => {
+const DroppableFieldCard: React.FC<{
+  index: number;
+  card: Card | null;
+  onDrop: (index: number, cardIndex: number) => void;
+}> = ({ index, card, onDrop }) => {
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: "card",
     drop: (item: { index: number }) => onDrop(index, item.index),
@@ -136,7 +149,11 @@ const Graves = styled.div`
   border: 1px solid rgb(0, 0, 0);
 `;
 
-const HandCard = styled.div<{ $index: number; $total: number; $isDragging: boolean }>`
+const HandCard = styled.div<{
+  $index: number;
+  $total: number;
+  $isDragging: boolean;
+}>`
   position: relative;
   display: flex;
   height: 20vh;
@@ -153,7 +170,9 @@ const HandCard = styled.div<{ $index: number; $total: number; $isDragging: boole
     transform: scale(1.5);
   }
 
-  ${({ $isDragging }) => $isDragging && `
+  ${({ $isDragging }) =>
+    $isDragging &&
+    `
     transform: scale(1.1);
   `}
 `;
@@ -210,7 +229,6 @@ const FieldCard = styled.div<{ $isOver: boolean; $canDrop: boolean }>`
     transform: scale(1.1); /* 필드 위로 드래그할 때 살짝 확대 */
   `}
 `;
-
 
 const Overlay = styled.div`
   position: absolute;

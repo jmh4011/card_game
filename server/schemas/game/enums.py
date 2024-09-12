@@ -1,5 +1,10 @@
 from enum import Enum
 
+class MessageType(Enum):
+    TEXT = "text"
+    GAMESTAT = "gamestat"
+    ACRION = "action"
+
 class ZoneType(Enum):
     HAND = "hand"
     FIELD = "field"

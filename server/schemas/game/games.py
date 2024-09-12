@@ -1,13 +1,24 @@
 
 from pydantic import BaseModel
 from typing import Any, TYPE_CHECKING
-from schemas.game.enums import MoveType, ActionType, EntityZoneType, ZoneType
+from schemas.game.enums import MoveType, ActionType, EntityZoneType, ZoneType, MessageType
 from schemas.db.cards import CardSchemas
 if TYPE_CHECKING:
     from modules.card import Card
     from modules.effect import Effect
     from modules.player import Player
 
+class ConditionInfo(BaseModel):
+    player: 'Player'
+    opponent: 'Player'
+    trigger_cards: 'Card'
+    
+
+class MessageModel(BaseModel):
+    type: MessageType
+    data: Any
+    class Config:
+        use_enum_values = True
 
 class Entity(BaseModel):
     zone: EntityZoneType
@@ -16,11 +27,7 @@ class Entity(BaseModel):
     class Config:
         use_enum_values = True
 
-class ConditionInfo(BaseModel):
-    player: 'Player'
-    opponent: 'Player'
-    trigger_cards: 'Card'
-    
+
 
 class CardInfo(CardSchemas):
     zone: ZoneType

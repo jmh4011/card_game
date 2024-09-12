@@ -1,11 +1,13 @@
 import { useSetRecoilState } from "recoil";
 import { useHttp } from "./api";
-import { SetFn } from "../utils/types";
+
+import { GameMod } from "../types/models";
+import { SetFn } from "../types/types";
 
 const useHttpGame = () => {
   const { http } = useHttp();
 
-  const getMods = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getMods = (callback: (data:GameMod[]) => void, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/games/mods`,
@@ -15,7 +17,7 @@ const useHttpGame = () => {
     });
   };
 
-  const getMod = (mod_id: number, callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getMod = (mod_id: number, callback: (data:GameMod) => void, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/games/mods/${mod_id}`,
@@ -25,7 +27,7 @@ const useHttpGame = () => {
     });
   };
 
-  const getToken = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getToken = (callback: (data:string) => void, onError?: SetFn, setLoading?: SetFn) => {
     http({
       type: "get",
       url: `/games/tokens`,

@@ -1,7 +1,8 @@
 import { useSetRecoilState } from "recoil";
 import { useHttp } from "./api";
 import { cardsStats, effectsStats} from "../atoms/global";
-import { SetFn } from "../utils/types";
+import { SetFn } from "../types/types";
+import { CardRetrun } from "../types/routers";
 
 const useHttpCard = () => {
   const { http } = useHttp();
@@ -12,7 +13,7 @@ const useHttpCard = () => {
     http({
       type: "get",
       url: `/cards`,
-      callback: (data) => {
+      callback: (data:CardRetrun) => {
         setCards(data.cards);
         setEffects(data.effects)
       },

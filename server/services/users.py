@@ -9,7 +9,7 @@ from schemas.db.decks import DeckSchemas
 from schemas.router.user_stats import RouterUserStatUpdate
 from schemas.db.user_deck_selections import UserDeckSelectionSchemas,UserDeckSelectionUpdate, UserDeckSelectionCreate
 import logging
-from schemas.router.users import UserLogin
+from schemas.router.users import UserLogin, UserSignUp
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,9 @@ class UserServices:
         return None
     
     @staticmethod
-    async def create(db: AsyncSession, user: UserCreate) -> tuple:
+    async def signup(db: AsyncSession, user: UserSignUp) -> tuple:
+        if user.password != user.again_password:
+            return None
         if await UserCrud.get_username(db=db, username=user.username):
             return None
         user_info = UserCreate(username=user.username, password= await get_password_hash(user.password))
@@ -133,7 +135,7 @@ class UserServices:
         return result
     
     @staticmethod
-    async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> list[UserDeckSelectionSchemas]:
+    async def set_deck_selection(db:AsyncSession,user_id:int, data:UserDeckSelectionUpdate) -> DeckSchemas:
         deck: None|UserDeckSelectionSchemas = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=data.mod_id)
         try: 
             if deck:
@@ -143,7 +145,9 @@ class UserServices:
                 result = await UserDeckSelectionCrud.create(db=db, deck_selection=deck_selection)
             await db.commit()
             await db.refresh(result)
-            return result
+            deck = await DeckCrud.get(deck_id=data.deck_id, db=db)
+            await db.refresh(deck)
+            return deck
         except Exception as e:
             await db.rollback()
             raise e

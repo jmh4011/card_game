@@ -32,12 +32,6 @@ async def update_deck_route(deck_id :int, deck: RouterDeckUpdate, request: Reque
     db_deck = await DeckServices.update(db=db,user_id=user_id,deck_id=deck_id, deck=deck)
     return db_deck
 
-@router.put("/decks/{deck_id}", response_model=RouterDeckUpdateReturn)
-async def update_deck_route(deck_id :int, deck: RouterDeckUpdate, request: Request, response: Response,  db: AsyncSession = Depends(get_db)):
-    user_id = await get_user_id(db=db, request=request, response=response)
-    deck = await DeckServices.update(db=db,user_id=user_id,deck_id=deck_id, deck=deck)
-    return deck
-
 @router.post("/decks", response_model=DeckSchemas)
 async def create_deck_route(deck: RouterDeckCreate,request: Request, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await get_user_id(db=db, request=request, response=response)

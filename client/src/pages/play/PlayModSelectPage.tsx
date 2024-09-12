@@ -8,8 +8,8 @@ import { characterImage } from "../../api/static";
 import useHttpUser from "../../api/users";
 import { userStats } from "../../atoms/global";
 import ScrollableDescription from "../../components/ScrollableDescription";
-import { Deck, GameMod } from "../../utils/types";
 import Navbar from "../../components/Navbar";
+import { GameMod } from "../../types/models";
 
 const PlayModSelectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const PlayModSelectPage: React.FC = () => {
     updateUserStat({
       current_mod_id: val.mod_id,
       nickname: null,
-      money: null
+      money: null,
     });
   };
 

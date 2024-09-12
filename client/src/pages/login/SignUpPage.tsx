@@ -12,7 +12,7 @@ const SignUpPage: React.FC = () => {
   const [againPassword, setAgainPassword] = useState<string>("");
   const [vibration, setVibration] = useState<boolean>(false);
   const setLoading = useSetRecoilState(loadingState);
-  const { createUser } = useHttpUser();
+  const { userSignUp } = useHttpUser();
 
   const [isAuthenticated, setIsAuthenticated] =
     useRecoilState(isAuthenticatedState);
@@ -26,9 +26,12 @@ const SignUpPage: React.FC = () => {
   }, [vibration]);
 
   const useHandleSignUp = () => {
-    createUser(
-      username,
-      password,
+    userSignUp(
+      {
+        username: username,
+        password: password,
+        again_password: againPassword,
+      },
       (data) => {
         setIsAuthenticated(true);
         navigate("/");

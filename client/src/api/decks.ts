@@ -1,12 +1,18 @@
 import { useSetRecoilState } from "recoil";
 import { useHttp } from "./api";
 import {} from "../atoms/global";
-import { SetFn, DeckUpdate } from "../utils/types";
+import { SetFn } from "../types/types";
+import { DeckCards, DeckCreate, DeckUpdate, DeckUpdateReturn } from "../types/routers";
+import { Deck } from "../types/models";
 
 const useHttpDeck = () => {
   const { http } = useHttp();
 
-  const getDecks = (callback: SetFn, onError?: SetFn, setLoading?: SetFn) => {
+  const getDecks = (
+    callback: (data: Deck[]) => void,
+    onError?: SetFn,
+    setLoading?: SetFn
+  ) => {
     http({
       type: "get",
       url: `/decks`,
@@ -18,7 +24,7 @@ const useHttpDeck = () => {
 
   const getDeck = (
     deck_id: number,
-    callback: SetFn,
+    callback: (data: Deck[]) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
@@ -32,11 +38,10 @@ const useHttpDeck = () => {
   };
 
   const createDeck = (
-    callback: SetFn,
+    data: DeckCreate,
+    callback: (data: Deck) => void,
     onError?: SetFn,
-    setLoading?: SetFn,
-    deck_name: string = `새로운 덱`,
-    image_path: string = "0.png"
+    setLoading?: SetFn
   ) => {
     http({
       type: "post",
@@ -44,13 +49,13 @@ const useHttpDeck = () => {
       callback: callback,
       customSetLoading: setLoading,
       onError,
-      data: { deck_name, image_path },
+      data: data,
     });
   };
 
   const getDeckCards = (
     deck_id: number,
-    callback: SetFn,
+    callback: (data: DeckCards) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {
@@ -66,7 +71,7 @@ const useHttpDeck = () => {
   const updateDeck = (
     deck_id: number,
     data: DeckUpdate,
-    callback: SetFn,
+    callback: (data: DeckUpdateReturn) => void,
     onError?: SetFn,
     setLoading?: SetFn
   ) => {

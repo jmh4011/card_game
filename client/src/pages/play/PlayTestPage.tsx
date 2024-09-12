@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { cardsStats, wsTokenState } from "../../atoms/global";
-import { Card } from "../../utils/types";
 import styled from "styled-components";
-import CardInfo from "./components/CardInfo";
-import PlayerField from "./components/PlayerField";
+import CardInfo from "../../components/plays/ShowCardInfo";
+import PlayerField from "../../components/plays/PlayerField";
+import { Card } from "../../types/models";
 
 const PlayTestPage: React.FC = () => {
   const cards = useRecoilValue(cardsStats);
@@ -13,22 +13,19 @@ const PlayTestPage: React.FC = () => {
   const [fields, setFields] = useState<Record<number, Card>>({});
   const [graves, setGraves] = useState<Card[]>([]);
   const [decks, setDecks] = useState<number>(40);
-  const [showCardInfo, setShowCardInfo] = useState<number>(1)
+  const [showCardInfo, setShowCardInfo] = useState<number>(1);
 
-  const handleCard = (val:number) => {
-    setShowCardInfo(val)
-  }
+  const handleCard = (val: number) => {
+    setShowCardInfo(val);
+  };
 
   return (
     <Contener>
-      <Enemy>
-        {/* <PlayerField handleCard={handleCard}/> */}
-      </Enemy>
+      <Enemy>{/* <PlayerField handleCard={handleCard}/> */}</Enemy>
       <CardInfoContener>
         <CardInfo card_id={showCardInfo} />
       </CardInfoContener>
       <My>
-        <PlayerField handleCard={handleCard}/>
       </My>
     </Contener>
   );
@@ -49,7 +46,7 @@ const Enemy = styled.div`
   width: 100%;
   height: 50%;
   border: 3px solid rgb(100, 0, 0);
-  transform: scale(1, -1)
+  transform: scale(1, -1);
 `;
 const Center = styled.div`
   box-sizing: border-box;

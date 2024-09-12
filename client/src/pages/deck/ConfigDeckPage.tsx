@@ -3,17 +3,18 @@ import { useSetRecoilState } from "recoil";
 import { loadingState } from "../../atoms/global";
 import styled from "styled-components";
 import useHttpDeck from "../../api/decks";
-import CardInfo from "./components/CardInfo";
-import ShowDeck from "./components/ShowDeck";
-import SearchCards from "./components/SearchCards";
+import CardInfo from "../../components/decks/CardInfo";
+import ShowDeck from "../../components/decks/ShowDeck";
+import SearchCards from "../../components/decks/SearchCards";
 import { OutModal } from "../../utils/styles";
-import { CardCount, Deck } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import { DeckCards } from "../../types/routers";
+import { Deck } from "../../types/models";
 
 interface ConfigDeckProps {
   deck: Deck;
-  deckCards: CardCount;
+  deckCards: DeckCards;
   setDeck: (data: any) => void;
   setDeckCards: (data: any) => void;
 }
@@ -70,7 +71,7 @@ const ConfigDeckPage: React.FC<ConfigDeckProps> = ({
 
   const handleUserCardRightClick = (e: React.MouseEvent, value: number) => {
     e.preventDefault();
-    setTempDeckCards((prev: CardCount) => {
+    setTempDeckCards((prev: DeckCards) => {
       const newState = { ...prev };
       if (newState[value] !== undefined) {
         newState[value] += 1;

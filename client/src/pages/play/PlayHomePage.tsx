@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import useHttpUser from "../../api/users";
-import { Deck, DeckSelection, GameMod } from "../../utils/types";
 import useHttpDeck from "../../api/decks";
 import { useRecoilState } from "recoil";
 import { userStats } from "../../atoms/global";
@@ -11,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import ResDescription from "../../components/ResDescription";
 import ScrollableDescription from "../../components/ScrollableDescription";
 import Navbar from "../../components/Navbar";
+import { Deck, GameMod } from "../../types/models";
 
 const PlayHomePage: React.FC = () => {
   const { getUserDeckSelection } = useHttpUser();

@@ -1,11 +1,7 @@
 import React from "react";
 import { atom } from "recoil";
-import { Card, CardCount, Deck, DeckSelection, Effect, UserStat } from "../utils/types";
-
-export const modalState = atom<{ id: string; element: React.FC }[]>({
-  key: "modalState",
-  default: [],
-});
+import { DeckSelection, UserCards, UserStat } from "../types/routers";
+import { Card, Effect } from "../types/models";
 
 export const isAuthenticatedState = atom<boolean>({
   key: "isAuthenticated",
@@ -32,7 +28,7 @@ export const effectsStats = atom<Record<number, Effect>>({
   default: {},
 });
 
-export const userCardsStats = atom<CardCount>({
+export const userCardsStats = atom<UserCards>({
   key: "userCrads",
   default: {},
 });
