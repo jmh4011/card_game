@@ -7,19 +7,22 @@ import styled from "styled-components";
 import PlayerField from "../../components/plays/PlayerField";
 import ShowCardInfo from "../../components/plays/ShowCardInfo";
 import { Card } from "../../types/models";
-import { Action, CardInfo, GameStat, MessageModel } from "../../types/games";
+import { Action, CardInfo, GameInfo, MessageModel } from "../../types/games";
 import {
+  gameStatState,
   playerDecksState,
   playerFieldsState,
   playerGravesState,
   playerHandsState,
+  playerStatState,
 } from "../../atoms/play";
 
 const PlayPage: React.FC = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
   const { getToken } = useHttpGame();
-
+  const [gameStat, setGamestat] = useRecoilState(gameStatState);
+  const [playerStat, setPlayerStat] = useRecoilState(playerStatState);
   const [playerHands, setPlayerHands] = useRecoilState(playerHandsState);
   const [playerFields, setPlayerFields] = useRecoilState(playerFieldsState);
   const [playerGraves, setPlayerGraves] = useRecoilState(playerGravesState);
@@ -37,12 +40,22 @@ const PlayPage: React.FC = () => {
       case "text":
         let data: string = messageJson.data;
         break;
-      case "gamestat":
-        let gameStat: GameStat = messageJson.data;
-        setPlayerHands(gameStat.Player.hands)
-        setPlayerFields(gameStat.Player.fields)
-        setPlayerGraves(gameStat.Player.graves)
-        setPlayerDecks(gameStat.Player.decks)
+      case "gameinfo":
+        let gameInfo: GameInfo = messageJson.data;
+        setGamestat({
+          is_player_turn: gameInfo.is_player_turn,
+          trun: gameInfo.trun,
+          side_effects: gameInfo.side_effects,
+        });
+        setPlayerStat({
+          health: gameInfo.Player.health,
+          cost: gameInfo.Player.cost,
+          side_effects: gameInfo.Player.side_effects,
+        });
+        setPlayerHands(gameInfo.Player.hands);
+        setPlayerFields(gameInfo.Player.fields);
+        setPlayerGraves(gameInfo.Player.graves);
+        setPlayerDecks(gameInfo.Player.decks);
         break;
       case "action":
         let action: Action = messageJson.data;

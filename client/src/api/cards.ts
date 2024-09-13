@@ -1,5 +1,5 @@
 import { useSetRecoilState } from "recoil";
-import { useHttp } from "./api";
+import { useHttp } from "./http";
 import { cardsStats, effectsStats} from "../atoms/global";
 import { SetFn } from "../types/types";
 import { CardRetrun } from "../types/routers";

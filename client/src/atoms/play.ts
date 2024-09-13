@@ -1,7 +1,24 @@
 import { atom } from "recoil";
-import { CardInfo } from "../types/games";
+import { CardInfo, GameStat, PlayerStat } from "../types/games";
 
-export const playerState = atom
+export const gameStatState = atom<GameStat>({
+  key: "gameStat",
+  default: {
+    is_player_turn: false,
+    trun: 0,
+    side_effects: []
+  }
+})
+
+
+export const playerStatState = atom<PlayerStat>({
+  key: "playerStat",
+  default: {
+    health: 30,
+    cost: 0,
+    side_effects: []
+  },
+})
 
 export const playerHandsState = atom<CardInfo[]>({
   key: "playerHands",
@@ -25,6 +42,6 @@ export const playerGravesState = atom<CardInfo[]>({
 });
 
 export const playerDecksState = atom<number>({
-  key: "playerHands",
+  key: "playerDecks",
   default: 40,
 });

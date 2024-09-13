@@ -1,5 +1,5 @@
 import { useSetRecoilState } from "recoil";
-import { useHttp } from "./api";
+import { useHttp } from "./http";
 
 import { GameMod } from "../types/models";
 import { SetFn } from "../types/types";

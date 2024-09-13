@@ -1,10 +1,10 @@
 import asyncio
 from typing import TYPE_CHECKING
 from schemas.game.enums import ZoneType
-from schemas.game.games import CardInfo
 from modules.effect import Effect
 from schemas.db.cards import CardSchemas
 from modules.registry import get_effect
+from schemas.game.card_info import CardInfo
 if TYPE_CHECKING:
     from modules.player import Player
 
@@ -31,7 +31,7 @@ class Card:
         self.effects = [effect(self) for effect in results]
         
 
-    async def get_info(self, player: 'Player') -> CardInfo:
+    async def get_info(self, player: 'Player') -> 'CardInfo':
         return CardInfo(
             card_name=self.card_name,
             card_class=self.card_class,

@@ -6,7 +6,9 @@ from modules.effect import Effect
 from modules.effect_manager import EffectManager
 from modules.registry import get_effect
 from schemas.game.enums import ZoneType
-from schemas.game.games import PlayerInfo
+from schemas.game.condition_info import ConditionInfo
+from schemas.game.player_info import PlayerInfo
+from schemas.game.trigger_cards import TriggerCards
 from services import DeckServices, CardServices
 from crud import DeckCardCrud
 import logging
@@ -54,6 +56,13 @@ class Player:
             graves=[await card.get_info(self) for card in self.graves],
             decks=len(self.decks)
         )
+        
+        
+    async def get_available_effects(self, opponent: 'Player', trigger_cards: TriggerCards):
+        return await self.effect_manager.get_available_effects(condition_info=ConditionInfo(
+            player=self,opponent=opponent,
+            trigger_cards=trigger_cards
+        ))
 
     async def _shuffle(self, cards: deque[Card]) -> deque[Card]:
         """Shuffles the cards and updates their indices."""

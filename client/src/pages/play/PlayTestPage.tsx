@@ -23,7 +23,6 @@ const PlayTestPage: React.FC = () => {
     <Contener>
       <Enemy>{/* <PlayerField handleCard={handleCard}/> */}</Enemy>
       <CardInfoContener>
-        <CardInfo card_id={showCardInfo} />
       </CardInfoContener>
       <My>
       </My>

@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { loadingState } from "../atoms/global";
-import { SetFn } from "../utils/types";
 import { useNavigate } from "react-router-dom";
+import { SetFn } from "../types/types";
 
 interface HttpOptions {
   type: "get" | "put" | "post" | "delete";

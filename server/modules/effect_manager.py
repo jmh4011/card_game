@@ -1,9 +1,9 @@
 import asyncio
 from schemas.game.enums import ZoneType
-from schemas.game.games import ConditionInfo
 from modules.card import Card
 from modules.registry import get_effect
 from modules.effect import Effect
+from schemas.game.condition_info import ConditionInfo
 
 
 class EffectManager:

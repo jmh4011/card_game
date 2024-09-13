@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from schemas.game.enums import ZoneType
-from schemas.game.games import ConditionInfo
+from schemas.game.condition_info import ConditionInfo
 if TYPE_CHECKING:
     from modules.card import Card
 

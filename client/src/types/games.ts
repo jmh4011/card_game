@@ -1,7 +1,7 @@
 import { Card } from "./models";
 
 // Enum 타입 정의
-export type MessageType = "text" | "gamestat" | "action";
+export type MessageType = "text" | "gameinfo" | "action";
 export type ZoneType = "hand" | "field" | "grave" | "deck";
 export type MoveType = "effect" | "attact" | "end";
 export type ActionType =
@@ -32,8 +32,7 @@ export interface CardInfo extends Card {
   zone: ZoneType;
   index: number;
   opponent: boolean;
-  side_effects: any[];
-  effects: number[];
+  side_effects: number[];
 }
 
 // MoveEffect 타입 정의
@@ -43,7 +42,6 @@ export interface MoveEffect {
   effect_id: number;
   select: boolean;
   targets: Entity[];
-  tmp: any;
 }
 
 // MoveAttack 타입 정의
@@ -52,7 +50,6 @@ export interface MoveAttack {
   entity: Entity;
   select: boolean;
   targets: Entity[];
-  tmp: any;
 }
 
 // Move 타입 정의
@@ -67,13 +64,13 @@ export interface MoveReturn {
   move_type: MoveType;
   move_id: number;
   target: number[];
-  tmp: any;
 }
 
 // PlayerInfo 타입 정의
 export interface PlayerInfo {
   cost: number;
   health: number;
+  side_effects: number[];
   hands: CardInfo[];
   fields: Record<number , CardInfo>;
   graves: CardInfo[];
@@ -81,11 +78,12 @@ export interface PlayerInfo {
 }
 
 // GameStat 타입 정의
-export interface GameStat {
+export interface GameInfo {
   Player: PlayerInfo;
   opponent: PlayerInfo;
   trun: number;
   is_player_turn: boolean;
+  side_effects: number[];
 }
 
 // Action 타입 정의
@@ -95,4 +93,16 @@ export interface Action {
   object: Entity;
   subject_state: CardInfo | PlayerInfo;
   object_state: CardInfo | PlayerInfo;
+}
+
+export interface GameStat {
+  trun: number;
+  is_player_turn: boolean;
+  side_effects: number[];
+}
+
+export interface PlayerStat {
+  health: number
+  cost: number
+  side_effects: number[];
 }

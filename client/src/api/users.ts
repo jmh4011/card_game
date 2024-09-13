@@ -1,4 +1,4 @@
-import { useHttp } from "./api";
+import { useHttp } from "./http";
 import {SetFn} from "../types/types";
 import { useSetRecoilState } from "recoil";
 import {
@@ -39,7 +39,7 @@ const useHttpUser = () => {
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,
-      data: { data },
+      data: data,
     });
   };
 
@@ -65,7 +65,7 @@ const useHttpUser = () => {
       callback: callback,
       onError: onError,
       customSetLoading: setLoading,
-      data: { data },
+      data: data,
     });
   };
 
