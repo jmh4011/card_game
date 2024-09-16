@@ -90,9 +90,20 @@ async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    logger.info("\n\nApplication shutdown: listing pending tasks\n\n")
+    list_pending_tasks()
     await engine.dispose()
 
 app.router.lifespan_context = lifespan
+
+def list_pending_tasks():
+    loop = asyncio.get_event_loop()
+    tasks = asyncio.all_tasks(loop)
+    current_task = asyncio.current_task(loop)
+    for task in tasks:
+        if task is not current_task:
+            coro = task.get_coro()
+            logger.info(f"Pending task: {task.get_name()} - {coro}")
 
 if __name__ == "__main__":
     uvicorn.run("server.main:app", host="127.0.0.1", port=8000, reload=True)
