@@ -38,7 +38,7 @@ class GameManager:
         try:
             logger.info(f"Waiting for message from Player {player.user_id}")
             message_text = await asyncio.wait_for(player.websocket.receive_text(), timeout=timeout)
-            message = MessageReturnModel.parse_raw(message_text)
+            message = MessageReturnModel.model_validate_json(message_text)
             return message
         except asyncio.TimeoutError:
             logger.warning(f"Player {player.user_id}가 {timeout}초 내에 응답하지 않았습니다.")

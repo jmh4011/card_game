@@ -2,8 +2,8 @@ export interface Card {
   card_id: number;
   card_name: string;
   card_class: string;
-  attack: number;
-  health: number;
+  attack: number | null;
+  health: number | null;
   effects: number[];
   image_path: string;
   card_type: number;

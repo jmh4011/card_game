@@ -7,27 +7,17 @@ import styled from "styled-components";
 import PlayerField from "../../components/plays/PlayerField";
 import ShowCardInfo from "../../components/plays/ShowCardInfo";
 import { Card } from "../../types/models";
-import { Action, CardInfo, GameInfo, MessageModel } from "../../types/games";
-import {
-  gameStatState,
-  playerDecksState,
-  playerFieldsState,
-  playerGravesState,
-  playerHandsState,
-  playerStatState,
-} from "../../atoms/play";
+import { Action, CardInfo, Entity, GameInfo, MessageModel } from "../../types/games";
+import { gameStatState, playerState } from "../../atoms/play";
 
 const PlayPage: React.FC = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsClientRef = useRef<WebSocketClient | null>(null);
   const { getToken } = useHttpGame();
-  const [gameStat, setGamestat] = useRecoilState(gameStatState);
-  const [playerStat, setPlayerStat] = useRecoilState(playerStatState);
-  const [playerHands, setPlayerHands] = useRecoilState(playerHandsState);
-  const [playerFields, setPlayerFields] = useRecoilState(playerFieldsState);
-  const [playerGraves, setPlayerGraves] = useRecoilState(playerGravesState);
-  const [playerDecks, setPlayerDecks] = useRecoilState(playerDecksState);
   const [showCardInfo, setShowCardInfo] = useState<CardInfo | null>(null);
+  const [gameStat, setGamestat] = useRecoilState(gameStatState)
+  const [player, setPlayer] = useRecoilState(playerState)
+
 
   const handleCard = (val: CardInfo) => {
     setShowCardInfo(val);
@@ -47,23 +37,56 @@ const PlayPage: React.FC = () => {
           trun: gameInfo.trun,
           side_effects: gameInfo.side_effects,
         });
-        setPlayerStat({
-          health: gameInfo.Player.health,
-          cost: gameInfo.Player.cost,
-          side_effects: gameInfo.Player.side_effects,
-        });
-        setPlayerHands(gameInfo.Player.hands);
-        setPlayerFields(gameInfo.Player.fields);
-        setPlayerGraves(gameInfo.Player.graves);
-        setPlayerDecks(gameInfo.Player.decks);
+        setPlayer(gameInfo.Player)
         break;
       case "action":
         let action: Action = messageJson.data;
+        handleMessageAction(action)
         break;
       default:
         console.log(messageJson);
     }
   };
+  
+
+  const getEntity = (entity: Entity) : any => {
+    switch (entity.zone) {
+      case "hands":
+      case "fields":
+      case "graves":
+        return player[entity.zone][entity.index] 
+      case "decks":
+        return null;
+      case "player":
+        return player
+      default:
+        return null;
+    }
+  }
+
+
+  const handleMessageAction = (action: Action) => {
+    switch (action.action_type) {
+      case "attack":
+        break;
+      case "damege":
+        break;
+      case "destroy":
+        break;
+      case "drow":
+        break
+      case "effect":
+        break
+      case "move":
+        let subject: CardInfo = getEntity(action.subject)
+        break
+      case "summon":
+        break
+      default:
+        console.log(action);
+    }
+
+  }
 
   const handleDrop = (index: number, cardIndex: number) => {
     wsClientRef.current?.sendMessage(

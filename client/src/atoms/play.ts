@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { CardInfo, GameStat, PlayerStat } from "../types/games";
+import { CardInfo, GameStat, Player } from "../types/games";
 
 export const gameStatState = atom<GameStat>({
   key: "gameStat",
@@ -10,38 +10,21 @@ export const gameStatState = atom<GameStat>({
   }
 })
 
-
-export const playerStatState = atom<PlayerStat>({
-  key: "playerStat",
+export const playerState = atom<Player>({
+  key: 'playerState',
   default: {
     health: 30,
     cost: 0,
-    side_effects: []
+    side_effects: [],
+    hands: [],
+    fields: {
+      0: null,
+      1: null,
+      2: null,
+      3: null,
+      4: null,
+    },
+    graves: [],
+    decks: 40,
   },
-})
-
-export const playerHandsState = atom<CardInfo[]>({
-  key: "playerHands",
-  default: [],
-});
-
-export const playerFieldsState = atom<Record<number, CardInfo | null>>({
-  key: "playerFields",
-  default: {
-    0: null,
-    1: null,
-    2: null,
-    3: null,
-    4: null,
-  },
-});
-
-export const playerGravesState = atom<CardInfo[]>({
-  key: "playerGraves",
-  default: [],
-});
-
-export const playerDecksState = atom<number>({
-  key: "playerDecks",
-  default: 40,
 });

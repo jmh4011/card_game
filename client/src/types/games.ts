@@ -12,7 +12,7 @@ export type ActionType =
   | "summon"
   | "damege"
   | "effect";
-export type EntityZoneType = "hand" | "field" | "grave" | "deck" | "player";
+export type EntityZoneType = "hands" | "fields" | "graves" | "decks" | "player";
 
 // MessageModel 타입 정의
 export interface MessageModel {
@@ -33,6 +33,7 @@ export interface CardInfo extends Card {
   index: number;
   opponent: boolean;
   side_effects: number[];
+  is_back: boolean;
 }
 
 // MoveEffect 타입 정의
@@ -66,21 +67,28 @@ export interface MoveReturn {
   target: number[];
 }
 
-// PlayerInfo 타입 정의
-export interface PlayerInfo {
+// Player 타입 정의
+export interface Player {
   cost: number;
   health: number;
   side_effects: number[];
   hands: CardInfo[];
-  fields: Record<number , CardInfo>;
+  fields: Record<number , CardInfo | null>;
   graves: CardInfo[];
   decks: number;
 }
 
+export interface Opponent {
+  cost: number;
+  health: number;
+  side_effects: number[];
+
+}
+
 // GameStat 타입 정의
 export interface GameInfo {
-  Player: PlayerInfo;
-  opponent: PlayerInfo;
+  Player: Player;
+  opponent: Player;
   trun: number;
   is_player_turn: boolean;
   side_effects: number[];
@@ -90,19 +98,13 @@ export interface GameInfo {
 export interface Action {
   action_type: ActionType;
   subject: Entity;
-  object: Entity;
-  subject_state: CardInfo | PlayerInfo;
-  object_state: CardInfo | PlayerInfo;
+  object: Entity | null;
+  subject_state: CardInfo | Player;
+  object_state: CardInfo | Player | null;
 }
 
 export interface GameStat {
   trun: number;
   is_player_turn: boolean;
-  side_effects: number[];
-}
-
-export interface PlayerStat {
-  health: number
-  cost: number
   side_effects: number[];
 }
