@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from modules.registry import get_effect
 from schemas.db.cards import CardSchemas
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class Card:
     def __init__(
-        self, card_info: CardSchemas, player: 'Player', zone: ZoneType, index: int
+        self, card_info: CardSchemas, player: 'Player', zone: ZoneType
     ) -> None:
         self.card_id: int = card_info.card_id
         self.card_name: str = card_info.card_name
@@ -25,12 +25,11 @@ class Card:
         self.card_type: str = card_info.card_type
         self.player: 'Player' = player
         self.zone: ZoneType = zone
-        self.index: int = index
-        self.side_effects: List['Effect'] = []
-        self.before_zone: Optional[ZoneType] = None
-        self.effects: List['Effect'] = []
+        self.side_effects: list['Effect'] = []
+        self.before_zone: ZoneType | None = None
+        self.effects: list['Effect'] = []
 
-    async def initialize_effects(self, effects_info: List[int]) -> None:
+    async def initialize_effects(self, effects_info: list[int]) -> None:
         """Initializes effects asynchronously."""
         effect_classes = await asyncio.gather(*[get_effect(effect_id) for effect_id in effects_info])
         self.effects = [effect_class(self) for effect_class in effect_classes]
@@ -43,16 +42,22 @@ class Card:
             card_id=self.card_id,
             attack=self.attack,
             health=self.health,
-            opponent=self.player != player,
-            zone=self.zone,
-            index=self.index,
-            before_zone=self.before_zone,
             side_effect=self.side_effects,
             card_type=self.card_type,
             effects=[effect.effect_id for effect in self.effects],
         )
 
-    async def move(self, new_zone: ZoneType, index: int) -> None:
+    async def move(self, new_zone: ZoneType, index: int | None = None) -> None:
+        """Moves the card to a new zone and updates the player's card collections."""
         self.before_zone = self.zone
         self.zone = new_zone
-        self.index = index
+
+        # 이전 존에서 카드 제거
+        if self.before_zone:
+            await self.player.remove_card_from_zone(self, self.before_zone)
+
+        # 새로운 존에 카드 추가
+        await self.player.add_card_to_zone(self, new_zone, index)
+
+        # 카드 이동에 따른 효과 처리
+        await self.player.effect_manager.on_card_moved(card=self, new_zone=new_zone)

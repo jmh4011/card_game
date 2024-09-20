@@ -1,6 +1,6 @@
 import asyncio
 from modules.card import Card
-from schemas.game.condition_info import ConditionInfo
+from schemas.game.effect_info import ConditionInfo
 from schemas.game.enums import ZoneType
 from modules.effect import Effect
 
@@ -26,27 +26,23 @@ class EffectManager:
                 if card.zone in effect.zones:
                     self.prepared_effects[card.zone].append(effect)
 
-    async def get_available_effects(
-        self, condition_info: ConditionInfo
-    ) -> dict[ZoneType, list['Effect']]:
+    async def get_available_effects(self, condition_info: ConditionInfo) -> list['Effect']:
         """Gets available effects based on the condition info."""
         tasks = [
             self._check_effects_in_zone(zone, effects, condition_info)
             for zone, effects in self.prepared_effects.items()
         ]
         results = await asyncio.gather(*tasks)
-        return {zone: effects for zone, effects in results}
+        return results
 
-    async def _check_effects_in_zone(
-        self, zone: ZoneType, effects: list['Effect'], condition_info: ConditionInfo
-    ) -> tuple[ZoneType, list['Effect']]:
+    async def _check_effects_in_zone(self, effects: list['Effect'], condition_info: ConditionInfo) -> list['Effect']:
         """Checks which effects are available in a specific zone."""
         results = await asyncio.gather(
             *[self._condition_check(effect, condition_info) for effect in effects]
         )
         # None 값을 제거하여 실제 효과만 남깁니다.
         available_effects = [effect for effect in results if effect is not None]
-        return zone, available_effects
+        return available_effects
 
     async def _condition_check(self, effect: 'Effect', condition_info: ConditionInfo) -> 'Effect':
         """Checks if an effect's condition is met."""

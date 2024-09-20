@@ -3,7 +3,7 @@ from enum import Enum
 class MessageType(Enum):
     PING = "ping"
     TEXT = "text"
-    GAMEINFO = "gameinfo"
+    GAME_INFO = "game_info"
     ACRION = "action"
     MOVE = "move"
 
@@ -13,7 +13,6 @@ class MessageReturnType(Enum):
     CANCEL = "cancel"
     END = "end"
 
-
 class ZoneType(Enum):
     HAND = "hand"
     FIELD = "field"
@@ -21,11 +20,12 @@ class ZoneType(Enum):
     DECK = "deck"
 
 class ActionType(Enum):
-    DROW = "drow"
+    MOVE = "move"
+    CARD_STATE = "card_state"
+    SIDE_EFFECT = "side_effect"
+    COST = "cost"
     ATTACK = "attack"
     DESTROY = "destroy"
-    MOVE = "move"
-    SUMMON = "summon"
     DAMAGE = "damege"
     EFFECT = "effect"
     

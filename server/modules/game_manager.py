@@ -10,7 +10,7 @@ from schemas.game.enums import MessageReturnType, MessageType
 from modules.effect import Effect
 from schemas.game.game_info import GameInfo
 from schemas.game.message import MessageModel, MessageReturnModel
-from schemas.game.move import Move
+from schemas.game.move import Move, MoveReturn
 from schemas.game.trigger_cards import TriggerCards
 if TYPE_CHECKING:
     from modules.card import Card
@@ -27,7 +27,7 @@ class GameManager:
         self.turn = 0
         self.chain_effects: list[Effect] = []
         self.trigger_cards = TriggerCards()
-        self.tmp_available_effects: Optional[Move] = None
+        self.tmp_available_effects: list[Effect] = []
         self.side_effects: list[Effect] = []
 
     async def _send_message(self, player: Player, message_type: MessageType, data):
@@ -85,8 +85,9 @@ class GameManager:
             await self.send_game_stat()
         logger.info("게임이 종료되었습니다.")
 
-    async def handle_move(self, data):
+    async def handle_move(self, data: MoveReturn):
         logger.info(f"Processing move from Player {self.turn_player.user_id}: {data}")
+        move = self.tmp_available_effects[data.move_id]
         # MOVE 메시지 처리 로직을 구현합니다.
 
     async def handle_cancel(self):
@@ -127,8 +128,8 @@ class GameManager:
             is_player_turn=False,
             side_effects=self.side_effects
         )
-        await self._send_message(self.turn_player, MessageType.GAMEINFO, game_stat_current)
-        await self._send_message(self.not_turn_player, MessageType.GAMEINFO, game_stat_opponent)
+        await self._send_message(self.turn_player, MessageType.GAME_INFO, game_stat_current)
+        await self._send_message(self.not_turn_player, MessageType.GAME_INFO, game_stat_opponent)
 
     async def game_start(self):
         try:

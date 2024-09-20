@@ -1,42 +1,35 @@
 import { Card } from "./models";
 
 // Enum 타입 정의
-export type MessageType = "text" | "gameinfo" | "action";
-export type ZoneType = "hand" | "field" | "grave" | "deck";
+export type MessageType = "text" | "game_info" | "action";
+export type ZoneType = "hands" | "fields" | "graves" | "decks";
 export type MoveType = "effect" | "attact" | "end";
 export type ActionType =
-  | "drow"
-  | "attack"
-  | "destroy"
-  | "move"
-  | "summon"
-  | "damege"
-  | "effect";
+| "move"
+| "card_state"
+| "side_effect"
+| "cost"
+| "attack"
+| "destroy"
+| "damage"
+| "effect"
 export type EntityZoneType = "hands" | "fields" | "graves" | "decks" | "player";
 
-// MessageModel 타입 정의
 export interface MessageModel {
   type: MessageType;
   data: any; 
 }
 
-// Entity 타입 정의
 export interface Entity {
   zone: EntityZoneType;
   index: number;
   opponent: boolean;
 }
 
-// CardInfo 타입 정의
 export interface CardInfo extends Card {
-  zone: ZoneType;
-  index: number;
-  opponent: boolean;
   side_effects: number[];
-  is_back: boolean;
 }
 
-// MoveEffect 타입 정의
 export interface MoveEffect {
   move_id: number;
   entity: Entity;
@@ -45,7 +38,6 @@ export interface MoveEffect {
   targets: Entity[];
 }
 
-// MoveAttack 타입 정의
 export interface MoveAttack {
   move_id: number;
   entity: Entity;
@@ -53,22 +45,19 @@ export interface MoveAttack {
   targets: Entity[];
 }
 
-// Move 타입 정의
 export interface Move {
   effects: MoveEffect[];
   attact: MoveAttack[]; 
   end: boolean;
 }
 
-// MoveReturn 타입 정의
 export interface MoveReturn {
   move_type: MoveType;
   move_id: number;
   target: number[];
 }
 
-// Player 타입 정의
-export interface Player {
+export interface PlayerInfo {
   cost: number;
   health: number;
   side_effects: number[];
@@ -85,26 +74,23 @@ export interface Opponent {
 
 }
 
-// GameStat 타입 정의
 export interface GameInfo {
-  Player: Player;
-  opponent: Player;
-  trun: number;
+  Player: PlayerInfo;
+  opponent: PlayerInfo;
+  turn: number;
   is_player_turn: boolean;
   side_effects: number[];
 }
 
-// Action 타입 정의
-export interface Action {
-  action_type: ActionType;
-  subject: Entity;
-  object: Entity | null;
-  subject_state: CardInfo | Player;
-  object_state: CardInfo | Player | null;
-}
 
 export interface GameStat {
-  trun: number;
+  turn: number;
   is_player_turn: boolean;
+  side_effects: number[];
+}
+
+export interface Player {
+  cost: number;
+  health: number;
   side_effects: number[];
 }
