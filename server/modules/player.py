@@ -13,6 +13,7 @@ from schemas.game.effect_info import ConditionInfo
 from schemas.game.enums import ZoneType
 from schemas.game.player_info import PlayerInfo
 from schemas.game.trigger_cards import TriggerCards
+from schemas.game.entity import Entity
 from services import CardServices, DeckServices
 
 if TYPE_CHECKING:
@@ -69,6 +70,32 @@ class Player:
         )
         return await self.effect_manager.get_available_effects(condition_info=condition_info)
 
+    async def entity_to_card(self, entity: Entity, opponent: 'Player') -> Card | None:
+        if entity.opponent:
+            if entity.zone == ZoneType.HAND:
+                if 0 <= entity.index < len(opponent.hands):
+                    return opponent.hands[entity.index]
+            elif entity.zone == ZoneType.FIELD:
+                if entity.index in opponent.fields:
+                    return opponent.fields[entity.index]
+            elif entity.zone == ZoneType.GRAVE:
+                if 0 <= entity.index < len(opponent.graves):
+                    return opponent.graves[entity.index]
+
+        else:
+            if entity.zone == ZoneType.HAND:
+                if 0 <= entity.index < len(self.hands):
+                    return self.hands[entity.index]
+            elif entity.zone == ZoneType.FIELD:
+                if entity.index in self.fields:
+                    return self.fields[entity.index]
+            elif entity.zone == ZoneType.GRAVE:
+                if 0 <= entity.index < len(self.graves):
+                    return self.graves[entity.index]
+        return None
+
+        
+        
     async def draw(self, num: int = 1) -> list[Card]:
         """Draws cards from the deck to the hand."""
         drawn_cards = []

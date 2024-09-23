@@ -12,7 +12,10 @@ class ConditionInfo(BaseModel):
     opponent: 'Player'
     trigger_cards: 'TriggerCards'
 
+class TargetInfo(BaseModel):
+    entity: 'Entity'
+    card: 'Card' | None
+
 class EffectInfo(BaseModel):
     opponent: 'Player'
-    target_cards: list['Card']
-    targer_enetity: list['Entity']
+    target_entity: list[TargetInfo]

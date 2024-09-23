@@ -17,6 +17,7 @@ class Effect_1(Effect):
         self.card.player.adjust_cost(-1)
 
     async def after(self, effect_info: EffectInfo):
+        
         self.card.move(ZoneType.FIELD, effect_info.targets)
     
     async def condition(self, condition_info: ConditionInfo) -> tuple[bool,list]:

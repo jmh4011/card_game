@@ -23,9 +23,10 @@ class GameManager:
         self.db = db
         self.turn_player = player1
         self.not_turn_player = player2
+        self.move_player = player1
+        self.not_move_player = player2
         self.active = True
         self.turn = 0
-        self.chain_effects: list[Effect] = []
         self.trigger_cards = TriggerCards()
         self.tmp_available_effects: list[Effect] = []
         self.side_effects: list[Effect] = []
@@ -65,22 +66,12 @@ class GameManager:
     async def handle_turn(self):
         while self.active:
             logger.info(f"Player {self.turn_player.user_id}'s turn.")
-            message = await self.receive_message(self.turn_player)
-            if message is None:
-                break  # 연결이 끊어졌을 경우 루프 종료
-
-            if message.type == MessageReturnType.MOVE:
-                await self.handle_move(message.data)
-            elif message.type == MessageReturnType.CANCEL:
-                await self.handle_cancel()
-            elif message.type == MessageReturnType.END:
-                await self.handle_end()
-            else:
-                logger.info(f"Player {self.turn_player.user_id}: {message.data}")
-                # 필요에 따라 추가 처리
-
-            # 턴 교체
+            while True:
+                if self.handle_chain():
+                    break
             self.turn_player, self.not_turn_player = self.not_turn_player, self.turn_player
+            self.move_player = self.turn_player
+            self.not_move_player = self.not_turn_player
             self.turn += 1
             await self.send_game_stat()
         logger.info("게임이 종료되었습니다.")
@@ -88,16 +79,15 @@ class GameManager:
     async def handle_move(self, data: MoveReturn):
         logger.info(f"Processing move from Player {self.turn_player.user_id}: {data}")
         move = self.tmp_available_effects[data.move_id]
+        move
         # MOVE 메시지 처리 로직을 구현합니다.
 
     async def handle_cancel(self):
         logger.info(f"Player {self.turn_player.user_id}가 동작을 취소했습니다.")
         # CANCEL 메시지 처리 로직을 구현합니다.
-
-    async def handle_end(self):
-        logger.info(f"Player {self.turn_player.user_id}가 턴을 종료했습니다.")
-        # END 메시지 처리 로직을 구현합니다.
-
+        return True
+        
+        
     async def handle_disconnect(self, player: Player):
         """플레이어의 연결이 끊겼을 때 호출됩니다."""
         logger.info(f"Player {player.user_id} disconnected from game.")
@@ -105,7 +95,7 @@ class GameManager:
         # 상대 플레이어에게 알림을 보냅니다.
         await self._send_message(
             self.not_turn_player,
-            MessageType.NOTIFICATION,
+            MessageType.PING,
             {"message": f"Player {player.user_id} has disconnected."}
         )
 
@@ -156,5 +146,28 @@ class GameManager:
         # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
 
     async def handle_chain(self):
-        # 체인 처리 로직을 구현합니다.
-        pass
+        add_chain = True
+        chain_effects: list[Effect] = []
+        while True:
+            logger.info(f"Player {self.move_player.user_id}'s move.")
+            message = await self.receive_message(self.turn_player)
+            if message is None:
+                break  # 연결이 끊어졌을 경우 루프 종료
+            if message.type == MessageReturnType.MOVE:
+                result = await self.handle_move(message.data)
+                if result:
+                    chain_effects.append(result)
+                    self.move_player, self.not_move_player = self.not_move_player, self.move_player
+                    add_chain = True
+            elif message.type == MessageReturnType.CANCEL:
+                if await self.handle_cancel():
+                    self.move_player, self.not_move_player = self.not_move_player, self.move_player
+                    if add_chain:
+                        add_chain = False
+                    else:
+                        break
+            else:
+                logger.info(f"Player {self.turn_player.user_id}: {message.data}")
+                # 필요에 따라 추가 처리
+        if chain_effects == []:
+            return True
