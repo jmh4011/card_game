@@ -1,3 +1,5 @@
+// websocket.ts
+
 class WebSocketClient {
   private websocket: WebSocket | null;
 

@@ -1,18 +1,11 @@
-import React, { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import React from "react";
 import styled from "styled-components";
-import { cardsStats } from "../../atoms/global";
 import ShowCard from "../ShowCard";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Card } from "../../types/models";
-import {
-  playerHandsState,
-  playerFieldsState,
-  playerGravesState,
-  playerDecksState,
-} from "../../atoms/play";
 import { CardInfo } from "../../types/games";
+import { usePlayerFieldState } from "../../hooks/usePlayerFieldState";
 
 interface PlayerFieldProps {
   handleCard: (val: CardInfo) => void;
@@ -23,13 +16,9 @@ const PlayerField: React.FC<PlayerFieldProps> = ({
   handleCard,
   handleDrop,
 }) => {
-  const cards = useRecoilValue(cardsStats);
+  const { hands, fields, graves, decks } = usePlayerFieldState();
 
-  const [hands, setHands] = useRecoilState(playerHandsState);
-  const [fields, setFields] = useRecoilState(playerFieldsState);
-  const [graves, setGraves] = useRecoilState(playerGravesState);
-  const [decks, setDecks] = useRecoilState(playerDecksState);
-  
+
 
   return (
     <DndProvider backend={HTML5Backend}>
