@@ -11,16 +11,17 @@ class Effect_1(Effect):
             effect_id=1,
             card=card,
             zones = [ZoneType.HAND],
-            select= True)
+            select = True)
 
     async def before(self, effect_info: EffectInfo):
         self.card.player.adjust_cost(-1)
 
     async def after(self, effect_info: EffectInfo):
-        
-        self.card.move(ZoneType.FIELD, effect_info.targets)
+        entity = effect_info.targets[0].entity
+        self.card.player.entity_to_card(entity=entity)
+        self.card.move(ZoneType.FIELD, effect_info.targets[0].entity)
     
-    async def condition(self, condition_info: ConditionInfo) -> tuple[bool,list]:
+    async def condition(self, condition_info: ConditionInfo) -> bool:
         if self.card.player.cost >= 1:
-            return True, []
-        return False,[]
+            return True
+        return False

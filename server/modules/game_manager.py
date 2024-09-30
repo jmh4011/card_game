@@ -35,7 +35,7 @@ class GameManager:
         message = MessageModel(type=message_type, data=data)
         await player.websocket.send_json(message.model_dump())
 
-    async def receive_message(self, player: Player, timeout=30.0) -> Optional[MessageReturnModel]:
+    async def receive_message(self, player: Player, timeout=30.0) -> MessageReturnModel | None:
         try:
             logger.info(f"Waiting for message from Player {player.user_id}")
             message_text = await asyncio.wait_for(player.websocket.receive_text(), timeout=timeout)
@@ -142,7 +142,7 @@ class GameManager:
         await self.not_turn_player.websocket.close()
 
     async def send_available_move(self):
-        available_effects = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
+        available_effects:list[Effect] = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
         # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
 
     async def handle_chain(self):
@@ -156,7 +156,7 @@ class GameManager:
             if message.type == MessageReturnType.MOVE:
                 result = await self.handle_move(message.data)
                 if result:
-                    chain_effects.append(result)
+                    chain_effects.append(result) 
                     self.move_player, self.not_move_player = self.not_move_player, self.move_player
                     add_chain = True
             elif message.type == MessageReturnType.CANCEL:

@@ -18,4 +18,4 @@ class TargetInfo(BaseModel):
 
 class EffectInfo(BaseModel):
     opponent: 'Player'
-    target_entity: list[TargetInfo]
+    targets: list[TargetInfo]

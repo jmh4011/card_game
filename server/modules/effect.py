@@ -10,6 +10,7 @@ class Effect:
         self.card = card
         self.zones = zones
         self.select = select
+        self.targets = []
 
     async def before(self, effect_info: EffectInfo):
         pass
@@ -17,5 +18,7 @@ class Effect:
     async def after(self, effect_info: EffectInfo):
         pass
     
-    async def condition(self, condition_info: ConditionInfo) -> tuple[bool,list]:
-        return False,[]
+    async def condition(self, condition_info: ConditionInfo) -> bool:
+        return False
+    
+    
