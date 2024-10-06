@@ -6,7 +6,7 @@ import logging
 from typing import TYPE_CHECKING, Optional
 from modules.player import Player
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.game.enums import MessageReturnType, MessageType
+from schemas.game.enums import MessageReturnType, MessageType, MoveType
 from modules.effect import Effect
 from schemas.game.game_info import GameInfo
 from schemas.game.message import MessageModel, MessageReturnModel
@@ -144,7 +144,10 @@ class GameManager:
     async def send_available_move(self):
         available_effects:list[Effect] = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
         # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
-
+        message = [Move(move_type=MoveType.EFFECT, entity=effect.card) for effect in available_effects]
+        
+        
+        
     async def handle_chain(self):
         add_chain = True
         chain_effects: list[Effect] = []

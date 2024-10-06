@@ -3,7 +3,6 @@ from schemas.game.enums import MoveType
 from schemas.game.entity import Entity
 
 class Move(BaseModel):
-    move_id: int
     move_type: MoveType
     entity: Entity
     select: bool
@@ -11,7 +10,7 @@ class Move(BaseModel):
     effect_id: int | None
 
 class MoveReturn(BaseModel):
-    move_id: int
+    move_index: int
     target: list[int]
 
     class Config:

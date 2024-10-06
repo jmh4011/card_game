@@ -43,6 +43,7 @@ class UserServices:
                 raise e
         return None
     
+    
     @staticmethod
     async def signup(db: AsyncSession, user: UserSignUp) -> tuple:
         if user.password != user.again_password:
