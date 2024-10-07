@@ -3,7 +3,8 @@
 import asyncio
 import random
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
+from collections import deque
 from modules.player import Player
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.game.enums import MessageReturnType, MessageType, MoveType
@@ -12,6 +13,7 @@ from schemas.game.game_info import GameInfo
 from schemas.game.message import MessageModel, MessageReturnModel
 from schemas.game.move import Move, MoveReturn
 from schemas.game.trigger_cards import TriggerCards
+from schemas.game.effect_info import ChainInfo, EffectInfo
 if TYPE_CHECKING:
     from modules.card import Card
 
@@ -28,7 +30,6 @@ class GameManager:
         self.active = True
         self.turn = 0
         self.trigger_cards = TriggerCards()
-        self.tmp_available_effects: list[Effect] = []
         self.side_effects: list[Effect] = []
 
     async def _send_message(self, player: Player, message_type: MessageType, data):
@@ -63,41 +64,19 @@ class GameManager:
             logger.error(f"Connection check failed for Player {player.user_id}: {e}")
             return False
 
-    async def handle_turn(self):
-        while self.active:
-            logger.info(f"Player {self.turn_player.user_id}'s turn.")
-            while True:
-                if self.handle_chain():
-                    break
-            self.turn_player, self.not_turn_player = self.not_turn_player, self.turn_player
-            self.move_player = self.turn_player
-            self.not_move_player = self.not_turn_player
-            self.turn += 1
+    async def game_start(self):
+        try:
+            if random.randint(0, 1):
+                self.not_turn_player, self.turn_player = self.turn_player, self.not_turn_player
+            await self.turn_player.start(self.db)
+            await self.not_turn_player.start(self.db)
+
             await self.send_game_stat()
-        logger.info("게임이 종료되었습니다.")
-
-    async def handle_move(self, data: MoveReturn):
-        logger.info(f"Processing move from Player {self.turn_player.user_id}: {data}")
-        move = self.tmp_available_effects[data.move_id]
-        move
-        # MOVE 메시지 처리 로직을 구현합니다.
-
-    async def handle_cancel(self):
-        logger.info(f"Player {self.turn_player.user_id}가 동작을 취소했습니다.")
-        # CANCEL 메시지 처리 로직을 구현합니다.
-        return True
-        
-        
-    async def handle_disconnect(self, player: Player):
-        """플레이어의 연결이 끊겼을 때 호출됩니다."""
-        logger.info(f"Player {player.user_id} disconnected from game.")
-        self.active = False
-        # 상대 플레이어에게 알림을 보냅니다.
-        await self._send_message(
-            self.not_turn_player,
-            MessageType.PING,
-            {"message": f"Player {player.user_id} has disconnected."}
-        )
+            await self.handle_turn()
+        except Exception as e:
+            logger.error(f"Error in game start: {e}")
+        finally:
+            await self.stop()
 
     async def send_game_stat(self):
         turn_player_info = await self.turn_player.get_info()
@@ -121,45 +100,35 @@ class GameManager:
         await self._send_message(self.turn_player, MessageType.GAME_INFO, game_stat_current)
         await self._send_message(self.not_turn_player, MessageType.GAME_INFO, game_stat_opponent)
 
-    async def game_start(self):
-        try:
-            if random.randint(0, 1):
-                self.not_turn_player, self.turn_player = self.turn_player, self.not_turn_player
-            await self.turn_player.start(self.db)
-            await self.not_turn_player.start(self.db)
 
+
+    async def handle_turn(self):
+        while self.active:
+            logger.info(f"Player {self.turn_player.user_id}'s turn.")
+            while True:
+                if self.handle_chain():
+                    break
+            self.turn_player, self.not_turn_player = self.not_turn_player, self.turn_player
+            self.move_player = self.turn_player
+            self.not_move_player = self.not_turn_player
+            self.turn += 1
             await self.send_game_stat()
-            await self.handle_turn()
-        except Exception as e:
-            logger.error(f"Error in game start: {e}")
-        finally:
-            await self.stop()
+        logger.info("게임이 종료되었습니다.")
 
-    async def stop(self):
-        self.active = False
-        # 웹소켓 연결 닫기
-        await self.turn_player.websocket.close()
-        await self.not_turn_player.websocket.close()
 
-    async def send_available_move(self):
-        available_effects:list[Effect] = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
-        # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
-        message = [Move(move_type=MoveType.EFFECT, entity=effect.card) for effect in available_effects]
-        
-        
-        
     async def handle_chain(self):
         add_chain = True
-        chain_effects: list[Effect] = []
+        chain_effects: deque[ChainInfo] = deque([])
         while True:
             logger.info(f"Player {self.move_player.user_id}'s move.")
-            message = await self.receive_message(self.turn_player)
+            available_effects = await self.send_available_move()
+            message = await self.receive_message(self.turn_player,)
             if message is None:
                 break  # 연결이 끊어졌을 경우 루프 종료
             if message.type == MessageReturnType.MOVE:
-                result = await self.handle_move(message.data)
+                result = await self.handle_move(message.data,available_effects)
                 if result:
-                    chain_effects.append(result) 
+                    chain_effects.appendleft(result) 
                     self.move_player, self.not_move_player = self.not_move_player, self.move_player
                     add_chain = True
             elif message.type == MessageReturnType.CANCEL:
@@ -172,5 +141,61 @@ class GameManager:
             else:
                 logger.info(f"Player {self.turn_player.user_id}: {message.data}")
                 # 필요에 따라 추가 처리
+        
         if chain_effects == []:
             return True
+        
+        for chain_info in chain_effects:
+            chain_info.effect.after(effect_info=chain_info.effect_info)
+            
+        return False
+
+
+    async def handle_move(self, data: MoveReturn, available_effects: list[Effect] ):
+        logger.info(f"Processing move from Player {self.turn_player.user_id}: {data}")
+        effect = available_effects[data.move_index]
+        effect_info = EffectInfo(opponent=self.not_move_player, targets=[effect.targets[idx] for idx in data.target])
+        effect.before(effect_info=effect_info)
+        
+        return ChainInfo(effect=effect,effect_info=effect_info)
+        # MOVE 메시지 처리 로직을 구현합니다.
+        
+
+    async def handle_cancel(self):
+        logger.info(f"Player {self.turn_player.user_id}가 동작을 취소했습니다.")
+        # CANCEL 메시지 처리 로직을 구현합니다.
+        return True
+        
+        
+    async def handle_disconnect(self, player: Player):
+        """플레이어의 연결이 끊겼을 때 호출됩니다."""
+        logger.info(f"Player {player.user_id} disconnected from game.")
+        self.active = False
+        # 상대 플레이어에게 알림을 보냅니다.
+        await self._send_message(
+            self.not_turn_player,
+            MessageType.PING,
+            {"message": f"Player {player.user_id} has disconnected."}
+        )
+
+
+    async def stop(self):
+        self.active = False
+        # 웹소켓 연결 닫기
+        await self.turn_player.websocket.close()
+        await self.not_turn_player.websocket.close()
+
+    async def send_available_move(self) -> list[Effect]:
+        available_effects:list[Effect] = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
+        # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
+        message = [Move(move_type=MoveType.EFFECT,
+                        entity=self.move_player.card_to_entity(effect.card),
+                        select=effect.select,
+                        targets=[target.entity for target in effect.targets],
+                        effect_id=effect.effect_id) 
+                    for effect in available_effects]
+        self._send_message(player=self.move_player, message_type=MessageType.MOVE, data=message)
+        return available_effects
+        
+        
+        

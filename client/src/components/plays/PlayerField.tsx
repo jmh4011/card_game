@@ -5,7 +5,7 @@ import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Card } from "../../types/models";
 import { CardInfo } from "../../types/games";
-import { usePlayerFieldState } from "../../hooks/usePlayerFieldState";
+import { usePlayerState } from "../../hooks/usePlayerState";
 
 interface PlayerFieldProps {
   handleCard: (val: CardInfo) => void;
@@ -16,7 +16,7 @@ const PlayerField: React.FC<PlayerFieldProps> = ({
   handleCard,
   handleDrop,
 }) => {
-  const { hands, fields, graves, decks } = usePlayerFieldState();
+  const { hands, fields, graves, decks } = usePlayerState();
 
 
 

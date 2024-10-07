@@ -18,7 +18,9 @@ class Effect_1(Effect):
 
     async def after(self, effect_info: EffectInfo):
         entity = effect_info.targets[0].entity
-        self.card.player.entity_to_card(entity=entity)
+        if await self.card.player.entity_to_card(entity=entity):
+            return
+        self.card.player.draw()
         self.card.move(ZoneType.FIELD, effect_info.targets[0].entity)
     
     async def condition(self, condition_info: ConditionInfo) -> bool:

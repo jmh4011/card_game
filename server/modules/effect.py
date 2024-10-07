@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from schemas.game.enums import ZoneType
-from schemas.game.effect_info import ConditionInfo, EffectInfo
+from schemas.game.effect_info import ConditionInfo, EffectInfo, TargetInfo
 if TYPE_CHECKING:
     from modules.card import Card
 
@@ -10,7 +10,7 @@ class Effect:
         self.card = card
         self.zones = zones
         self.select = select
-        self.targets = []
+        self.targets: list[TargetInfo] = []
 
     async def before(self, effect_info: EffectInfo):
         pass

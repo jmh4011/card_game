@@ -94,6 +94,40 @@ class Player:
                     return self.graves[entity.index]
         return None
 
+    async def card_to_entity(self, card: Card) -> Entity | None:
+        """Converts a Card object to an Entity object based on its current zone and player."""
+        entity = None
+        index = None
+        opponent = card.player != self  # 카드가 상대방 플레이어의 것인지 확인
+
+        # 카드의 현재 존에 따라 인덱스를 찾습니다
+        if card.zone == ZoneType.HAND:
+            if card in card.player.hands:
+                index = card.player.hands.index(card)
+
+        elif card.zone == ZoneType.FIELD:
+            index = next((idx for idx, c in card.player.fields.items() if c == card), None)
+
+        elif card.zone == ZoneType.GRAVE:
+            if card in card.player.graves:
+                index = card.player.graves.index(card)
+
+        elif card.zone == ZoneType.DECK:
+            if card in card.player.decks:
+                index = card.player.decks.index(card)
+
+        # 인덱스를 찾은 경우 Entity 객체를 생성합니다
+        if index is not None:
+            entity = Entity(
+                opponent=opponent,  # 상대방 카드일 경우 True, 그렇지 않으면 False
+                zone=card.zone,
+                index=index
+            )
+        else:
+            logger.warning(f"Card {card.card_id} not found in zone {card.zone} for Player {card.player.user_id}")
+
+        return entity
+
         
         
     async def draw(self, num: int = 1) -> list[Card]:

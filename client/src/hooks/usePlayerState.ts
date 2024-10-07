@@ -10,12 +10,29 @@ import {
 } from '../atoms/play';
 import { CardInfo, Entity } from '../types/games';
 
-export const usePlayerStateActions = () => {
+export const usePlayerState = () => {
   const [player, setPlayer] = useRecoilState(playerState);
   const [hands, setHands] = useRecoilState(playerHandsState);
   const [fields, setFields] = useRecoilState(playerFieldsState);
   const [graves, setGraves] = useRecoilState(playerGravesState);
   const [decks, setDecks] = useRecoilState(playerDecksState);
+
+  const getEntity = (entity: Entity): CardInfo | null => {
+    switch (entity.zone) {
+      case "hands":
+        return hands[entity.index] || null;
+      case "fields":
+        return fields[entity.index] || null;
+      case "graves":
+        return graves[entity.index] || null;
+      case "decks":
+        return null;
+      case "player":
+        return null;
+      default:
+        return null;
+    }
+  };
 
   const setCost = (cost: number | ((prevCost: number) => number)) => {
     setPlayer((prevPlayer) => ({
@@ -138,5 +155,6 @@ export const usePlayerStateActions = () => {
     removeCardFromZone,
     addCardToZone,
     updateCardInZone,
+    getEntity,
   };
 };
