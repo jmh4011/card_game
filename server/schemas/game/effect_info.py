@@ -1,27 +1,34 @@
-from pydantic import BaseModel
-from typing import TYPE_CHECKING
+from pydantic import BaseModel, ConfigDict
+from typing import TYPE_CHECKING, Union
 
-
-if TYPE_CHECKING:
-    from modules.player import Player
-    from schemas.game.trigger_cards import TriggerCards
-    from server.modules.card import Card
-    from schemas.game.entity import Entity
-    from modules.effect import Effect
+from schemas.game.enums import TriggerType
+from modules.player import Player
+from modules.card import Card
+from schemas.game.entity import Entity
+from modules.effect import Effect
 
 class ConditionInfo(BaseModel):
-    player: 'Player'
-    opponent: 'Player'
-    trigger_cards: 'TriggerCards'
+    player: Player
+    opponent: Player
+    trigger_cards: dict[TriggerType, list[Card]]
+
+    # Pydantic v2에서의 모델 설정
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class TargetInfo(BaseModel):
-    entity: 'Entity'
-    card: 'Card' | None
+    entity: Entity
+    card: Union[Card, None]
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class EffectInfo(BaseModel):
-    opponent: 'Player'
+    opponent: Player
     targets: list[TargetInfo]
-    
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
 class ChainInfo(BaseModel):
-    effect: 'Effect'
-    effect_info: 'EffectInfo'
+    effect: Effect
+    effect_info: EffectInfo
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)

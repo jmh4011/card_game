@@ -2,6 +2,7 @@
 
 import asyncio
 from collections import deque, defaultdict
+from sqlalchemy.ext.asyncio import AsyncSession
 from modules.player import Player
 from modules.game_manager import GameManager
 
@@ -10,18 +11,33 @@ class RoomManager:
         self.waiting_users: defaultdict[int, deque[Player]] = defaultdict(deque)
         self.active_games: dict[int, GameManager] = {}
         self._lock = asyncio.Lock()
+        self._conditions: defaultdict[int, asyncio.Condition] = defaultdict(lambda: asyncio.Condition())
 
-    async def match(self, player: Player, mod_id: int) -> tuple[Player, Player] | None:
-        async with self._lock:
+    async def match(self,db:AsyncSession, player: Player, mod_id: int) -> GameManager:
+        condition = self._conditions[mod_id]
+        async with condition:
             self.waiting_users[mod_id].append(player)
             if len(self.waiting_users[mod_id]) >= 2:
                 player1 = self.waiting_users[mod_id].popleft()
                 player2 = self.waiting_users[mod_id].popleft()
-                # 매칭된 플레이어들에게 알림
-                await player1.notify_matched()
-                await player2.notify_matched()
-                return player1, player2
-            return None
+
+                # GameManager 생성 및 게임 시작
+                game_manager = GameManager(db=db, player1=player1, player2=player2)
+                await self.register_game(player1.user_id, game_manager)
+                await self.register_game(player2.user_id, game_manager)
+
+                # 게임을 별도의 태스크로 시작
+                asyncio.create_task(game_manager.game_start())
+
+                # 대기 중인 모든 플레이어에게 매칭이 완료되었음을 알림
+                condition.notify_all()
+
+                return game_manager
+            else:
+                # 매칭될 때까지 대기
+                await condition.wait()
+                # 매칭이 완료되면 게임 매니저 반환
+                return self.active_games.get(player.user_id)
 
     async def match_cancel(self, player: Player, mod_id: int):
         async with self._lock:

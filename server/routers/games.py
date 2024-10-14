@@ -53,3 +53,4 @@ async def websocket_endpoint(websocket: WebSocket, token: str, db: AsyncSession 
     except Exception as e:
         logger.error(f"WebSocket connection error: {e}")
         await websocket.close(code=status.WS_1011_INTERNAL_ERROR)
+        logger.info("라우터에서 닫음")

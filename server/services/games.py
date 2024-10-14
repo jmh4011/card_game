@@ -50,18 +50,12 @@ class GameServices:
             await db.refresh(user_deck)
             player = Player(user_id=user_id, websocket=websocket, deck_id=user_deck.deck_id)
 
-            # 플레이어 매칭 시도
-            result = await room_manager.match(player=player, mod_id=user_info.current_mod_id)
-            if result:
-                player1, player2 = result
-                # GameManager 생성 및 게임 시작
-                game_manager = GameManager(db=db, player1=player1, player2=player2)
-                await room_manager.register_game(player1.user_id, game_manager)
-                await room_manager.register_game(player2.user_id, game_manager)
-                await game_manager.game_start()
-            else:
-                # 매칭이 되지 않은 경우 대기 상태 유지
-                pass
+            # 플레이어 매칭 시도 및 매칭될 때까지 대기
+            game_manager = await room_manager.match(db=db, player=player, mod_id=user_info.current_mod_id)
+
+            # 게임이 진행되는 동안 웹소켓 연결 유지
+            await game_manager.wait_until_game_over()
+
         except WebSocketDisconnect:
             logger.info(f"Client {user_id} disconnected")
             await GameServices.disconnect_user(db=db, websocket=websocket, user_id=user_id)
@@ -83,3 +77,4 @@ class GameServices:
             await game_manager.handle_disconnect(player)
             await room_manager.unregister_game(user_id)
         await websocket.close()
+        logger.info("서비스에서 닫음")

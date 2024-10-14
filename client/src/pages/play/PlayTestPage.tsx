@@ -1,43 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { cardsStats, wsTokenState } from "../../atoms/global";
+import React, {  } from "react";
 import styled from "styled-components";
-import CardInfo from "../../components/plays/ShowCardInfo";
-import PlayerField from "../../components/plays/PlayerField";
-import { Card } from "../../types/models";
-import { usePlayPageState } from "../../hooks/usePlayPageState";
-import useHttpGame from "../../api/game";
-import WebSocketClient from "../../api/websocket";
 
 const PlayTestPage: React.FC = () => {
-  const {handleMessage} = usePlayPageState()
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const wsClientRef = useRef<WebSocketClient | null>(null);
-  const { getToken } = useHttpGame();
 
   const handleDrop = (index: number, cardIndex: number) => {
-    wsClientRef.current?.sendMessage(
-      `Card with index ${cardIndex} dropped on field ${index}`
-    );
+
   };
 
-  useEffect(() => {
-    getToken((data) => {
-      wsClientRef.current = new WebSocketClient();
-      wsClientRef.current.connect(data, handleMessage, () => {
-        console.log("Connection closed by server");
-        setIsConnected(false);
-      });
-      setIsConnected(true);
-    });
-
-    return () => {
-      if (wsClientRef.current) {
-        wsClientRef.current.disconnect();
-        setIsConnected(false);
-      }
-    };
-  }, [getToken]);
 
   return (
     <Contener>

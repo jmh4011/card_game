@@ -5,19 +5,20 @@ import random
 import logging
 from typing import TYPE_CHECKING
 from collections import deque
+
+from fastapi.websockets import WebSocketState
 from modules.player import Player
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.game.enums import MessageReturnType, MessageType, MoveType
+from schemas.game.enums import MessageReturnType, MessageType, MoveType, TriggerType
 from modules.effect import Effect
 from schemas.game.game_info import GameInfo
 from schemas.game.message import MessageModel, MessageReturnModel
 from schemas.game.move import Move, MoveReturn
 from schemas.game.trigger_cards import TriggerCards
-from schemas.game.effect_info import ChainInfo, EffectInfo
+from schemas.game.effect_info import ChainInfo, ConditionInfo, EffectInfo
 if TYPE_CHECKING:
     from modules.card import Card
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class GameManager:
@@ -29,31 +30,50 @@ class GameManager:
         self.not_move_player = player2
         self.active = True
         self.turn = 0
-        self.trigger_cards = TriggerCards()
+        self.trigger_cards:dict[TriggerType,list['Card']] = {}
         self.side_effects: list[Effect] = []
-
+        self._game_over_event = asyncio.Event()
+        self.card_instance_id_counter = 1  # 카드 인스턴스 ID 카운터
+        self.card_registry: dict[int, Card] = {}  # 카드 레지스트리
+        
+        
+    async def wait_until_game_over(self):
+        await self._game_over_event.wait()
+    
     async def _send_message(self, player: Player, message_type: MessageType, data):
-        message = MessageModel(type=message_type, data=data)
-        await player.websocket.send_json(message.model_dump())
+        try:
+            if player.websocket.client_state == WebSocketState.CONNECTED:
+                message = MessageModel(type=message_type, data=data).model_dump()
+                await player.websocket.send_json(message)
+                logger.info(f"Sent message to player {player.user_id}: {message_type}")
+            else:
+                logger.warning(f"WebSocket not connected for player {player.user_id}")
+        except Exception as e:
+            logger.error(f"Failed to send message to player {player.user_id}: {e}")
+
 
     async def receive_message(self, player: Player, timeout=30.0) -> MessageReturnModel | None:
-        try:
-            logger.info(f"Waiting for message from Player {player.user_id}")
-            message_text = await asyncio.wait_for(player.websocket.receive_text(), timeout=timeout)
-            message = MessageReturnModel.model_validate_json(message_text)
-            return message
-        except asyncio.TimeoutError:
-            logger.warning(f"Player {player.user_id}가 {timeout}초 내에 응답하지 않았습니다.")
-            if not await self.check_connection(player):
-                logger.warning(f"Player {player.user_id}의 연결이 끊어졌습니다.")
-                await self.handle_disconnect(player)
-            else:
-                logger.warning(f"Player {player.user_id}의 연결은 유지되고 있습니다.")
-            return None
-        except Exception as e:
-            logger.error(f"Error in receiving message from Player {player.user_id}: {e}")
-            await self.handle_disconnect(player)
-            return None
+        while True:
+            try:
+                logger.info(f"Waiting for message from Player {player.user_id}")
+                message_text = await asyncio.wait_for(player.websocket.receive_text(), timeout=timeout)
+                try:
+                    message = MessageReturnModel.model_validate_json(message_text)
+                    logger.info(f"{player.user_id}: {message}")
+                    return message
+                except Exception as e:
+                    logger.warning(f"{player.user_id}: {message_text}")
+            except asyncio.TimeoutError:
+                logger.warning(f"Player {player.user_id}가 {timeout}초 내에 응답하지 않았습니다.")
+                if not await self.check_connection(player):
+                    logger.warning(f"Player {player.user_id}의 연결이 끊어졌습니다.")
+                    await self.handle_disconnect(player)
+                else:
+                    logger.warning(f"Player {player.user_id}의 연결은 유지되고 있습니다.")
+                return None
+            except Exception as e:
+                logger.error(f"Error in receiving message from Player {player.user_id}: {e}")
+                raise e
 
     async def check_connection(self, player: Player) -> bool:
         try:
@@ -70,13 +90,15 @@ class GameManager:
                 self.not_turn_player, self.turn_player = self.turn_player, self.not_turn_player
             await self.turn_player.start(self.db)
             await self.not_turn_player.start(self.db)
-
-            await self.send_game_stat()
+            await self.send_game_stat()  # 이 시점에서 초기화가 끝난 후 게임 정보 전송
             await self.handle_turn()
         except Exception as e:
             logger.error(f"Error in game start: {e}")
         finally:
+            logger.error(f"게임 종료")
             await self.stop()
+            # 게임 종료 이벤트 설정
+            self._game_over_event.set()
 
     async def send_game_stat(self):
         turn_player_info = await self.turn_player.get_info()
@@ -101,16 +123,15 @@ class GameManager:
         await self._send_message(self.not_turn_player, MessageType.GAME_INFO, game_stat_opponent)
 
 
-
     async def handle_turn(self):
         while self.active:
-            logger.info(f"Player {self.turn_player.user_id}'s turn.")
-            while True:
-                if self.handle_chain():
-                    break
-            self.turn_player, self.not_turn_player = self.not_turn_player, self.turn_player
             self.move_player = self.turn_player
             self.not_move_player = self.not_turn_player
+            logger.info(f"Player {self.turn_player.user_id}'s turn.")
+            while True:
+                if await self.handle_chain():
+                    break
+            self.turn_player, self.not_turn_player = self.not_turn_player, self.turn_player
             self.turn += 1
             await self.send_game_stat()
         logger.info("게임이 종료되었습니다.")
@@ -122,7 +143,7 @@ class GameManager:
         while True:
             logger.info(f"Player {self.move_player.user_id}'s move.")
             available_effects = await self.send_available_move()
-            message = await self.receive_message(self.turn_player,)
+            message = await self.receive_message(self.move_player,)
             if message is None:
                 break  # 연결이 끊어졌을 경우 루프 종료
             if message.type == MessageReturnType.MOVE:
@@ -178,15 +199,27 @@ class GameManager:
             {"message": f"Player {player.user_id} has disconnected."}
         )
 
-
     async def stop(self):
         self.active = False
-        # 웹소켓 연결 닫기
-        await self.turn_player.websocket.close()
-        await self.not_turn_player.websocket.close()
+        try:
+            # not_turn_player의 웹소켓이 열려 있으면 닫습니다
+            if not self.not_turn_player.websocket.application_state == "CLOSED":
+                await self.not_turn_player.websocket.close()
+            
+            # current_player의 웹소켓도 마찬가지로 닫음
+            if not self.turn_player.websocket.application_state == "CLOSED":
+                await self.turn_player.websocket.close()
+            
+            logger.info("stop에서 닫음")
+        except Exception as e:
+            logger.error(f"Error while stopping game: {e}")
 
-    async def send_available_move(self) -> list[Effect]:
-        available_effects:list[Effect] = await self.turn_player.get_available_effects(opponent=self.not_turn_player)
+
+    async def send_available_move(self):
+        condition_info = ConditionInfo(
+            player=self.move_player, opponent=self.not_move_player, trigger_cards=self.trigger_cards
+        )
+        available_effects = await self.move_player.get_available_effects(condition_info)
         # 현재 플레이어에게 가능한 동작을 전송하는 로직을 추가합니다.
         message = [Move(move_type=MoveType.EFFECT,
                         entity=self.move_player.card_to_entity(effect.card),
@@ -194,7 +227,7 @@ class GameManager:
                         targets=[target.entity for target in effect.targets],
                         effect_id=effect.effect_id) 
                     for effect in available_effects]
-        self._send_message(player=self.move_player, message_type=MessageType.MOVE, data=message)
+        await self._send_message(player=self.move_player, message_type=MessageType.MOVE, data=message)
         return available_effects
         
         

@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = "mysql+aiomysql://cardserver:0000@localhost/card_game"
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
 Base = declarative_base()
 

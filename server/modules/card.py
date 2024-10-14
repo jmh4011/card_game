@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import TYPE_CHECKING
 
 from modules.registry import get_effect
@@ -11,10 +12,13 @@ if TYPE_CHECKING:
     from modules.player import Player
 
 
+logger = logging.getLogger(__name__)
+
 class Card:
     def __init__(
-        self, card_info: CardSchemas, player: 'Player', zone: ZoneType
+        self, card_info: CardSchemas, player: 'Player', zone: ZoneType, instance_id: int
     ) -> None:
+        self.instance_id: int = instance_id  # 고유한 카드 인스턴스 ID
         self.card_id: int = card_info.card_id
         self.card_name: str = card_info.card_name
         self.card_class: str = card_info.card_class
@@ -55,9 +59,9 @@ class Card:
         # 이전 존에서 카드 제거
         if self.before_zone:
             await self.player.remove_card_from_zone(self, self.before_zone)
-
+        
         # 새로운 존에 카드 추가
         await self.player.add_card_to_zone(self, new_zone, index)
 
         # 카드 이동에 따른 효과 처리
-        await self.player.effect_manager.on_card_moved(card=self, new_zone=new_zone)
+        await self.player.effect_manager.on_card_moved(card=self)

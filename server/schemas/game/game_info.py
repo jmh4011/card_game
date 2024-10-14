@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from schemas.game.player_info import PlayerInfo
 
 class GameInfo(BaseModel):
-    Player: PlayerInfo
+    player: PlayerInfo
     opponent: PlayerInfo
     turn: int
     is_player_turn: bool

@@ -1,16 +1,13 @@
-from fastapi import FastAPI, Request, Response, Depends
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from contextlib import asynccontextmanager
-from database import Base, engine, get_db
+from database import Base, engine
 from routers import users, decks, cards, games
 import logging
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession
-from services import CardServices
-
 
 app = FastAPI()
 
@@ -56,7 +53,7 @@ class QueueMiddleware(BaseHTTPMiddleware):
             logger.error(f"Error processing request: {e}")
             return Response("Internal Server Error", status_code=500)
 
-# app.add_middleware(QueueMiddleware)
+app.add_middleware(QueueMiddleware)
 
 # CORS 설정
 origins = [

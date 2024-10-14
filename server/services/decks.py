@@ -68,7 +68,6 @@ class DeckServices:
     
     @staticmethod
     async def get_cards(db: AsyncSession, deck_id: int) -> dict[int,int]:
-        logger.warning(f"\n\n{deck_id}\n\n")
         deck_cards: list[DeckCard] = await DeckCardCrud.get_all(db=db, deck_id=deck_id)
         for card in deck_cards:
             await db.refresh(card)

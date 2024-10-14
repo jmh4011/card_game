@@ -119,6 +119,10 @@ async def get_user_id(db: AsyncSession, request: Request, response: Response) ->
             await set_auth_cookies(response=response, access_token=new_access_token, refresh_token=new_refresh_token)
             return user_id
         else:
+            
+            logger.warning(user.refresh_token == refresh_token)
+            logger.warning(refresh_token_expiry.astimezone(timezone.utc))
+            logger.warning(datetime.now(timezone.utc))
             logger.warning("Invalid or expired refresh token in database")
             raise HTTPException(status_code=401, detail="User Unauthorized")
 

@@ -1,23 +1,27 @@
 import { Card } from "./models";
 
 // Enum 타입 정의
-export type MessageType = "text" | "game_info" | "action";
+export type MessageType = "ping" | "text" |"game_info" |"action" | "move"
+
 export type ZoneType = "hands" | "fields" | "graves" | "decks";
+
 export type MoveType = "effect" | "attact" | "end";
+
 export type ActionType =
-| "move"
-| "card_state"
-| "side_effect"
-| "cost"
-| "attack"
-| "destroy"
-| "damage"
-| "effect"
+  | "move"
+  | "card_state"
+  | "side_effect"
+  | "cost"
+  | "attack"
+  | "destroy"
+  | "damage"
+  | "effect";
+
 export type EntityZoneType = "hands" | "fields" | "graves" | "decks" | "player";
 
 export interface MessageModel {
   type: MessageType;
-  data: any; 
+  data: any;
 }
 
 export interface Entity {
@@ -30,25 +34,12 @@ export interface CardInfo extends Card {
   side_effects: number[];
 }
 
-export interface MoveEffect {
-  move_id: number;
-  entity: Entity;
-  effect_id: number;
-  select: boolean;
-  targets: Entity[];
-}
-
-export interface MoveAttack {
-  move_id: number;
-  entity: Entity;
-  select: boolean;
-  targets: Entity[];
-}
-
 export interface Move {
-  effects: MoveEffect[];
-  attact: MoveAttack[]; 
-  end: boolean;
+  move_type: MoveType;
+  entity: Entity;
+  select: boolean;
+  targets: Entity[];
+  effect_id: number | null;
 }
 
 export interface MoveReturn {
@@ -62,7 +53,7 @@ export interface PlayerInfo {
   health: number;
   side_effects: number[];
   hands: CardInfo[];
-  fields: Record<number , CardInfo | null>;
+  fields: Record<number, CardInfo | null>;
   graves: CardInfo[];
   decks: number;
 }
@@ -71,17 +62,15 @@ export interface Opponent {
   cost: number;
   health: number;
   side_effects: number[];
-
 }
 
 export interface GameInfo {
-  Player: PlayerInfo;
+  player: PlayerInfo;
   opponent: PlayerInfo;
   turn: number;
   is_player_turn: boolean;
   side_effects: number[];
 }
-
 
 export interface GameStat {
   turn: number;

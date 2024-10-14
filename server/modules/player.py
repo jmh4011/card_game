@@ -9,7 +9,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from modules.card import Card
 from modules.effect_manager import EffectManager
-from schemas.game.effect_info import ConditionInfo
 from schemas.game.enums import ZoneType
 from schemas.game.player_info import PlayerInfo
 from schemas.game.trigger_cards import TriggerCards
@@ -18,7 +17,8 @@ from services import CardServices, DeckServices
 
 if TYPE_CHECKING:
     from modules.effect import Effect
-
+    from schemas.game.effect_info import ConditionInfo
+    from modules.game_manager import GameManager
 logger = logging.getLogger(__name__)
 
 
@@ -34,6 +34,7 @@ class Player:
         self.fields: dict[int, Card] = {}
         self.graves: deque[Card] = deque()
         self.decks: deque[Card] = deque()
+        self.side_effects = []
 
     async def start(self, db: AsyncSession) -> None:
         """Initializes and shuffles the deck with the given card information."""
@@ -62,12 +63,10 @@ class Player:
             fields={idx: await card.get_info(self) for idx, card in self.fields.items()},
             graves=[await card.get_info(self) for card in self.graves],
             decks=len(self.decks),
+            side_effects=self.side_effects
         )
 
-    async def get_available_effects(self, opponent: 'Player', trigger_cards: TriggerCards) -> list['Effect']:
-        condition_info = ConditionInfo(
-            player=self, opponent=opponent, trigger_cards=trigger_cards
-        )
+    async def get_available_effects(self, condition_info:'ConditionInfo'):
         return await self.effect_manager.get_available_effects(condition_info=condition_info)
 
     async def entity_to_card(self, entity: Entity, opponent: 'Player') -> Card | None:
@@ -136,9 +135,9 @@ class Player:
         for _ in range(num):
             if not self.decks:
                 break
-            card = self.decks.popleft()
+            card = self.decks[0]
             await card.move(new_zone=ZoneType.HAND)
-            drawn_cards.append(card)
+
         return drawn_cards
 
     async def attack(self, attacker: Card, defender: Card) -> bool:
@@ -177,7 +176,7 @@ class Player:
                 self.fields[index] = card  # 필드의 특정 인덱스에 카드 추가
             else:
                 # 필드에 빈 자리를 찾아서 추가
-                for idx in range(7):  # 필드 슬롯 개수 가정
+                for idx in range(5):  # 필드 슬롯 개수 가정
                     if idx not in self.fields:
                         self.fields[idx] = card
                         break

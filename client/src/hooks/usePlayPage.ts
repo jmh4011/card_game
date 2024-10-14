@@ -15,35 +15,34 @@ import {
 } from "../types/action";
 import { usePlayerState } from "./usePlayerState";
 
-export const usePlayPageState = () => {
+export const usePlayPage = () => {
   const [showCardInfo, setShowCardInfo] = useState<CardInfo | null>(null);
   const [gameStat, setGamestat] = useRecoilState(gameStatState);
   const player = usePlayerState();
-
 
   const updateCardInfo = (card: CardInfo) => {
     setShowCardInfo(card);
   };
 
-  
-
   const handleMessage = (message: string) => {
     let messageJson: MessageModel = JSON.parse(message);
     console.log(messageJson);
     switch (messageJson.type) {
+      case "ping":
       case "text":
-        // 텍스트 메시지 처리
         break;
       case "game_info":
         let game_info: GameInfo = messageJson.data;
-        handleMessageGameInfo(game_info)
+        handleMessageGameInfo(game_info);
         break;
       case "action":
         let action: Action = messageJson.data;
         handleMessageAction(action);
         break;
+      case "move":
+        break;
       default:
-        console.log(messageJson);
+        console.error("not defind message type");
     }
   };
 
@@ -54,15 +53,15 @@ export const usePlayPageState = () => {
       side_effects: game_info.side_effects,
     });
     player.setPlayer({
-      cost: game_info.Player.cost,
-      health: game_info.Player.health,
-      side_effects: game_info.Player.side_effects,
+      cost: game_info.player.cost,
+      health: game_info.player.health,
+      side_effects: game_info.player.side_effects,
     });
-    player.setHands(game_info.Player.hands);
-    player.setFields(game_info.Player.fields);
-    player.setGraves(game_info.Player.graves);
-    player.setDecks(game_info.Player.decks);
-  }
+    player.setHands(game_info.player.hands);
+    player.setFields(game_info.player.fields);
+    player.setGraves(game_info.player.graves);
+    player.setDecks(game_info.player.decks);
+  };
 
   const handleMessageAction = (action: Action) => {
     switch (action.action_type) {
@@ -92,10 +91,7 @@ export const usePlayPageState = () => {
         const { entity, effect } = actionSideEffect;
 
         if (entity.zone === "player") {
-          player.setSideEffects((prevEffects) => [
-            ...prevEffects,
-            effect,
-          ]);
+          player.setSideEffects((prevEffects) => [...prevEffects, effect]);
         } else {
           const card = player.getEntity(entity);
           if (card) {
@@ -169,8 +165,6 @@ export const usePlayPageState = () => {
         console.log("알 수 없는 액션 타입:", action);
     }
   };
-
-  
 
   return {
     handleMessage,

@@ -6,6 +6,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Card } from "../../types/models";
 import { CardInfo } from "../../types/games";
 import { usePlayerState } from "../../hooks/usePlayerState";
+import { usePlayRef } from "../../hooks/usePlayRef";
 
 interface PlayerFieldProps {
   handleCard: (val: CardInfo) => void;
@@ -17,7 +18,7 @@ const PlayerField: React.FC<PlayerFieldProps> = ({
   handleDrop,
 }) => {
   const { hands, fields, graves, decks } = usePlayerState();
-
+  const {playerHandRefs, } = usePlayRef()
 
 
   return (
@@ -35,7 +36,10 @@ const PlayerField: React.FC<PlayerFieldProps> = ({
           ))}
         </Fields>
         <Hands>
-          {hands.map((val, idx) => (
+          {hands.map((val, idx) => {
+            
+            playerHandRefs.current[idx] = playerHandRefs.current[idx] || React.createRef();
+            return(
             <DraggableHandCard
               key={idx}
               index={idx}
@@ -43,7 +47,7 @@ const PlayerField: React.FC<PlayerFieldProps> = ({
               card={val}
               onClick={() => handleCard(val)}
             />
-          ))}
+          )})}
         </Hands>
         <Graves>{graves.length}</Graves>
         <Deck>{decks}</Deck>
