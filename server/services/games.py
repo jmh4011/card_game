@@ -8,7 +8,6 @@ from schemas.db.game_mods import GameModSchemas
 from auth import create_websocket_token
 from modules.player import Player
 from modules.room_manager import room_manager
-from modules.game_manager import GameManager
 import logging
 from services.users import UserServices
 
@@ -43,15 +42,12 @@ class GameServices:
     @staticmethod
     async def connect_user(db: AsyncSession, websocket: WebSocket, user_id: int):
         try:
-            # 유저 연결 및 매칭
             user_info = await UserStatCrud.get(db=db, user_id=user_id)
-            await db.refresh(user_info)
-            user_deck = await UserDeckSelectionCrud.get(db=db, user_id=user_id, mod_id=user_info.current_mod_id)
-            await db.refresh(user_deck)
-            player = Player(user_id=user_id, websocket=websocket, deck_id=user_deck.deck_id)
-
             # 플레이어 매칭 시도 및 매칭될 때까지 대기
-            game_manager = await room_manager.match(db=db, player=player, mod_id=user_info.current_mod_id)
+            game_manager = await room_manager.match(db=db, 
+                                                    user_id=user_id, 
+                                                    websocket= websocket,
+                                                    mod_id=user_info.current_mod_id)
 
             # 게임이 진행되는 동안 웹소켓 연결 유지
             await game_manager.wait_until_game_over()
@@ -67,14 +63,14 @@ class GameServices:
     async def disconnect_user(db: AsyncSession, websocket: WebSocket, user_id: int):
         logger.info(f"Client {user_id} disconnected")
         user_info = await UserStatCrud.get(db=db, user_id=user_id)
-        player = Player(user_id=user_id, websocket=websocket)
 
         # 매칭 취소 또는 게임 중단 처리
-        await room_manager.match_cancel(player=player, mod_id=user_info.current_mod_id)
+        await room_manager.match_cancel(user_id=user_id, mod_id=user_info.current_mod_id)
         game_manager = await room_manager.get_active_game(user_id)
 
         if game_manager:
-            await game_manager.handle_disconnect(player)
+            await game_manager.handle_disconnect(user_id)
             await room_manager.unregister_game(user_id)
         await websocket.close()
         logger.info("서비스에서 닫음")
+

@@ -1,11 +1,19 @@
 from typing import TYPE_CHECKING
 from schemas.game.enums import ZoneType
+from schemas.game.effect_info import ConditionInfo, EffectInfo, TargetInfo
 if TYPE_CHECKING:
-    from modules.card import Card  
-    from schemas.game.effect_info import ConditionInfo, EffectInfo, TargetInfo
-
+    from modules.game_manager import GameManager
+    
 class Effect:
-    def __init__(self, effect_id:int, card:'Card', zones:list[ZoneType], select:bool) -> None:
+    def __init__(self,
+                game_manager:'GameManager', 
+                instance_id:int, 
+                effect_id:int, 
+                card:int, 
+                zones:list[ZoneType], 
+                select:bool) -> None:
+        self.game_manager = game_manager
+        self.instance_id = instance_id
         self.effect_id = effect_id
         self.card = card
         self.zones = zones

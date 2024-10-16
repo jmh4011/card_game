@@ -35,12 +35,6 @@ class MoveType(Enum):
     ATTACT = "attact"
     END = "end"
 
-class EntityZoneType(Enum):
-    HAND = "hand"
-    FIELD = "field"
-    GRAVE = "grave"
-    DECK = "deck"
-    PLAYER = 'player'
 
 class TriggerType(Enum):
     SUMMON = "summon"  # 소환 시

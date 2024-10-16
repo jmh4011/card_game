@@ -5,8 +5,6 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from modules.game_manager import GameManager
-from modules.player import Player
 from services.games import GameServices  # 수정된 임포트 경로
 from auth import get_user_id, verify_token
 from schemas.db.game_mods import GameModSchemas

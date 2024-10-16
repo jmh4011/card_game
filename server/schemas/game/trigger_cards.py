@@ -1,19 +1,11 @@
-from pydantic import BaseModel
-from typing import TYPE_CHECKING, Union
-
-
-if TYPE_CHECKING:
-    from modules.card import Card
+from pydantic import BaseModel, ConfigDict
 
 class TriggerCards(BaseModel):
-    summon: list['Card'] = []
-    effect: list['Card'] = []
-    draw: list['Card'] = []
-    move: list['Card'] = []
-    attack: list['Card'] = []
-    defence: list['Card'] = []
-    damage: list['Card'] = []
-    destroy: list['Card'] = []
-
-    class Config:
-        arbitrary_types_allowed = True
+    summon: list[int] = []
+    effect: list[int] = []
+    draw: list[int] = []
+    move: list[int] = []
+    attack: list[int] = []
+    defence: list[int] = []
+    damage: list[int] = []
+    destroy: list[int] = []

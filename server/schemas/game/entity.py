@@ -1,10 +1,14 @@
+from enum import Enum
 from pydantic import BaseModel
-from schemas.game.enums import EntityZoneType
+
+class EntityType(Enum):
+    FIELD = "field"
+    PLAYER = "player"
+    CARD = "card"
 
 class Entity(BaseModel):
-    zone: EntityZoneType
-    index: int
-    opponent: bool
+    id: int
+    zone: EntityType
 
     class Config:
         use_enum_values = True

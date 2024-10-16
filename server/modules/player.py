@@ -11,7 +11,6 @@ from modules.card import Card
 from modules.effect_manager import EffectManager
 from schemas.game.enums import ZoneType
 from schemas.game.player_info import PlayerInfo
-from schemas.game.trigger_cards import TriggerCards
 from schemas.game.entity import Entity
 from services import CardServices, DeckServices
 
@@ -19,49 +18,47 @@ if TYPE_CHECKING:
     from modules.effect import Effect
     from schemas.game.effect_info import ConditionInfo
     from modules.game_manager import GameManager
+    from schemas.game.trigger_cards import TriggerCards
+    from modules.game_manager import GameManager
 logger = logging.getLogger(__name__)
 
 
 class Player:
-    def __init__(self, user_id: int, websocket: WebSocket, deck_id: int) -> None:
+    def __init__(self, game_manager: 'GameManager',user_id: int, websocket: WebSocket, deck_id: int) -> None:
+        self.game_manager = game_manager
         self.user_id = user_id
         self.websocket = websocket
         self.deck_id = deck_id
         self.effect_manager = EffectManager()
         self.cost = 0
         self.health = 40
-        self.hands: deque[Card] = deque()
-        self.fields: dict[int, Card] = {}
-        self.graves: deque[Card] = deque()
-        self.decks: deque[Card] = deque()
+        self.hands: list[int] = []
+        self.fields: dict[int, int] = {}
+        self.graves: list[int] = []
+        self.decks: list[int] = []
         self.side_effects = []
 
     async def start(self, db: AsyncSession) -> None:
         """Initializes and shuffles the deck with the given card information."""
         cards = await DeckServices.get_cards(db=db, deck_id=self.deck_id)
         deck = [
-            await self._get_card(card_id=card_id, zone=ZoneType.DECK, db=db)
+            await self.game_manager.create_card_instance(card_id=card_id, db=db)
             for card_id, count in cards.items()
             for _ in range(count)
         ]
         random.shuffle(deck)
-        self.decks = deque(deck)
-        await self.effect_manager.effects_check(list(self.decks))
+        self.decks = deck
+        await self.effect_manager.effects_check(self.decks)
         await self.draw(5)
 
-    async def _get_card(self, card_id: int, zone: ZoneType, db: AsyncSession) -> Card:
-        db_card = await CardServices.get(card_id=card_id, db=db)
-        card = Card(card_info=db_card, player=self, zone=zone)
-        await card.initialize_effects(db_card.effects)
-        return card
 
     async def get_info(self) -> PlayerInfo:
         return PlayerInfo(
             cost=self.cost,
             health=self.health,
-            hands=[await card.get_info(self) for card in self.hands],
-            fields={idx: await card.get_info(self) for idx, card in self.fields.items()},
-            graves=[await card.get_info(self) for card in self.graves],
+            hands=[(await self.game_manager.get_card_instance(card)).get_info() for card in self.hands],
+            fields={idx: (await self.game_manager.get_card_instance(card)).get_info() for idx, card in self.fields.items()},
+            graves=[(await self.game_manager.get_card_instance(card)).get_info() for card in self.graves],
             decks=len(self.decks),
             side_effects=self.side_effects
         )
@@ -69,7 +66,8 @@ class Player:
     async def get_available_effects(self, condition_info:'ConditionInfo'):
         return await self.effect_manager.get_available_effects(condition_info=condition_info)
 
-    async def entity_to_card(self, entity: Entity, opponent: 'Player') -> Card | None:
+    async def entity_to_card(self, entity: Entity, opponent_id: int) -> Card | None:
+        opponent = await self.game_manager.get_player_instance(opponent_id)
         if entity.opponent:
             if entity.zone == ZoneType.HAND:
                 if 0 <= entity.index < len(opponent.hands):

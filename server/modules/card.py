@@ -10,14 +10,16 @@ from schemas.game.enums import ZoneType
 if TYPE_CHECKING:
     from modules.effect import Effect
     from modules.player import Player
+    from modules.game_manager import GameManager
 
 
 logger = logging.getLogger(__name__)
 
 class Card:
-    def __init__(
-        self, card_info: CardSchemas, player: 'Player', zone: ZoneType, instance_id: int
+    async def __init__(
+        self,game_manager: 'GameManager',card_info: CardSchemas, player: 'Player', zone: ZoneType, instance_id: int
     ) -> None:
+        game_manager: 'GameManager' = game_manager
         self.instance_id: int = instance_id  # 고유한 카드 인스턴스 ID
         self.card_id: int = card_info.card_id
         self.card_name: str = card_info.card_name
@@ -31,14 +33,13 @@ class Card:
         self.zone: ZoneType = zone
         self.side_effects: list['Effect'] = []
         self.before_zone: ZoneType | None = None
-        self.effects: list['Effect'] = []
+        self.effects: list['Effect'] = self._initialize_effects(card_info.effects)
 
-    async def initialize_effects(self, effects_info: list[int]) -> None:
-        """Initializes effects asynchronously."""
+    async def _initialize_effects(self, effects_info: list[int]) -> None:
         effect_classes = await asyncio.gather(*[get_effect(effect_id) for effect_id in effects_info])
-        self.effects = [effect_class(self) for effect_class in effect_classes]
+        return [effect_class(self) for effect_class in effect_classes]
 
-    async def get_info(self, player: 'Player') -> CardInfo:
+    async def get_info(self) -> CardInfo:
         return CardInfo(
             card_name=self.card_name,
             card_class=self.card_class,
