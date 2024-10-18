@@ -5,7 +5,7 @@ export type MessageType = "ping" | "text" |"game_info" |"action" | "move"
 
 export type ZoneType = "hands" | "fields" | "graves" | "decks";
 
-export type MoveType = "effect" | "attact" | "end";
+export type MoveType = "effect" | "attack" | "end";
 
 export type ActionType =
   | "move"

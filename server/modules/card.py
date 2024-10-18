@@ -2,9 +2,8 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING
 
-from modules.registry import get_effect
 from schemas.db.cards import CardSchemas
-from schemas.game.card_info import CardInfo
+from schemas.game.class_info import CardInfo
 from schemas.game.enums import ZoneType
 
 if TYPE_CHECKING:
@@ -17,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 class Card:
     async def __init__(
-        self,game_manager: 'GameManager',card_info: CardSchemas, player: 'Player', zone: ZoneType, instance_id: int
+        self,game_manager: 'GameManager',card_info: CardSchemas, player_id: int, zone: ZoneType, instance_id: int
     ) -> None:
-        game_manager: 'GameManager' = game_manager
-        self.instance_id: int = instance_id  # 고유한 카드 인스턴스 ID
+        self.game_manager: 'GameManager' = game_manager
+        self.instance_id: int = instance_id
         self.card_id: int = card_info.card_id
         self.card_name: str = card_info.card_name
         self.card_class: str = card_info.card_class
@@ -29,40 +28,58 @@ class Card:
         self.health: int = card_info.health
         self.image_path: str = card_info.image_path
         self.card_type: str = card_info.card_type
-        self.player: 'Player' = player
+        self.player_id: int = player_id
         self.zone: ZoneType = zone
-        self.side_effects: list['Effect'] = []
         self.before_zone: ZoneType | None = None
-        self.effects: list['Effect'] = self._initialize_effects(card_info.effects)
+        self.effects: list[int] = self._initialize_effects(card_info.effects)
+        self.side_effects: list[int] = []
 
-    async def _initialize_effects(self, effects_info: list[int]) -> None:
-        effect_classes = await asyncio.gather(*[get_effect(effect_id) for effect_id in effects_info])
-        return [effect_class(self) for effect_class in effect_classes]
+    async def _initialize_effects(self, effects_info: list[int]) -> list[int]:
+        effects = await asyncio.gather(*[self.game_manager.registry_manager.create_effect_instance(effect_id,self.instance_id) 
+                                                for effect_id in effects_info])
+        return effects
 
-    async def get_info(self) -> CardInfo:
+    async def _get_info(self) -> CardInfo:
         return CardInfo(
-            card_name=self.card_name,
-            card_class=self.card_class,
-            image_path=self.image_path,
-            card_id=self.card_id,
-            attack=self.attack,
-            health=self.health,
-            side_effect=self.side_effects,
-            card_type=self.card_type,
-            effects=[effect.effect_id for effect in self.effects],
+            card_name = self.card_name,
+            card_class = self.card_class,
+            image_path = self.image_path,
+            card_id = self.card_id,
+            attack = self.attack,
+            health = self.health,
+            card_type = self.card_type,
+            effects = self.effects,
         )
+    
+    async def _is_public_player(self) -> bool:
+        if self.zone == ZoneType.DECK:
+            return False
+        return True
+        
+    
+    async def _is_public_opponet(self) -> bool:
+        if self.zone == ZoneType.HAND:
+            return False
+        elif self.zone == ZoneType.DECK:
+            return False
+        elif self.zone == ZoneType.FIELD:
+            return True
+        elif self.zone == ZoneType.GRAVE:
+            return True
+        else:
+            return None
 
-    async def move(self, new_zone: ZoneType, index: int | None = None) -> None:
-        """Moves the card to a new zone and updates the player's card collections."""
+    async def is_public(self,player_id:int) -> bool:
+        if (player_id == self.player_id and await self._is_public_player()) or await self._is_public_opponet():
+            return True
+        return False
+    
+    
+    async def get_info(self, player_id:int):
+        if self.is_public(player_id=player_id):
+            return await self._get_info()
+        return None
+
+    async def move(self, new_zone: ZoneType) -> None:
         self.before_zone = self.zone
         self.zone = new_zone
-
-        # 이전 존에서 카드 제거
-        if self.before_zone:
-            await self.player.remove_card_from_zone(self, self.before_zone)
-        
-        # 새로운 존에 카드 추가
-        await self.player.add_card_to_zone(self, new_zone, index)
-
-        # 카드 이동에 따른 효과 처리
-        await self.player.effect_manager.on_card_moved(card=self)

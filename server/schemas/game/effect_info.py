@@ -1,24 +1,19 @@
-from pydantic import BaseModel, ConfigDict
+from enum import Enum
+from pydantic import BaseModel
 from schemas.game.entity import Entity
-from modules.effect import Effect
 from schemas.game.trigger_cards import TriggerCards
+from schemas.game.target_info import TargetInfo
+
 
 class ConditionInfo(BaseModel):
-    player: int
-    opponent: int
+    player_id: int
     trigger_cards: TriggerCards
 
-class TargetInfo(BaseModel):
-    entity: Entity
-    card: int | None
-
-
 class EffectInfo(BaseModel):
-    opponent: int
+    player_id: int
     targets: list[TargetInfo]
 
-
 class ChainInfo(BaseModel):
-    effect: int
+    effect_id: int
     effect_info: EffectInfo
 

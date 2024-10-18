@@ -1,6 +1,19 @@
+from enum import Enum
 from pydantic import BaseModel
 from typing import Any
-from schemas.game.enums import MessageType, MessageReturnType
+
+class MessageType(Enum):
+    PING = "ping"
+    TEXT = "text"
+    GAME_INFO = "game_info"
+    ACRION = "action"
+    MOVE = "move"
+
+class MessageReturnType(Enum):
+    TEXT = "text"
+    MOVE = "move"
+    CANCEL = "cancel"
+    END = "end"
 
 class MessageModel(BaseModel):
     type: MessageType

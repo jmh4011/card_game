@@ -2,13 +2,17 @@ from enum import Enum
 from pydantic import BaseModel
 
 class EntityType(Enum):
+    HAND = "hand"
     FIELD = "field"
+    GRAVE = "grave"
+    DECK = "deck"
     PLAYER = "player"
-    CARD = "card"
+    
 
 class Entity(BaseModel):
-    id: int
-    zone: EntityType
+    index: int | None
+    opponent: bool
+    type: EntityType
 
     class Config:
         use_enum_values = True

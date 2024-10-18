@@ -27,7 +27,7 @@ class RoomManager:
                 user2_websocket = self.websocket_registry.pop(user2_id)
                 # GameManager 생성 및 게임 시작
                 
-                game_manager = await GameManager(db=db,
+                game_manager = GameManager(db=db,
                                                 mod_id=mod_id,
                                                 user1_id=user1_id, 
                                                 user2_id=user2_id,

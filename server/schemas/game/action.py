@@ -1,41 +1,71 @@
+from enum import Enum
 from typing import Any
 from pydantic import BaseModel
-from schemas.game.enums import ActionType
+from schemas.game.enums import ZoneType
 from schemas.game.entity import Entity
-from schemas.game.card_info import CardInfo
+from schemas.game.class_info import CardInfo
 
+class ActionType(Enum):
+    MOVE = "move"
+    SET_CARD = "set_card"
+    SET_PLAYER = "set_player"
+    SET_GAME = "set_game"
+    ATTACK = "attack"
+    DAMAGE = "damege"
+    EFFECT = "effect"
+
+class SetCardType(Enum):
+    NAME = "name"
+    CLASS = "class"
+    ATTACK = "attack"
+    HEALTH = "health"
+    IMAHE_PATH = "image_path"
+    TYPE = "type"
+    EFEECTS = "effects"
+    
+class SetPlayerType(Enum):
+    COST = "cost"
+    ATTACK = "attack"
+    HEALTH = "health"
+    EFEECTS = "effects"
+
+class SetGameType(Enum):
+    EFEECTS = "effects"
 
 class Action(BaseModel):
     action_type: ActionType
     action_data: Any
 
+class ActionSetCard(BaseModel):
+    card: Entity
+    type: SetCardType
+    data: Any
+
+class ActionSetPlayer(BaseModel):
+    opponent: bool
+    type: SetPlayerType
+    data: Any
+
+class ActionSetGame(BaseModel):
+    type: SetGameType
+    data: Any
+
+
 class ActionMove(BaseModel):
-    before: Entity
+    before: Entity | None
     after: Entity
-
-class ActionCardState(BaseModel):
-    entity: Entity
-    state: CardInfo
-
-class ActionSideEffect(BaseModel):
-    entity: Entity
-    effect: int
-
-class ActionCost(BaseModel):
-    cost: int
+    destroy: bool = False
+    state: CardInfo | None
+    
 
 class ActionEffect(BaseModel):
-    effect: int
-    subject: Entity
+    effect_id: int
+    entity: Entity
     targets: list[Entity] = []
 
 class ActionAtteck(BaseModel):
     subject: Entity
     object: Entity
-
-class ActionDestroy(BaseModel):
-    before: Entity
-    after: Entity
 
 class ActionDamage(BaseModel):
     entity: Entity

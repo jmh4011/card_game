@@ -1,48 +1,46 @@
-import asyncio
 import logging
 import random
-from collections import deque
 from typing import TYPE_CHECKING
 
 from fastapi import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from modules.card import Card
 from modules.effect_manager import EffectManager
 from schemas.game.enums import ZoneType
-from schemas.game.player_info import PlayerInfo
-from schemas.game.entity import Entity
-from services import CardServices, DeckServices
+from schemas.game.class_info import PlayerInfo
+from services import DeckServices
 
 if TYPE_CHECKING:
-    from modules.effect import Effect
     from schemas.game.effect_info import ConditionInfo
     from modules.game_manager import GameManager
-    from schemas.game.trigger_cards import TriggerCards
     from modules.game_manager import GameManager
 logger = logging.getLogger(__name__)
 
 
 class Player:
-    def __init__(self, game_manager: 'GameManager',user_id: int, websocket: WebSocket, deck_id: int) -> None:
+    def __init__(self, game_manager: 'GameManager',user_id: int, player_id:int,websocket: WebSocket, deck_id: int) -> None:
         self.game_manager = game_manager
         self.user_id = user_id
+        self.player_id = player_id
         self.websocket = websocket
         self.deck_id = deck_id
         self.effect_manager = EffectManager()
         self.cost = 0
+        self.max_cost = 0
         self.health = 40
+        self.max_health = 40
         self.hands: list[int] = []
         self.fields: dict[int, int] = {}
         self.graves: list[int] = []
         self.decks: list[int] = []
-        self.side_effects = []
+        self.effects: list[int] = []
+        self.side_effects: list[int] = []
 
     async def start(self, db: AsyncSession) -> None:
         """Initializes and shuffles the deck with the given card information."""
         cards = await DeckServices.get_cards(db=db, deck_id=self.deck_id)
         deck = [
-            await self.game_manager.create_card_instance(card_id=card_id, db=db)
+            await self.game_manager.registry_manager.create_card_instance(card_id=card_id, zone=ZoneType.DECK,player_id=self.user_id)
             for card_id, count in cards.items()
             for _ in range(count)
         ]
@@ -52,172 +50,87 @@ class Player:
         await self.draw(5)
 
 
-    async def get_info(self) -> PlayerInfo:
+    async def _get_info(self) -> PlayerInfo:
         return PlayerInfo(
             cost=self.cost,
             health=self.health,
-            hands=[(await self.game_manager.get_card_instance(card)).get_info() for card in self.hands],
-            fields={idx: (await self.game_manager.get_card_instance(card)).get_info() for idx, card in self.fields.items()},
-            graves=[(await self.game_manager.get_card_instance(card)).get_info() for card in self.graves],
+            hands=[(await self.game_manager.registry_manager.get_card_instance(card)).get_info_player() 
+                    for card in self.hands],
+            fields={idx: (await self.game_manager.registry_manager.get_card_instance(card)).get_info_player() 
+                    for idx, card in self.fields.items()},
+            graves=[(await self.game_manager.registry_manager.get_card_instance(card)).get_info_player()
+                    for card in self.graves],
             decks=len(self.decks),
+            effects=self.effects,
             side_effects=self.side_effects
         )
+    
+    async def get_info_player(self):
+        return await self._get_info()
+    
+    async def get_info_opponent(self):
+        return await self._get_info()
 
     async def get_available_effects(self, condition_info:'ConditionInfo'):
         return await self.effect_manager.get_available_effects(condition_info=condition_info)
 
-    async def entity_to_card(self, entity: Entity, opponent_id: int) -> Card | None:
-        opponent = await self.game_manager.get_player_instance(opponent_id)
-        if entity.opponent:
-            if entity.zone == ZoneType.HAND:
-                if 0 <= entity.index < len(opponent.hands):
-                    return opponent.hands[entity.index]
-            elif entity.zone == ZoneType.FIELD:
-                if entity.index in opponent.fields:
-                    return opponent.fields[entity.index]
-            elif entity.zone == ZoneType.GRAVE:
-                if 0 <= entity.index < len(opponent.graves):
-                    return opponent.graves[entity.index]
 
-        else:
-            if entity.zone == ZoneType.HAND:
-                if 0 <= entity.index < len(self.hands):
-                    return self.hands[entity.index]
-            elif entity.zone == ZoneType.FIELD:
-                if entity.index in self.fields:
-                    return self.fields[entity.index]
-            elif entity.zone == ZoneType.GRAVE:
-                if 0 <= entity.index < len(self.graves):
-                    return self.graves[entity.index]
-        return None
-
-    async def card_to_entity(self, card: Card) -> Entity | None:
-        """Converts a Card object to an Entity object based on its current zone and player."""
-        entity = None
+    async def remove_card(self, card_id: int, zone: ZoneType) -> int | None:
         index = None
-        opponent = card.player != self  # 카드가 상대방 플레이어의 것인지 확인
-
-        # 카드의 현재 존에 따라 인덱스를 찾습니다
-        if card.zone == ZoneType.HAND:
-            if card in card.player.hands:
-                index = card.player.hands.index(card)
-
-        elif card.zone == ZoneType.FIELD:
-            index = next((idx for idx, c in card.player.fields.items() if c == card), None)
-
-        elif card.zone == ZoneType.GRAVE:
-            if card in card.player.graves:
-                index = card.player.graves.index(card)
-
-        elif card.zone == ZoneType.DECK:
-            if card in card.player.decks:
-                index = card.player.decks.index(card)
-
-        # 인덱스를 찾은 경우 Entity 객체를 생성합니다
-        if index is not None:
-            entity = Entity(
-                opponent=opponent,  # 상대방 카드일 경우 True, 그렇지 않으면 False
-                zone=card.zone,
-                index=index
-            )
-        else:
-            logger.warning(f"Card {card.card_id} not found in zone {card.zone} for Player {card.player.user_id}")
-
-        return entity
-
         
-        
-    async def draw(self, num: int = 1) -> list[Card]:
-        """Draws cards from the deck to the hand."""
-        drawn_cards = []
-        for _ in range(num):
-            if not self.decks:
-                break
-            card = self.decks[0]
-            await card.move(new_zone=ZoneType.HAND)
-
-        return drawn_cards
-
-    async def attack(self, attacker: Card, defender: Card) -> bool:
-        """Performs an attack from attacker to defender."""
-        defender.health -= attacker.attack
-        if defender.health <= 0:
-            await defender.move(new_zone=ZoneType.GRAVE)
-            return True
-        return False
-
-    async def remove_card_from_zone(self, card: Card, zone: ZoneType) -> None:
-        """Removes a card from the specified zone."""
-        if zone == ZoneType.HAND and card in self.hands:
-            self.hands.remove(card)
-        elif zone == ZoneType.FIELD and card in self.fields.values():
-            index = next((idx for idx, c in self.fields.items() if c == card), None)
+        if zone == ZoneType.HAND and card_id in self.hands:
+            index = self.hands.index(card_id)
+            del self.hands[index]
+        elif zone == ZoneType.FIELD and card_id in self.fields.values():
+            index = next((idx for idx, c in self.fields.items() if c == card_id), None)
             if index is not None:
                 del self.fields[index]
-        elif zone == ZoneType.GRAVE and card in self.graves:
-            self.graves.remove(card)
-        elif zone == ZoneType.DECK and card in self.decks:
-            self.decks.remove(card)
+        elif zone == ZoneType.GRAVE and card_id in self.graves:
+            index = self.graves.index(card_id)
+            del self.graves[index]
+        elif zone == ZoneType.DECK and card_id in self.decks:
+            index = self.decks.index(card_id)
+            del self.decks[index]
         else:
-            logger.warning(f"Card {card.card_id} not found in zone {zone}.")
+            logger.warning(f"Card {card_id} not found in zone {zone}.")
+        
+        return index
+
 
     
-    async def add_card_to_zone(self, card: Card, zone: ZoneType, index: int | None = None) -> None:
+    async def add_card_to_zone(self, card_id: int, zone: ZoneType, index: int | None = None) -> None:
         """Adds a card to the specified zone, optionally at a specific index."""
         if zone == ZoneType.HAND:
             if index is not None and 0 <= index <= len(self.hands):
-                self.hands.insert(index, card)  # 지정된 인덱스에 카드 삽입
+                self.hands.insert(index, card_id)  # 지정된 인덱스에 카드 삽입
             else:
-                self.hands.append(card)  # 인덱스가 없으면 끝에 추가
+                self.hands.append(card_id)  # 인덱스가 없으면 끝에 추가
         elif zone == ZoneType.FIELD:
             if index is not None:
-                self.fields[index] = card  # 필드의 특정 인덱스에 카드 추가
+                self.fields[index] = card_id  # 필드의 특정 인덱스에 카드 추가
             else:
                 # 필드에 빈 자리를 찾아서 추가
                 for idx in range(5):  # 필드 슬롯 개수 가정
                     if idx not in self.fields:
-                        self.fields[idx] = card
+                        self.fields[idx] = card_id
                         break
         elif zone == ZoneType.GRAVE:
-            self.graves.append(card)
+            if index is not None and 0 <= index <= len(self.graves):
+                self.graves.insert(index, card_id)  # 지정된 인덱스에 카드 삽입
+            else:
+                self.graves.append(card_id)  # 인덱스가 없으면 끝에 추가
         elif zone == ZoneType.DECK:
             if index is not None and 0 <= index <= len(self.decks):
-                self.decks.insert(index, card)  # 지정된 인덱스에 카드 삽입
+                self.decks.insert(index, card_id)  # 지정된 인덱스에 카드 삽입
             else:
-                self.decks.append(card)  # 인덱스가 없으면 끝에 추가
+                self.decks.append(card_id)  # 인덱스가 없으면 끝에 추가
         else:
-            logger.warning(f"Unknown zone {zone} for card {card.card_id}.")
+            logger.warning(f"Unknown zone {zone} for card {card_id}.")
+
 
     async def shuffle_deck(self) -> None:
         """Shuffles the deck."""
-        deck_list = list(self.decks)
+        deck_list = self.decks
         random.shuffle(deck_list)
-        self.decks = deque(deck_list)
+        self.decks = deck_list
     
-    async def adjust_health(self, amount: int) -> None:
-        self.health += amount
-        if self.health < 0:
-            self.health = 0
-        logger.info(f"Player {self.user_id}'s health adjusted by {amount}. New health: {self.health}")
-
-    async def adjust_cost(self, amount: int) -> None:
-        self.cost += amount
-        if self.cost < 0:
-            self.cost = 0
-        elif self.cost > 10: 
-            self.cost = 10
-        logger.info(f"Player {self.user_id}'s cost adjusted by {amount}. New cost: {self.cost}")
-
-    async def set_health(self, new_health: int) -> None:
-        self.health = new_health
-        if self.health < 0:
-            self.health = 0
-        logger.info(f"Player {self.user_id}'s health set to {self.health}")
-
-    async def set_cost(self, new_cost: int) -> None:
-        self.cost = new_cost
-        if self.cost < 0:
-            self.cost = 0
-        elif self.cost > 10:
-            self.cost = 10
-        logger.info(f"Player {self.user_id}'s cost set to {self.cost}")
